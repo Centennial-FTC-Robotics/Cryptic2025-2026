@@ -19,7 +19,6 @@ public class Robot {
     public VerticalSlides verticalSlides = new VerticalSlides();
     public Intake intake = new Intake();
     public IntakeSlides intakeSlides = new IntakeSlides();
-    public ClawArm clawArm = new ClawArm();
     public Outtake outtake = new Outtake(clawArm);
     public IMU imu = new IMU();
     public DrivetrainNoRR dtNoRR = new DrivetrainNoRR();
