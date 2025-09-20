@@ -1,24 +1,18 @@
 package org.Cryptic;
 
 import org.Cryptic.Commands.BaseActions;
-import org.Cryptic.Commands.SpecimenActions;
 import org.Cryptic.Commands.SampleActions;
 import org.Cryptic.Commands.SpecimenCommands;
-import org.Cryptic.Subsystems.ClawArm;
 import org.Cryptic.Subsystems.Drivetrain;
 import org.Cryptic.Subsystems.DrivetrainNoRR;
 import org.Cryptic.Subsystems.IMU;
-import org.Cryptic.Subsystems.IntakeSlides;
 import org.Cryptic.Subsystems.Outtake;
-import org.Cryptic.Subsystems.VerticalSlides;
 import org.Cryptic.Subsystems.Intake;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 public class Robot {
     public Drivetrain dt = new Drivetrain();
-    public VerticalSlides verticalSlides = new VerticalSlides();
     public Intake intake = new Intake();
-    public IntakeSlides intakeSlides = new IntakeSlides();
     public Outtake outtake = new Outtake(clawArm);
     public IMU imu = new IMU();
     public DrivetrainNoRR dtNoRR = new DrivetrainNoRR();
