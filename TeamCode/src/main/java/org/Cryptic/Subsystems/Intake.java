@@ -10,5 +10,9 @@ public class Intake extends Subsystem {
     @Override
     public void init(LinearOpMode opmode) throws InterruptedException {
         // TODO
+
+
+
+
     }
 }

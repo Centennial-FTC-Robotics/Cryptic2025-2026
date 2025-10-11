@@ -68,7 +68,9 @@ public class MeepMeepTesting {
         // Active Intake 5 Specimen Auto
         myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d((t*-0.5-2.75), (t*2.5 + 2.75), Math.toRadians(270)))
                 .waitSeconds(1)
-                .splineToConstantHeading(new Vector2d(1, rungY-4), Math.toRadians(180))
+                .splineToLinearHeading(new Pose2d(-38, 40, Math.toRadians(180)), Math.toRadians(270))
+
+
 //                .strafeToLinearHeading(new Vector2d(-33+offset, 40), Math.toRadians(210))
 //                .strafeToLinearHeading(new Vector2d(-32+offset, 44), Math.toRadians(135))
 //                .strafeToLinearHeading(new Vector2d(-32+offset, 40), Math.toRadians(205))
@@ -249,5 +251,15 @@ public class MeepMeepTesting {
                 .setBackgroundAlpha(0.95f)
                 .addEntity(myBot)
                 .start();
+
+
+        // .splineToConstantHeading:
+        // .splineToLinearHeading:
+
+        // .strafeToConstantHeading:
+        // .strafeToLinearHeading:
+
+
+
     }
 }
