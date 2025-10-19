@@ -27,6 +27,10 @@ public class Robot {
     };
     public SampleActions sampleActions = new SampleActions();
 
+    // TODO: perhaps store order that allows for extra points here?
+    // int motif; // position of the 1 green among the 2 purple
+    // check page 77 https://ftc-resources.firstinspires.org/ftc/game/manual
+
     public void initialize(LinearOpMode opmode) throws InterruptedException {
 
         for(Subsystem subsystem : subsystems) {
