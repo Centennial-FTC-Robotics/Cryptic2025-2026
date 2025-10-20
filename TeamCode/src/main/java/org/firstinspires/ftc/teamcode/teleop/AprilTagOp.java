@@ -66,6 +66,7 @@ import java.util.List;
  */
 public class AprilTagOp extends LinearOpMode {
 
+    // read: https://ftc-resources.firstinspires.org/ftc/game/manual, around page 77
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
 
     /**
