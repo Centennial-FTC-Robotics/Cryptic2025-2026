@@ -12,6 +12,9 @@ public class Outtake extends Subsystem {
     public Servo angleServo;
     public DcMotorEx powerMotor;
 
+    public int motif;
+    public int[] orders; // TODO
+
     @Override
     public void init(LinearOpMode opmode) throws InterruptedException {
         // TODO
@@ -28,7 +31,7 @@ public class Outtake extends Subsystem {
         // TODO;
     }
 
-    public void outtakeSamples(int motif, int[] order) {
+    public void outtakeSamples() {
         // motif is where the purple ball is
         // order is the loadout of the current balls
         // to figure out order, keep a color sensor

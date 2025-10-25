@@ -21,11 +21,7 @@ public class SampleAuto extends LinearOpMode {
         Pose2d initialPose = new Pose2d((t*1.5 - 2.75), (t*2.5 + 2.75), Math.toRadians(180));
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
 
-        double inPerTick = 1; // TODO
-        ThreeDeadWheelLocalizer localizer = new ThreeDeadWheelLocalizer(
-                this.hardwareMap,
-                inPerTick,
-                initialPose);
+        double inPerTick = 1;
 
 
         double scoreX = -1, scoreY = -1; // TODO coords of the goal
@@ -37,9 +33,8 @@ public class SampleAuto extends LinearOpMode {
                 // .stopAndAdd(robot.sampleActions.reset(robot))
         ;
 
-        robot.intake.update();
-
         TrajectoryActionBuilder firstSample = driveToScore.endTrajectory().fresh()
-                .strafeToSplineHeading(new Vector2d(48, 46), Math.toRadians(270));
+                .strafeToSplineHeading(new Vector2d(48, 46), Math.toRadians(270))
+                .stopAndAdd(robot.sampleActions.intakeSample(robot));
     }
 }

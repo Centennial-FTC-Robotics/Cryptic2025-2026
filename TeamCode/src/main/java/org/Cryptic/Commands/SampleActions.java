@@ -29,4 +29,25 @@ public class SampleActions {
     public Action positionToScore(Robot robot) {
         return new positionToScore(robot);
     }
+
+    public class intakeSample implements Action {
+        private boolean initialized = false;
+        private Robot robot;
+
+        public intakeSample(Robot robot) {
+            this.robot = robot;
+        }
+
+        @Override
+        public boolean run(@NonNull TelemetryPacket packet) {
+            if (!initialized) {
+                initialized = true;
+                robot.outtake.outtakeSamples();
+            }
+        }
+    }
+
+    public Action intakeSample(Robot robot) {
+        return new intakeSample(robot);
+    }
 }
