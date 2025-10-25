@@ -37,6 +37,8 @@ public class SampleAuto extends LinearOpMode {
                 // .stopAndAdd(robot.sampleActions.reset(robot))
         ;
 
+        robot.intake.update();
+
         TrajectoryActionBuilder firstSample = driveToScore.endTrajectory().fresh()
                 .strafeToSplineHeading(new Vector2d(48, 46), Math.toRadians(270));
     }

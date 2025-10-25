@@ -68,10 +68,8 @@ public class MeepMeepTesting {
         // Active Intake 5 Specimen Auto
         myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d((t*-0.5-2.75), (t*2.5 + 2.75), Math.toRadians(270)))
                 .waitSeconds(1)
-                .splineToLinearHeading(new Pose2d(-38, 40, Math.toRadians(180)), Math.toRadians(270))
-
-
-//                .strafeToLinearHeading(new Vector2d(-33+offset, 40), Math.toRadians(210))
+                .splineToLinearHeading(new Pose2d(-38, 10, Math.toRadians(180)), Math.toRadians(270))
+                .strafeToLinearHeading(new Vector2d(-33+offset, 40), Math.toRadians(210))
 //                .strafeToLinearHeading(new Vector2d(-32+offset, 44), Math.toRadians(135))
 //                .strafeToLinearHeading(new Vector2d(-32+offset, 40), Math.toRadians(205))
 //                .strafeToLinearHeading(new Vector2d(-40+offset, 40), Math.toRadians(210))
@@ -81,7 +79,8 @@ public class MeepMeepTesting {
 //                .strafeToLinearHeading(new Vector2d(-48+offset, 40), Math.toRadians(205))
 //                .strafeToLinearHeading(new Vector2d(-44+offset, 44), Math.toRadians(130))
 //                .strafeToLinearHeading(new Vector2d(-38, observationY - 4), Math.toRadians(270))
-//                .strafeToConstantHeading(new Vector2d(-38, observationY))
+                .strafeToConstantHeading(new Vector2d(-38, observationY))
+                .strafeToLinearHeading(new Vector2d(-38, 10), Math.toRadians(0))
 //                .strafeToConstantHeading(new Vector2d(2, rungY))
 //                .setReversed(true)
 //                //.strafeToConstantHeading(new Vector2d(-38, observationY))

@@ -21,7 +21,7 @@ public class Outtake extends Subsystem {
     }
 
     public void launchHigh() {
-        // TODO();
+        // TODO(); figure out odometry, angles, where we are
     }
 
     public void launchStraight() {
@@ -31,6 +31,7 @@ public class Outtake extends Subsystem {
     public void outtakeSamples(int motif, int[] order) {
         // motif is where the purple ball is
         // order is the loadout of the current balls
+        // to figure out order, keep a color sensor
 
         int green = 0;
         int purple = 0;
