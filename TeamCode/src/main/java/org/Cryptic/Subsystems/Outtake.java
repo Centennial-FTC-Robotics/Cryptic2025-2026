@@ -1,10 +1,13 @@
 package org.Cryptic.Subsystems;
+import com.acmerobotics.roadrunner.Pose2d;
 
+import com.acmerobotics.roadrunner.Rotation2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.Cryptic.Subsystem;
+import org.firstinspires.ftc.teamcode.MecanumDrive;
 
 public class Outtake extends Subsystem {
 
@@ -13,7 +16,7 @@ public class Outtake extends Subsystem {
     public DcMotorEx powerMotor;
 
     public int motif;
-    public int[] orders; // TODO
+    public int[] order; // TODO
 
     @Override
     public void init(LinearOpMode opmode) throws InterruptedException {
@@ -93,4 +96,30 @@ public class Outtake extends Subsystem {
             }
         }
     }
+
+
+
+    public void autoUpdateAim(MecanumDrive Drive) {
+
+        double tx = -72.0; // target x position change later
+        double ty = -72.0; // target y position change later
+
+        Drive.updatePoseEstimate();
+
+        Pose2d currentPos = Drive.localizer.getPose();
+
+        double dx = tx - currentPos.position.x;
+        double dy = ty - currentPos.position.y;
+
+        Rotation2d heading = currentPos.heading;
+        double headingDeg = heading.log();
+
+        double aimTargetInRadians = Math.atan2(dy,dx);
+
+        // not sure if we need heading (where front of robot is facing) depending on if we have full 360 range of motion. ts might get weird
+
+
+    }
+
+
 }
