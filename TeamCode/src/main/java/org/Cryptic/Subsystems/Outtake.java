@@ -18,6 +18,17 @@ public class Outtake extends Subsystem {
     public int motif;
     public int[] order; // TODO
 
+    double tx = -72.0; // x location of field goal
+    double ty = -72.0; // y location of field goal
+
+    double height = 36.0; // height of goal
+    double radius = 5.0; // radius of ball
+
+
+
+
+
+
     @Override
     public void init(LinearOpMode opmode) throws InterruptedException {
         // TODO
@@ -101,8 +112,8 @@ public class Outtake extends Subsystem {
 
     public void autoUpdateAim(MecanumDrive Drive) {
 
-        double tx = -72.0; // target x position change later
-        double ty = -72.0; // target y position change later
+        // tx = -72.0; // target x position change later
+        // ty = -72.0; // target y position change later
 
         Drive.updatePoseEstimate();
 
@@ -118,6 +129,41 @@ public class Outtake extends Subsystem {
 
         // not sure if we need heading (where front of robot is facing) depending on if we have full 360 range of motion. ts might get weird
 
+
+
+
+    }
+
+
+    public void setRotateMotorPos(Pose2d currentPos) { // to be used in autoUpdateAim
+
+    }
+
+
+
+
+
+
+    public void launch(MecanumDrive Drive) { // using georgy's math
+
+        Drive.updatePoseEstimate();
+
+        Pose2d currentPos = Drive.localizer.getPose();
+
+        // tx = -72.0; // target x position change later
+
+        double dx = tx - currentPos.position.x;
+        double dy = ty - currentPos.position.y;
+
+        double dist = Math.hypot(dx,dy);
+
+        double launchAngle = Math.atan2((2 * height),dist);
+
+
+        double rpm = (30 / (Math.PI * radius)) * Math.sqrt(2 * 9.81 * height) / Math.sin(launchAngle);
+
+
+        // TODO using encoders set motor to use specificed RPM
 
     }
 
