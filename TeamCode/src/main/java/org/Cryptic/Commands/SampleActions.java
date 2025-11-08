@@ -21,8 +21,10 @@ public class SampleActions {
         public boolean run(@NonNull TelemetryPacket packet) {
             if (!initialized) {
                 initialized = true;
-                robot.outtake.outtakeSample();
+                // TODO
+                return true;
             }
+            return false;
         }
     }
 
