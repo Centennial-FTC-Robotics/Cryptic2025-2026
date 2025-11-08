@@ -3,6 +3,7 @@ import com.acmerobotics.roadrunner.Pose2d;
 
 import com.acmerobotics.roadrunner.Rotation2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -35,6 +36,11 @@ public class Outtake extends Subsystem {
         powerMotor = opmode.hardwareMap.get(DcMotorEx.class, "powerMotor");
         angleServo = opmode.hardwareMap.get(Servo.class, "angleServo");
         rotateMotor = opmode.hardwareMap.get(DcMotorEx.class, "rotateMotor");
+
+        powerMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        rotateMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+
     }
 
     public void launchHigh() {
@@ -45,6 +51,8 @@ public class Outtake extends Subsystem {
         // TODO;
     }
 
+
+    /*
     public void outtakeSamples() {
         // motif is where the purple ball is
         // order is the loadout of the current balls
@@ -108,6 +116,8 @@ public class Outtake extends Subsystem {
         }
     }
 
+    */
+
 
 
     public void autoUpdateAim(MecanumDrive Drive) {
@@ -119,15 +129,26 @@ public class Outtake extends Subsystem {
 
         Pose2d currentPos = Drive.localizer.getPose();
 
+
         double dx = tx - currentPos.position.x;
         double dy = ty - currentPos.position.y;
 
         Rotation2d heading = currentPos.heading;
         double headingDeg = heading.log();
 
-        double aimTargetInRadians = Math.atan2(dy,dx);
 
-        // not sure if we need heading (where front of robot is facing) depending on if we have full 360 range of motion. ts might get weird
+        double dist = Math.hypot(dx,dy);
+        double launchAngle = Math.atan2((2 * height),dist);
+
+        // set launch angle
+
+        angleServo.setPosition((launchAngle / 90.0)); // test later
+
+
+        // rotate motor
+        // something to note, motor cannot rotate past a certain fixed degree (eg. 180) so if you wanted to go 181, you would have to go the other way
+        // first get motor position using encoder
+
 
 
 
@@ -135,9 +156,6 @@ public class Outtake extends Subsystem {
     }
 
 
-    public void setRotateMotorPos(Pose2d currentPos) { // to be used in autoUpdateAim
-
-    }
 
 
 
