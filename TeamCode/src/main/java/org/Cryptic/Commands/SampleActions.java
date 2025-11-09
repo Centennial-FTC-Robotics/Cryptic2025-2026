@@ -9,34 +9,19 @@ import org.Cryptic.Robot;
 
 public class SampleActions {
 
-    public class positionToScore implements Action {
-        private boolean initialized = false;
-        private Robot robot = new Robot();
+    private long startTime;
 
-        public positionToScore(Robot robot) {
-            this.robot = robot;
-        }
-
-        @Override
-        public boolean run(@NonNull TelemetryPacket packet) {
-            if (!initialized) {
-                initialized = true;
-                // TODO
-                return true;
-            }
-            return false;
-        }
+    private void initTime(){
+        startTime = System.currentTimeMillis();
     }
-
-    public Action positionToScore(Robot robot) {
-        return new positionToScore(robot);
+    public boolean hasBeenTime(int mili){
+        return System.currentTimeMillis() - startTime >= mili;
     }
-
-    public class intakeSample implements Action {
+    public class grabBall implements Action {
         private boolean initialized = false;
         private Robot robot;
 
-        public intakeSample(Robot robot) {
+        public grabBall(Robot robot) {
             this.robot = robot;
         }
 
@@ -44,12 +29,14 @@ public class SampleActions {
         public boolean run(@NonNull TelemetryPacket packet) {
             if (!initialized) {
                 initialized = true;
-                robot.outtake.outtakeSamples();
+                robot.intake.grabBall(10); // TODO what power
+                initTime();
             }
+            return (!hasBeenTime(300));
         }
     }
 
-    public Action intakeSample(Robot robot) {
-        return new intakeSample(robot);
+    public Action grabBall(Robot robot) {
+        return new grabBall(robot);
     }
 }

@@ -2,6 +2,7 @@ package org.Cryptic;
 
 import org.Cryptic.Commands.BaseActions;
 import org.Cryptic.Commands.SampleActions;
+import org.Cryptic.Subsystems.Camera;
 import org.Cryptic.Subsystems.Drivetrain;
 import org.Cryptic.Subsystems.IMU;
 import org.Cryptic.Subsystems.Outtake;
@@ -17,6 +18,8 @@ public class Robot {
     public Outtake outtake = new Outtake();
     public IMU imu = new IMU();
 
+    public Camera camera = new Camera();
+
     public BaseActions baseActions = new BaseActions();
 
     public Subsystem[] subsystems = new Subsystem[] {
@@ -24,12 +27,10 @@ public class Robot {
             intake,
             imu,
             baseActions,
+            camera
     };
     public SampleActions sampleActions = new SampleActions();
 
-    // TODO: perhaps store order that allows for extra points here?
-    // int motif; // position of the 1 green among the 2 purple
-    // check page 77 https://ftc-resources.firstinspires.org/ftc/game/manual
 
     public void initialize(LinearOpMode opmode) throws InterruptedException {
 

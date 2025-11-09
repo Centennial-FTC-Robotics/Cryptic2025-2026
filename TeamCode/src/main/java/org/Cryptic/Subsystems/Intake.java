@@ -42,14 +42,7 @@ public class Intake extends Subsystem {
 
 
 
-    public void intakeSamples(double power) {
-
-
-
-
-
-
-
+    public void grabBall(double power) {
 
 
 
@@ -68,8 +61,6 @@ public class Intake extends Subsystem {
         }
 
         indexServo.setPosition(currentServoPos);
-
-
     }
 
 

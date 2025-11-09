@@ -27,7 +27,7 @@ public class SampleAuto extends LinearOpMode {
         double scoreX = -1, scoreY = -1; // TODO coords of the goal
 
         TrajectoryActionBuilder driveToScore = drive.actionBuilder(initialPose)
-                .stopAndAdd(robot.sampleActions.positionToScore(robot))
+                // .stopAndAdd(robot.sampleActions.positionToScore(robot))
                 .strafeToSplineHeading(new Vector2d(scoreX, scoreY), Math.toRadians(225))
                 // .stopAndAdd(robot.sampleActions.launchSample(robot))
                 // .stopAndAdd(robot.sampleActions.reset(robot))
@@ -35,6 +35,6 @@ public class SampleAuto extends LinearOpMode {
 
         TrajectoryActionBuilder firstSample = driveToScore.endTrajectory().fresh()
                 .strafeToSplineHeading(new Vector2d(48, 46), Math.toRadians(270))
-                .stopAndAdd(robot.sampleActions.intakeSample(robot));
+                .stopAndAdd(robot.sampleActions.grabBall(robot));
     }
 }
