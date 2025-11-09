@@ -16,7 +16,8 @@ import org.Cryptic.Subsystem;
 public class Intake extends Subsystem {
 
     public int[] currentBalls;
-    public int[] motifBalls;
+
+    public int currentIndex;
 
     public DcMotorEx bandMotor;
     public Servo indexServo;
@@ -32,12 +33,13 @@ public class Intake extends Subsystem {
         colorSensor = opmode.hardwareMap.get(NormalizedColorSensor.class, "colorSensor");
 
 
-
         bandMotor = opmode.hardwareMap.get(DcMotorEx.class, "bandMotor");
         indexServo = opmode.hardwareMap.get(Servo.class, "indexSero");
 
         bandMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
+        currentIndex = 0;
+        currentBalls = new int[3];
     }
 
 
@@ -50,17 +52,30 @@ public class Intake extends Subsystem {
 
     public void registerBall() {// color sensor to be used
 
+        boolean isGreen;
 
-        //int currentColor =
-
+        NormalizedRGBA res = colorSensor.getNormalizedColors();
+        float[] hsv = new float[3];
+        Color.RGBToHSV((int) (res.red * 256), (int) (res.green * 256), (int) (res.blue * 256), hsv);
+        // only hue, hsv[0], matters
+        int purpleHue = 270;
+        int greenHue = 120;
+        if (Math.abs(hsv[0] - purpleHue) > Math.abs(hsv[0] - greenHue)) {
+            isGreen = true;
+        } else {
+            isGreen = false;
+        }
 
         if (currentServoPos >= 0.3) {
             currentServoPos = 0.0;
+            currentIndex = 0;
         } else {
             currentServoPos += (1.0 / 3.0);
+            currentIndex++;
         }
 
         indexServo.setPosition(currentServoPos);
+        currentBalls[currentIndex] = (isGreen ? 1 : 0);
     }
 
 
