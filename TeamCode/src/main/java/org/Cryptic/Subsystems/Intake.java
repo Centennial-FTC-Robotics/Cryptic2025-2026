@@ -50,7 +50,7 @@ public class Intake extends Subsystem {
 
     }
 
-    public void registerBall() {// color sensor to be used
+    public void registerBall() {// color sensor is used
 
         boolean isGreen;
 
