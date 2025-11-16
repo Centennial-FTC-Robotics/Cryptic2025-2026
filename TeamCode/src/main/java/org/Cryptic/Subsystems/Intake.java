@@ -42,11 +42,7 @@ public class Intake extends Subsystem {
         currentBalls = new int[3];
     }
 
-
-
     public void grabBall(double power) {
-
-
 
     }
 
