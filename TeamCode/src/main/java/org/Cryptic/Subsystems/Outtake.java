@@ -1,6 +1,6 @@
 package org.Cryptic.Subsystems;
-import com.acmerobotics.roadrunner.Pose2d;
 
+import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Rotation2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -12,9 +12,9 @@ import org.firstinspires.ftc.teamcode.MecanumDrive;
 
 public class Outtake extends Subsystem {
 
-    public DcMotorEx rotateMotor; // TODO christian is this for angling turret im assuming it is
+    public DcMotorEx rotateMotor; // turret rotation motor
     public Servo angleServo;
-    public DcMotorEx powerMotor;
+    public DcMotorEx powerMotor;  // shooter flywheel
 
     public int motif;
     public int[] order; // TODO
@@ -23,18 +23,35 @@ public class Outtake extends Subsystem {
     double ty = -72.0; // y location of field goal
 
     double height = 36.0; // height of goal
-    double radius = 5.0; // radius of ball
+    double radius = 5.0;  // radius of ball (be consistent with your units)
+
+
+    private static final double CPR = 500.0; // change later check with gobilda specs
+
+
+
+
+
 
     @Override
     public void init(LinearOpMode opmode) throws InterruptedException {
-        // TODO
         powerMotor = opmode.hardwareMap.get(DcMotorEx.class, "powerMotor");
         angleServo = opmode.hardwareMap.get(Servo.class, "angleServo");
         rotateMotor = opmode.hardwareMap.get(DcMotorEx.class, "rotateMotor");
 
         powerMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         rotateMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+
+
+        rotateMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rotateMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        powerMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        powerMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
+
+
 
     public void autoUpdateAim(MecanumDrive Drive) {
 
@@ -45,42 +62,36 @@ public class Outtake extends Subsystem {
 
         Pose2d currentPos = Drive.localizer.getPose();
 
-
         double dx = tx - currentPos.position.x;
+
         double dy = ty - currentPos.position.y;
 
         Rotation2d heading = currentPos.heading;
+        double headingRad = heading.log(); // radians
 
-
-        double dist = Math.hypot(dx,dy);
-        double launchAngle = Math.atan2((2 * height),dist);
-
-        // set launch angle
-
-        angleServo.setPosition((launchAngle / 90.0)); // test later
-
-
-        // rotate motor
-        // something to note, motor cannot rotate past a certain fixed degree (eg. 180) so if you wanted to go 181, you would have to go the other way
-        // first get motor position using encoder
+        double dist = Math.hypot(dx, dy);
+        double launchAngle = Math.atan2((2 * height), dist);
 
 
 
+        angleServo.setPosition((launchAngle / Math.toRadians(90.0))); // test later
 
+        int turretEncoderPosition = rotateMotor.getCurrentPosition();
+
+
+        double turretAngleRad = encoderToRadians(turretEncoderPosition);
 
     }
 
     // via christian, the range of motion is pi one way pi the other
-    // TODO how the heck do you program to turn the other way
-    // this returns a value between pi and -pi then
+    // this returns a value between pi and -pi then (once CPR is correct)
     public double encoderToRadians(double encoderValue) {
-        // TODO calibrate? or counts per revolution
-        double CPR = 10.0;
-        return encoderValue/CPR * 2 * Math.PI;
+        return (encoderValue / CPR) * 2 * Math.PI;
     }
 
     public int radiansToEncoder(double radians) {
-        double CPR = 10.0;
+        double CPR = 537.6; // must match above
+
         double revolutions = radians / (2 * Math.PI);
         return (int) (CPR * revolutions);
     }
@@ -89,14 +100,18 @@ public class Outtake extends Subsystem {
 
         Drive.updatePoseEstimate();
 
-        // angling turret to point to goal
         Pose2d currentPos = Drive.localizer.getPose();
-        double robotAngle = Drive.localizer.getPose().heading.log();
+
+
+        double robotAngle = Drive.localizer.getPose().heading.log(); // radians
         double turretAngle = rotateMotor.getCurrentPosition();
         turretAngle = encoderToRadians(turretAngle);
 
         double dx = tx - currentPos.position.x;
         double dy = ty - currentPos.position.y;
+
+
+
         // tan(robotAngle+turretAngle) = dy/dx
         double targetAngle = Math.atan2(dy, dx);
         // correct if targetAngle is negative of what it should be
@@ -104,22 +119,32 @@ public class Outtake extends Subsystem {
             targetAngle = -targetAngle;
         }
         targetAngle -= robotAngle;
-        // want to rotate turret to targetAngle; either targetAngle clockwise or 2pi-targetAngle counterclockwise
-        // the signs should be taken care of
+
+
+
+        // want to rotate turret to targetAngle
         rotateMotor.setTargetPosition(radiansToEncoder(targetAngle));
 
+        rotateMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rotateMotor.setPower(0.4);
 
-        // angling launching mechanism
-        double dist = Math.hypot(dx,dy);
+        // we should prob tune power
 
-        double launchAngle = Math.atan2((2 * height),dist);
+        double dist = Math.hypot(dx, dy);
+        double launchAngle = Math.atan2((2 * height), dist);
+
 
         double rpm = (30 / (Math.PI * radius)) * Math.sqrt(2 * 9.81 * height) / Math.sin(launchAngle);
 
 
-        // TODO using encoders set motor to use specificed RPM
+
+
+        double ticksPerSecond = rpm * CPR / 60.0;
+        powerMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        powerMotor.setVelocity(ticksPerSecond); // not seyting up manual pid for now ...
+
+
 
     }
-
-
 }
