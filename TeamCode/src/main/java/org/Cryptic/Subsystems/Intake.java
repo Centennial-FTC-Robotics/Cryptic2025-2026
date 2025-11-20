@@ -15,16 +15,14 @@ import org.Cryptic.Subsystem;
 
 public class Intake extends Subsystem {
 
-    public int[] currentBalls;
-
-    public int currentIndex;
 
     public DcMotorEx bandMotor;
     public Servo indexServo;
 
     public NormalizedColorSensor colorSensor;
 
-    // add color sensor
+    public int currentIndex;
+    public int[] currentBalls;
 
     public static double currentServoPos = 0.0;
 
@@ -40,6 +38,9 @@ public class Intake extends Subsystem {
 
         currentIndex = 0;
         currentBalls = new int[3];
+
+        this.robot.currentIndex = currentIndex;
+        this.robot.currentBalls = currentBalls;
     }
 
     public void grabBall(double power) {
@@ -73,16 +74,5 @@ public class Intake extends Subsystem {
         indexServo.setPosition(currentServoPos);
         currentBalls[currentIndex] = (isGreen ? 1 : 0);
     }
-
-
-
-    public void indexBalls(int[] currentBalls, int[] motifBalls) {
-
-
-
-
-
-    }
-
 
 }

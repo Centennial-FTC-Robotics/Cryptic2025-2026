@@ -16,9 +16,6 @@ public class Outtake extends Subsystem {
     public Servo angleServo;
     public DcMotorEx powerMotor;  // shooter flywheel
 
-    public int motif;
-    public int[] order; // TODO
-
     double tx = -72.0; // x location of field goal
     double ty = -72.0; // y location of field goal
 

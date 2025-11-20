@@ -31,7 +31,11 @@ public class Robot {
     };
     public SampleActions sampleActions = new SampleActions();
 
+    public int currentIndex; // index of the intake i think
 
+    public int[] currentBalls;
+
+    public int motif;
     public void initialize(LinearOpMode opmode) throws InterruptedException {
 
         for(Subsystem subsystem : subsystems) {
