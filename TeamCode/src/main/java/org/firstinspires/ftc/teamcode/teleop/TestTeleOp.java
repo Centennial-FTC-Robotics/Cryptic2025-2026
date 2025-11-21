@@ -29,7 +29,17 @@ public class TestTeleOp extends LinearOpMode {
                 intakePad, GamepadKeys.Button.B
         );
 
+        ToggleButtonReader toggleAutoAim = new ToggleButtonReader(
+                intakePad, GamepadKeys.Button.LEFT_BUMPER
+        );
+
+
+
+
         FtcDashboard dashboard = FtcDashboard.getInstance();
+
+        boolean autoAimMode = true;
+
 
         waitForStart();
         while (opModeIsActive()) {
@@ -39,9 +49,41 @@ public class TestTeleOp extends LinearOpMode {
             intakePad.readButtons();
             bReader.readValue();
             bIntakeReader.readValue();
+            toggleAutoAim.readValue();
 
             robot.intake.update();
             robot.outtake.update();
+
+            if (intakePad.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER) && autoAimMode) {
+                autoAimMode = false;
+            } else if (intakePad.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER) && !autoAimMode) {
+                autoAimMode = true;
+            }
+
+
+            if (autoAimMode) {
+                robot.outtake.autoUpdateAim(robot.dt.drivebase);
+            } else {
+
+                if (gamepad2.dpad_left) {
+
+                    robot.outtake.manuallyUpdateAim(1000); // find rpm later
+
+                } else if (gamepad2.dpad_right) {
+
+                    robot.outtake.manuallyUpdateAim(-1000); // change rpm later
+                }
+
+
+            }
+
+
+
+            if (gamepad2.right_trigger >= 0.15) {
+                robot.intake.grabBall(1000); // setup rpm later and constnats
+            }
+
+
 
             robot.dt.drivebase.setDrivePowers(new PoseVelocity2d(
                     new Vector2d(
@@ -51,9 +93,7 @@ public class TestTeleOp extends LinearOpMode {
                     -gamepad1.right_stick_x
             ));
 
-            if (drivePad.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
-                robot.outtake.outtakeSample();
-            }
+
 
 
 

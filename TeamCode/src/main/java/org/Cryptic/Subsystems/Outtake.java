@@ -77,6 +77,13 @@ public class Outtake extends Subsystem {
         rotateMotor.setPower(0.4);
     }
 
+    public void manuallyUpdateAim(double rpm) { // if auto update fails, click left bumper to
+        double ticksPerSecond = rpm * CPR / 60.0;
+
+        rotateMotor.setVelocity(ticksPerSecond);
+
+    }
+
     // via christian, the range of motion is pi one way pi the other
     // this returns a value between pi and -pi then (once CPR is correct)
     public double encoderToRadians(double encoderValue) {
