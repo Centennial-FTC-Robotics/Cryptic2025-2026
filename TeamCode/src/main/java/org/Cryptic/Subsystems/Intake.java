@@ -15,39 +15,26 @@ import org.Cryptic.Subsystem;
 
 public class Intake extends Subsystem {
 
-
     public DcMotorEx bandMotor;
     public Servo indexServo;
 
     public NormalizedColorSensor colorSensor;
 
-    public int currentIndex;
-    public int[] currentBalls;
-
-    public static double currentServoPos = 0.0;
-
     @Override
     public void init(LinearOpMode opmode) throws InterruptedException {
         colorSensor = opmode.hardwareMap.get(NormalizedColorSensor.class, "colorSensor");
 
-
         bandMotor = opmode.hardwareMap.get(DcMotorEx.class, "bandMotor");
-        indexServo = opmode.hardwareMap.get(Servo.class, "indexSero");
+        indexServo = opmode.hardwareMap.get(Servo.class, "indexServo");
 
         bandMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
-        currentIndex = 0;
-        currentBalls = new int[3];
-
-        this.robot.currentIndex = currentIndex;
-        this.robot.currentBalls = currentBalls;
+        this.robot.currentIndex = 0;
+        this.robot.currentBalls = new int[3];
+        for (int i=0; i<3; ++i) this.robot.currentBalls[i] = -1;
     }
 
-    public void grabBall(double power) {
-
-    }
-
-    public void registerBall() {// color sensor is used
+    public void grabBall() { // color sensor is used
 
         boolean isGreen;
 
@@ -63,16 +50,20 @@ public class Intake extends Subsystem {
             isGreen = false;
         }
 
-        if (currentServoPos >= 0.3) {
-            currentServoPos = 0.0;
-            currentIndex = 0;
-        } else {
-            currentServoPos += (1.0 / 3.0);
-            currentIndex++;
+        int step = 0;
+        while (this.robot.currentBalls[this.robot.currentIndex] != -1 && step < 3) {
+            step++;
+            this.robot.currentIndex = (this.robot.currentIndex + 1) % 3;
         }
+        if (step == 3) {
+            System.out.println("There are no available slots");
+        }
+        indexServo.setPosition(this.robot.currentIndex / 3.0);
 
-        indexServo.setPosition(currentServoPos);
-        currentBalls[currentIndex] = (isGreen ? 1 : 0);
+        // TODO actually control bandMotor to get ball
+
+        this.robot.currentBalls[this.robot.currentIndex] = (isGreen ? 1 : 0);
+        // note that the one just added is the current index now
     }
 
 }

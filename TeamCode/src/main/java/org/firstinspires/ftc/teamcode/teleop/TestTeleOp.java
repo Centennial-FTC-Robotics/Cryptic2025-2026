@@ -51,13 +51,20 @@ public class TestTeleOp extends LinearOpMode {
                     -gamepad1.right_stick_x
             ));
 
-            if (drivePad.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
-                robot.outtake.outtakeSample();
+            // Intake
+            if (drivePad.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
+                robot.intake.grabBall();
             }
 
+            // Outtake
+            if (drivePad.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
+                robot.outtake.launch(robot.dt.drivebase);
+            }
 
-
-
+            // Read motif
+            if (drivePad.wasJustPressed(GamepadKeys.Button.A)) {
+                robot.camera.getMotif();
+            }
         }
     }
 }

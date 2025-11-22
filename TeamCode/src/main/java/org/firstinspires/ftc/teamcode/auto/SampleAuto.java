@@ -21,7 +21,7 @@ public class SampleAuto extends LinearOpMode {
         Robot robot = new Robot();
         robot.initialize(this);
 
-        double t = 24;
+        double t = 23.5;
         Pose2d initialPose = new Pose2d((t*1 - 4), (t*5 + 6), Math.toRadians(315));
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
 
@@ -47,9 +47,10 @@ public class SampleAuto extends LinearOpMode {
                 .strafeToConstantHeading(new Vector2d(ballX - 10, ballY + (21 - robot.motif)*t))
                 .stopAndAdd(robot.sampleActions.grabBall(robot))
                 .strafeToConstantHeading(new Vector2d(scoreX, scoreY))
-                .stopAndAdd(robot.sampleActions.autoUpdateAim(robot))
-                // TODO implement .stopAndAdd(robot.sampleActions.selectBall(robot))
+                .stopAndAdd(robot.sampleActions.launch(robot))
+                .stopAndAdd(robot.sampleActions.launch(robot))
                 .stopAndAdd(robot.sampleActions.launch(robot));
+
 
         Action driveToScoreA = driveToScore.build();
         Action firstLaunchA = firstLaunch.build();

@@ -73,10 +73,10 @@ public class Camera extends Subsystem {
      *
      * @return 21 for GPP, 22 for PGP, 23 for PPG
      */
-    public int getMotif() {
+    public void getMotif() {
         List<AprilTagDetection> currentDetections = aprilTag.getDetections();
         assert (currentDetections.size() == 1);
 
-        return currentDetections.get(0).id;
+        this.robot.motif = currentDetections.get(0).id;
     }
 }

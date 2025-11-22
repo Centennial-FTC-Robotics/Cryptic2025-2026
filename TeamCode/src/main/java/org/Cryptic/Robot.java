@@ -7,7 +7,6 @@ import org.Cryptic.Subsystems.Drivetrain;
 import org.Cryptic.Subsystems.IMU;
 import org.Cryptic.Subsystems.Outtake;
 import org.Cryptic.Subsystems.Intake;
-import org.xml.sax.helpers.NamespaceSupport;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -32,10 +31,13 @@ public class Robot {
     public SampleActions sampleActions = new SampleActions();
 
     public int currentIndex; // index of the intake i think
+    public int targetIndex; // index of motif to shoot
 
-    public int[] currentBalls;
+    public int[] currentBalls; // 1 for green 0 for purple -1 for empty
+    // currentBalls[i] is ball at intake if i/3 is the rotation of it
 
-    public int motif;
+    public int motif; // 21 = GPP etc.
+
     public void initialize(LinearOpMode opmode) throws InterruptedException {
 
         for(Subsystem subsystem : subsystems) {

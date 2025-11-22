@@ -29,7 +29,7 @@ public class SampleActions {
         public boolean run(@NonNull TelemetryPacket packet) {
             if (!initialized) {
                 initialized = true;
-                robot.intake.grabBall(10); // TODO what power
+                robot.intake.grabBall();
                 initTime();
             }
             return (!hasBeenTime(300));
@@ -50,7 +50,7 @@ public class SampleActions {
         public boolean run(@NonNull TelemetryPacket packet) {
             if (!initialized) {
                 initialized = true;
-                robot.motif = robot.camera.getMotif();
+                robot.camera.getMotif();
                 initTime();
             }
             return (!hasBeenTime(300));
@@ -59,26 +59,6 @@ public class SampleActions {
 
     public Action getMotif(Robot robot) {
         return new getMotif(robot);
-    }
-
-    public class autoUpdateAim implements Action {
-        private boolean initialized = false;
-        private Robot robot;
-
-        public autoUpdateAim(Robot robot) { this.robot = robot; }
-
-        public boolean run(@NonNull TelemetryPacket packet) {
-            if (!initialized) {
-                initialized = true;
-                robot.outtake.autoUpdateAim(robot.dt.drivebase);
-                initTime();
-            }
-            return (!hasBeenTime(300));
-        }
-    }
-
-    public Action autoUpdateAim(Robot robot) {
-        return new autoUpdateAim(robot);
     }
 
     public class launch implements Action {

@@ -14,6 +14,8 @@ public class Outtake extends Subsystem {
 
     public DcMotorEx rotateMotor; // turret rotation motor
     public Servo angleServo;
+
+    public Servo indexServo;
     public DcMotorEx powerMotor;  // shooter flywheel
 
     double tx = -72.0; // x location of field goal
@@ -29,6 +31,7 @@ public class Outtake extends Subsystem {
         powerMotor = opmode.hardwareMap.get(DcMotorEx.class, "powerMotor");
         angleServo = opmode.hardwareMap.get(Servo.class, "angleServo");
         rotateMotor = opmode.hardwareMap.get(DcMotorEx.class, "rotateMotor");
+        indexServo = opmode.hardwareMap.get(Servo.class, "indexServo");
 
         powerMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         rotateMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -39,8 +42,6 @@ public class Outtake extends Subsystem {
         powerMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         powerMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
-
-
 
     public void autoUpdateAim(MecanumDrive Drive) {
         // tx = -72.0; // target x position change later
@@ -89,7 +90,27 @@ public class Outtake extends Subsystem {
         return (int) (CPR * revolutions);
     }
 
+
     public void launch(MecanumDrive Drive) { // using georgy's math
+        // aim
+        autoUpdateAim(Drive);
+
+        // choose right ball
+        int target = ((this.robot.motif - 21) == robot.targetIndex) ? 1 : 0;
+        int step = 0;
+        int shootIndex = 0;
+        while (this.robot.currentBalls[shootIndex] != target && step < 3) {
+            step++;
+            shootIndex = (shootIndex + 1) % 3;
+        }
+        if (step == 3) {
+            System.out.println("There are probably either no green balls or no purple balls");
+        }
+        double pos = shootIndex / 3.0 + 0.5;
+        if (pos > 1) pos = pos - 1;
+        this.robot.currentBalls[shootIndex] = -1;
+        indexServo.setPosition(pos);
+
         Drive.updatePoseEstimate();
         Pose2d currentPos = Drive.localizer.getPose();
         double dx = tx - currentPos.position.x;
@@ -101,5 +122,10 @@ public class Outtake extends Subsystem {
         double ticksPerSecond = rpm * CPR / 60.0;
         powerMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         powerMotor.setVelocity(ticksPerSecond); // not seyting up manual pid for now ...
+
+        // update the information necessary
+        this.robot.currentIndex = shootIndex;
+        indexServo.setPosition(shootIndex / 3.0);
+        this.robot.targetIndex = (this.robot.targetIndex + 1) % 3;
     }
 }
