@@ -90,10 +90,16 @@ public class Outtake extends Subsystem {
         return (int) (CPR * revolutions);
     }
 
+    public void manuallyUpdateAim(double rpm) { // if auto update fails, click left bumper to
+        double ticksPerSecond = rpm * CPR / 60.0;
+
+        rotateMotor.setVelocity(ticksPerSecond);
+
+    }
 
     public void launch(MecanumDrive Drive) { // using georgy's math
         // aim
-        autoUpdateAim(Drive);
+        // autoUpdateAim(Drive);
 
         // choose right ball
         int target = ((this.robot.motif - 21) == robot.targetIndex) ? 1 : 0;

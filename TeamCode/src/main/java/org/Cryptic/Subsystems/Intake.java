@@ -15,6 +15,8 @@ import org.Cryptic.Subsystem;
 
 public class Intake extends Subsystem {
 
+    private static final double CPR = 500.0; // change later check with gobilda specs
+
     public DcMotorEx bandMotor;
     public Servo indexServo;
 
@@ -34,7 +36,7 @@ public class Intake extends Subsystem {
         for (int i=0; i<3; ++i) this.robot.currentBalls[i] = -1;
     }
 
-    public void grabBall() { // color sensor is used
+    public void grabBall(double rpm) { // color sensor is used
 
         boolean isGreen;
 
@@ -61,6 +63,9 @@ public class Intake extends Subsystem {
         indexServo.setPosition(this.robot.currentIndex / 3.0);
 
         // TODO actually control bandMotor to get ball
+        double ticksPerSecond = rpm * CPR / 60.0;
+
+        bandMotor.setVelocity(ticksPerSecond);
 
         this.robot.currentBalls[this.robot.currentIndex] = (isGreen ? 1 : 0);
         // note that the one just added is the current index now
