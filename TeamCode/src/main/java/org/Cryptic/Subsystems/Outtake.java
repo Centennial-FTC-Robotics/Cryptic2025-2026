@@ -18,8 +18,6 @@ public class Outtake extends Subsystem {
     public Servo indexServo;
     public DcMotorEx powerMotor;  // shooter flywheel
 
-    double tx = -72.0; // x location of field goal
-    double ty = -72.0; // y location of field goal
 
     double height = 36.0; // height of goal
     double radius = 5.0;  // radius of ball (be consistent with your units)
@@ -41,9 +39,11 @@ public class Outtake extends Subsystem {
 
         powerMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         powerMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        this.robot.targetIndex = 0;
     }
 
-    public void autoUpdateAim(MecanumDrive Drive) {
+    public void autoUpdateAim(double tx, double ty, MecanumDrive Drive) { // for this to work, turrent encoder 0 should be aligned with "robot facing forward"
         // tx = -72.0; // target x position change later
         // ty = -72.0; // target y position change later
 
@@ -80,27 +80,33 @@ public class Outtake extends Subsystem {
 
     // via christian, the range of motion is pi one way pi the other
     // this returns a value between pi and -pi then (once CPR is correct)
+    // for this to work, turrent encoder 0 should be aligned with "robot facing forward"
     public double encoderToRadians(double encoderValue) {
         return (encoderValue / CPR) * 2 * Math.PI;
     }
 
     public int radiansToEncoder(double radians) {
-        double CPR = 537.6; // must match above
         double revolutions = radians / (2 * Math.PI);
         return (int) (CPR * revolutions);
     }
 
     public void manuallyUpdateAim(double rpm) { // if auto update fails, click left bumper to
+        rotateMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         double ticksPerSecond = rpm * CPR / 60.0;
 
         rotateMotor.setVelocity(ticksPerSecond);
 
     }
 
-    public void launch(MecanumDrive Drive) { // using georgy's math
+
+
+    // tx is x location of field goal and ty is y location
+    public void launch(double tx, double ty, MecanumDrive Drive) { // using georgy's math
         // aim
         // autoUpdateAim(Drive);
 
+        // 21 for GPP, 22 for PGP, 23 for PPG
         // choose right ball
         int target = ((this.robot.motif - 21) == robot.targetIndex) ? 1 : 0;
         int step = 0;

@@ -29,7 +29,7 @@ public class SampleActions {
         public boolean run(@NonNull TelemetryPacket packet) {
             if (!initialized) {
                 initialized = true;
-                robot.intake.grabBall();
+                robot.intake.grabBall(1000); // adjust RPM later
                 initTime();
             }
             return (!hasBeenTime(300));
@@ -63,21 +63,61 @@ public class SampleActions {
 
     public class launch implements Action {
         private boolean initialized = false;
-        private Robot robot;
+        private final Robot robot;
+        private final double tx, ty;
 
-        public launch(Robot robot) { this.robot = robot; }
+        public launch(double tx, double ty, Robot robot) {
+            this.robot = robot;
+            this.tx = tx;
+            this.ty = ty;
+        }
 
         public boolean run(@NonNull TelemetryPacket packet) {
             if (!initialized) {
                 initialized = true;
-                robot.outtake.launch(robot.dt.drivebase);
+                robot.outtake.launch(tx, ty, robot.dt.drivebase);
                 initTime();
             }
             return (!hasBeenTime(300));
         }
     }
 
-    public Action launch(Robot robot) {
-        return new launch(robot);
+
+    public Action launch(double tx, double ty, Robot robot) {
+        return new launch(tx, ty, robot);
     }
+
+
+
+    public class aimAtGoal implements Action {
+        private final Robot robot;
+        private final double tx, ty;
+        private boolean initialized = false;
+        private long startTime;
+
+        public aimAtGoal(double tx, double ty, Robot robot) {
+            this.robot = robot;
+            this.tx = tx;
+            this.ty = ty;
+        }
+
+        @Override
+        public boolean run(@NonNull TelemetryPacket packet) {
+            if (!initialized) {
+                initialized = true;
+                startTime = System.currentTimeMillis();
+            }
+
+            robot.outtake.autoUpdateAim(tx, ty, robot.dt.drivebase);
+
+            return System.currentTimeMillis() - startTime < 5000; // adjust later
+        }
+    }
+
+    public Action aimAtGoal(double tx, double ty, Robot robot) {
+        return new aimAtGoal(tx, ty, robot);
+    }
+
+
+
 }

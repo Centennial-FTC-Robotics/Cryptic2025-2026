@@ -56,8 +56,10 @@ public class TestTeleOp extends LinearOpMode {
                 autoAimMode = true;
             }
 
+
+
             if (autoAimMode) {
-                robot.outtake.autoUpdateAim(robot.dt.drivebase);
+                robot.outtake.autoUpdateAim(72.0,-72.0,robot.dt.drivebase);
             } else {
                 if (gamepad2.dpad_left) {
                     robot.outtake.manuallyUpdateAim(1000); // find rpm later
@@ -81,7 +83,7 @@ public class TestTeleOp extends LinearOpMode {
 
             // Outtake actually launch
             if (drivePad.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
-                robot.outtake.launch(robot.dt.drivebase);
+                robot.outtake.launch(72.0,-72.0,robot.dt.drivebase);
             }
 
             // Read motif

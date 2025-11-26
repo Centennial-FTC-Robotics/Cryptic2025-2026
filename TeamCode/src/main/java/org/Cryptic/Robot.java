@@ -36,7 +36,7 @@ public class Robot {
     public int[] currentBalls; // 1 for green 0 for purple -1 for empty
     // currentBalls[i] is ball at intake if i/3 is the rotation of it
 
-    public int motif; // 21 = GPP etc.
+    public int motif; // 21 for GPP, 22 for PGP, 23 for PPG
 
     public void initialize(LinearOpMode opmode) throws InterruptedException {
 

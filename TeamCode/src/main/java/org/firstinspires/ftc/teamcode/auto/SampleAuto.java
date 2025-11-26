@@ -13,6 +13,8 @@ import org.Cryptic.Robot;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.ThreeDeadWheelLocalizer;
 
+
+// assuming blue alliance
 public class SampleAuto extends LinearOpMode {
 
     @Override
@@ -29,6 +31,7 @@ public class SampleAuto extends LinearOpMode {
 
         double ballX = t+6, ballY = 3*t+6; // TODO coords of the goal
         double scoreX = t*3, scoreY = t*5;
+
 
         TrajectoryActionBuilder driveToScore = drive.actionBuilder(initialPose)
                 .strafeToLinearHeading(new Vector2d(ballX, ballY), Math.toRadians(60))
@@ -47,9 +50,9 @@ public class SampleAuto extends LinearOpMode {
                 .strafeToConstantHeading(new Vector2d(ballX - 10, ballY + (21 - robot.motif)*t))
                 .stopAndAdd(robot.sampleActions.grabBall(robot))
                 .strafeToConstantHeading(new Vector2d(scoreX, scoreY))
-                .stopAndAdd(robot.sampleActions.launch(robot))
-                .stopAndAdd(robot.sampleActions.launch(robot))
-                .stopAndAdd(robot.sampleActions.launch(robot));
+                .stopAndAdd(robot.sampleActions.launch(scoreX,scoreY,robot))
+                .stopAndAdd(robot.sampleActions.launch(scoreX,scoreY,robot))
+                .stopAndAdd(robot.sampleActions.launch(scoreX,scoreY,robot));
 
 
         Action driveToScoreA = driveToScore.build();
@@ -58,6 +61,7 @@ public class SampleAuto extends LinearOpMode {
         Actions.runBlocking(
                 new ParallelAction(
                         new SequentialAction(
+
                                 driveToScoreA,
                                 firstLaunchA
                         )
