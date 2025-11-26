@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.Cryptic.Robot;
 
-public class TestTeleOp extends LinearOpMode {
+public class TestTeleOpRed extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -60,7 +60,7 @@ public class TestTeleOp extends LinearOpMode {
 
             if (autoAimMode) {
                 if (gamepad2.left_trigger >= 0.15) {
-                    robot.outtake.autoUpdateAim(72.0, -72.0, robot.dt.drivebase);
+                    robot.outtake.autoUpdateAim(-72.0, -72.0, robot.dt.drivebase);
                 }
             } else {
                 if (gamepad2.dpad_left) {
@@ -85,7 +85,7 @@ public class TestTeleOp extends LinearOpMode {
 
             // Outtake actually launch
             if (drivePad.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
-                robot.outtake.launch(72.0,-72.0,robot.dt.drivebase);
+                robot.outtake.launch(-72.0,-72.0,robot.dt.drivebase);
             }
 
             // Read motif

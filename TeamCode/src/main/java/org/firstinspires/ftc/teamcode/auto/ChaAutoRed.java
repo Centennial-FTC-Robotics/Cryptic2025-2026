@@ -9,6 +9,7 @@ import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.Cryptic.Commands.SampleActions;
 import org.Cryptic.Robot;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 
@@ -31,9 +32,11 @@ public class ChaAutoRed extends LinearOpMode {
         double ballX = t+6, ballY = 3*t+6; // TODO coords of the goal
         double scoreX = t*3, scoreY = t*5;
 
+        // 21 for GPP, 22 for PGP, 23 for PPG
 
         TrajectoryActionBuilder scoop = drive.actionBuilder(initialPose)
-                .splineToLinearHeading(new Pose2d(t * -1,1.5 * t,Math.toRadians(180)), Math.toRadians(270));
+                .stopAndAdd(robot.sampleActions.getMotif(robot))
+                .splineToLinearHeading(new Pose2d(t * -1,(1.5 * t) * (robot.motif - 21 + 1),Math.toRadians(180)), Math.toRadians(270));
 
 
         Action scoopToScore = scoop.build();
