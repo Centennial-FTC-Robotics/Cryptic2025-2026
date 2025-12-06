@@ -1,5 +1,5 @@
 include ':FtcRobotController'
 include ':TeamCode'
 include ':MeepMeepTesting'
-include ':meepmeeptesting:lib'
-include ':meepmeeptesting:lib2'
+
+

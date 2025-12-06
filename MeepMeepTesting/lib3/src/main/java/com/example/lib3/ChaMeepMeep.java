@@ -1,20 +1,12 @@
 package com.example.meepmeeptesting;
 
-import com.acmerobotics.roadrunner.AccelConstraint;
-import com.acmerobotics.roadrunner.CompositeVelConstraint;
-import com.acmerobotics.roadrunner.MinVelConstraint;
 import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.ProfileAccelConstraint;
-import com.acmerobotics.roadrunner.TranslationalVelConstraint;
 import com.acmerobotics.roadrunner.Vector2d;
-import com.acmerobotics.roadrunner.VelConstraint;
 import com.noahbres.meepmeep.MeepMeep;
 import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder;
 import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 
-import java.util.Vector;
-
-public class MeepMeepTesting {
+public class ChaMeepMeep {
     public static void main(String[] args) {
         // Test out auto
         MeepMeep meepMeep = new MeepMeep(800);
