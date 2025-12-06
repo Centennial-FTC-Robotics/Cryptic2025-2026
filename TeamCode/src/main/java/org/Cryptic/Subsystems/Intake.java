@@ -37,9 +37,7 @@ public class Intake extends Subsystem {
     }
 
     public void grabBall(double rpm) { // color sensor is used
-
         boolean isGreen;
-
         NormalizedRGBA res = colorSensor.getNormalizedColors();
         float[] hsv = new float[3];
         Color.RGBToHSV((int) (res.red * 256), (int) (res.green * 256), (int) (res.blue * 256), hsv);
