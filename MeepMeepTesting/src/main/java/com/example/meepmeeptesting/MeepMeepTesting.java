@@ -38,7 +38,7 @@ public class MeepMeepTesting {
                 .waitSeconds(1)
                 .strafeToLinearHeading(new Vector2d(0, t), Math.toRadians(90))
                 .waitSeconds(0.5)
-                .strafeToSplineHeading(new Vector2d(ballX, ballY + motifIndex*t), Math.toRadians(180))
+                .splineToLinearHeading(new Pose2d(new Vector2d(ballX, ballY + motifIndex*t), Math.toRadians(180)), Math.toRadians(180))
                 .waitSeconds(0.5)
                 .strafeToConstantHeading(new Vector2d(ballX - 5, ballY + motifIndex*t))
                 .waitSeconds(0.5)
@@ -46,7 +46,8 @@ public class MeepMeepTesting {
                 .waitSeconds(0.5)
                 .strafeToConstantHeading(new Vector2d(scoreX, scoreY))
                 .waitSeconds(0.5)
-                .strafeToLinearHeading(new Vector2d(ballX, ballY + motifIndex2*t), Math.toRadians(180))
+                // second
+                .splineToLinearHeading(new Pose2d(new Vector2d(ballX, ballY + motifIndex2*t), Math.toRadians(180)), Math.toRadians(180))
                 .waitSeconds(0.5)
                 .strafeToConstantHeading(new Vector2d(ballX - 5, ballY + motifIndex2*t))
                 .waitSeconds(0.5)
@@ -55,7 +56,7 @@ public class MeepMeepTesting {
                 .strafeToConstantHeading(new Vector2d(scoreX, scoreY))
                 .waitSeconds(0.5)
                 // last one
-                .strafeToLinearHeading(new Vector2d(ballX, ballY + motifIndex3*t), Math.toRadians(180))
+                .splineToLinearHeading(new Pose2d(new Vector2d(ballX, ballY + motifIndex3*t), Math.toRadians(180)), Math.toRadians(180))
                 .waitSeconds(0.5)
                 .strafeToConstantHeading(new Vector2d(ballX - 5, ballY + motifIndex3*t))
                 .waitSeconds(0.5)
@@ -63,6 +64,8 @@ public class MeepMeepTesting {
                 .waitSeconds(0.5)
                 .strafeToConstantHeading(new Vector2d(scoreX, scoreY))
                 .waitSeconds(0.5)
+                // push the gate
+                .splineToLinearHeading(new Pose2d(new Vector2d(-2.5*t, 0), Math.toRadians(180)), Math.toRadians(180))
                 .build());
 
         meepMeep.setBackground(MeepMeep.Background.FIELD_INTO_THE_DEEP_OFFICIAL)

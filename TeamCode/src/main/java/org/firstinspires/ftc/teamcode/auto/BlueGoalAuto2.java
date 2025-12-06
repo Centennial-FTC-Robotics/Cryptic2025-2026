@@ -47,7 +47,7 @@ public class BlueGoalAuto2 extends LinearOpMode {
         double motifIndex3 = (robot.motif+2)%3;
 
         TrajectoryActionBuilder launch = driveToAprilTag.endTrajectory().fresh()
-                .strafeToSplineHeading(new Vector2d(ballX, ballY + motifIndex*t), Math.toRadians(180))
+                .splineToLinearHeading(new Pose2d(new Vector2d(ballX, ballY + motifIndex*t), Math.toRadians(180)), Math.toRadians(180))
                 .stopAndAdd(robot.sampleActions.grabBall(robot))
                 .strafeToConstantHeading(new Vector2d(ballX - 5, ballY + motifIndex*t))
                 .stopAndAdd(robot.sampleActions.grabBall(robot))
@@ -59,7 +59,7 @@ public class BlueGoalAuto2 extends LinearOpMode {
                 .stopAndAdd(robot.sampleActions.launch(scoreX,scoreY,robot))
                 .stopAndAdd(robot.sampleActions.launch(scoreX,scoreY,robot))
                 // do for other balls
-                .strafeToLinearHeading(new Vector2d(ballX, ballY + motifIndex2*t), Math.toRadians(180))
+                .splineToLinearHeading(new Pose2d(new Vector2d(ballX, ballY + motifIndex2*t), Math.toRadians(180)), Math.toRadians(180))
                 .stopAndAdd(robot.sampleActions.grabBall(robot))
                 .strafeToConstantHeading(new Vector2d(ballX - 5, ballY + motifIndex2*t))
                 .stopAndAdd(robot.sampleActions.grabBall(robot))
@@ -71,7 +71,7 @@ public class BlueGoalAuto2 extends LinearOpMode {
                 .stopAndAdd(robot.sampleActions.launch(scoreX,scoreY,robot))
                 .stopAndAdd(robot.sampleActions.launch(scoreX,scoreY,robot))
                 // last one
-                .strafeToLinearHeading(new Vector2d(ballX, ballY + motifIndex3*t), Math.toRadians(180))
+                .splineToLinearHeading(new Pose2d(new Vector2d(ballX, ballY + motifIndex3*t), Math.toRadians(180)), Math.toRadians(180))
                 .stopAndAdd(robot.sampleActions.grabBall(robot))
                 .strafeToConstantHeading(new Vector2d(ballX - 5, ballY + motifIndex3*t))
                 .stopAndAdd(robot.sampleActions.grabBall(robot))
@@ -82,6 +82,8 @@ public class BlueGoalAuto2 extends LinearOpMode {
                 .stopAndAdd(robot.sampleActions.launch(scoreX,scoreY,robot))
                 .stopAndAdd(robot.sampleActions.launch(scoreX,scoreY,robot))
                 .stopAndAdd(robot.sampleActions.launch(scoreX,scoreY,robot))
+                // push the gate
+                .splineToLinearHeading(new Pose2d(new Vector2d(-2.5*t, 0), Math.toRadians(180)), Math.toRadians(180))
                 ;
 
         TrajectoryActionBuilder clearRamp = launch.endTrajectory().fresh()
