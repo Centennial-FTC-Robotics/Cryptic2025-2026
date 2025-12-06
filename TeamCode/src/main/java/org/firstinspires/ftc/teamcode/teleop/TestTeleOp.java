@@ -56,8 +56,6 @@ public class TestTeleOp extends LinearOpMode {
                 autoAimMode = true;
             }
 
-
-
             if (autoAimMode) {
                 if (gamepad2.left_trigger >= 0.15) {
                     robot.outtake.autoUpdateAim(72.0, -72.0, robot.dt.drivebase);

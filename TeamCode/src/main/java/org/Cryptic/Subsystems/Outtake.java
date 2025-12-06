@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.Cryptic.Subsystem;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
+import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc;
 
 public class Outtake extends Subsystem {
 
@@ -18,11 +19,10 @@ public class Outtake extends Subsystem {
     public Servo indexServo;
     public DcMotorEx powerMotor;  // shooter flywheel
 
-
-    double height = 36.0; // height of goal
+    double height = 54; // height of back goalpost
     double radius = 5.0;  // radius of ball (be consistent with your units)
 
-    private static final double CPR = 500.0; // change later check with gobilda specs
+    private static final double CPR = 500.0; // TODO change later check with gobilda specs
 
     @Override
     public void init(LinearOpMode opmode) throws InterruptedException {
@@ -43,7 +43,9 @@ public class Outtake extends Subsystem {
         this.robot.targetIndex = 0;
     }
 
-    public void autoUpdateAim(double tx, double ty, MecanumDrive Drive) { // for this to work, turrent encoder 0 should be aligned with "robot facing forward"
+    // this angles the turret so that in birds eye viw we're aiming the goal
+    // and that angleServo angles it so that the ball follows the right path
+    public void autoUpdateAim(double tx, double ty, MecanumDrive Drive) {
         // tx = -72.0; // target x position change later
         // ty = -72.0; // target y position change later
 
@@ -54,17 +56,17 @@ public class Outtake extends Subsystem {
         double dx = tx - currentPos.position.x;
         double dy = ty - currentPos.position.y;
 
-        Rotation2d heading = currentPos.heading;
-        double headingRad = heading.log(); // radians
+//        Rotation2d heading = currentPos.heading;
+//        double headingRad = heading.log(); // radians
 
-        double dist = Math.hypot(dx, dy);
+        double dist = Math.hypot(dx, dy) - 3;
         double launchAngle = Math.atan2((2 * height), dist);
 
-        angleServo.setPosition((launchAngle / Math.toRadians(90.0))); // test later
+        angleServo.setPosition(launchAngle); // test later
 
         double robotAngle = Drive.localizer.getPose().heading.log(); // radians
-        double turretAngle = rotateMotor.getCurrentPosition();
-        turretAngle = encoderToRadians(turretAngle);
+        // double turretAngle = rotateMotor.getCurrentPosition();
+        // turretAngle = encoderToRadians(turretAngle);
         // tan(robotAngle+turretAngle) = dy/dx
         double targetAngle = Math.atan2(dy, dx);
         // correct if targetAngle is negative of what it should be
@@ -96,7 +98,16 @@ public class Outtake extends Subsystem {
         double ticksPerSecond = rpm * CPR / 60.0;
 
         rotateMotor.setVelocity(ticksPerSecond);
+    }
 
+    public void autoUpdateAimAprilTag(boolean blueTeam) {
+        int aprilTagId = blueTeam ? 20 : 24;
+        AprilTagPoseFtc offset = robot.camera.getGoalOffset(blueTeam);
+        // . <--> apriltag --> offset.x
+        // distance from camera to apriltag --> offset.y
+        double angleToMove = Math.atan2(offset.x, offset.y);
+        double position = encoderToRadians(rotateMotor.getCurrentPosition()) + angleToMove;
+        rotateMotor.setTargetPosition(radiansToEncoder(position));
     }
 
 
@@ -128,9 +139,10 @@ public class Outtake extends Subsystem {
         double dx = tx - currentPos.position.x;
         double dy = ty - currentPos.position.y;
         // we should prob tune power
-        double dist = Math.hypot(dx, dy);
+        double dist = Math.hypot(dx, dy) - 3;
         double launchAngle = Math.atan2((2 * height), dist);
-        double rpm = (30 / (Math.PI * radius)) * Math.sqrt(2 * 9.81 * height) / Math.sin(launchAngle);
+        double vel = Math.sqrt(2 * 9.81 * height) / Math.sin(launchAngle);
+        double rpm = (30 / (Math.PI * radius)) * vel;
         double ticksPerSecond = rpm * CPR / 60.0;
         powerMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         powerMotor.setVelocity(ticksPerSecond); // not seyting up manual pid for now ...

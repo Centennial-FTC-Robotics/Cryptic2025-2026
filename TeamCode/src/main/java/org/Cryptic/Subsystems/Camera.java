@@ -6,6 +6,7 @@ import org.Cryptic.Subsystem;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.List;
@@ -75,8 +76,25 @@ public class Camera extends Subsystem {
      */
     public void getMotif() {
         List<AprilTagDetection> currentDetections = aprilTag.getDetections();
-        assert (currentDetections.size() == 1);
+        int res = -1;
+        for (AprilTagDetection at : currentDetections) {
+            int here = at.id;
+            if (here >= 21 && here <= 23) res = here;
+        }
 
-        this.robot.motif = currentDetections.get(0).id;
+        this.robot.motif = res;
+    }
+
+    public AprilTagPoseFtc getGoalOffset(boolean blueTeam) {
+        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+        int targetId = blueTeam ? 20 : 24;
+        AprilTagPoseFtc res = null;
+        for (AprilTagDetection at : currentDetections) {
+            int here = at.id;
+            if (here == targetId) {
+                res = at.ftcPose;
+            }
+        }
+        return res;
     }
 }

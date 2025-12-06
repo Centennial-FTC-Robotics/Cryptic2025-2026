@@ -25,7 +25,6 @@ public class BlueThree extends LinearOpMode {
         Robot robot = new Robot();
         robot.initialize(this);
 
-        // TODO change so that (0,0) is at center
         double t = 23.5; // 23.5 inches per tile
         // Pose2d initialPose = new Pose2d((t*(-2) - 4), (t*2 + 6), Math.toRadians(315));
         Pose2d initialPose = new Pose2d(t*(-0.5), -2.6*t, Math.toRadians(90));
