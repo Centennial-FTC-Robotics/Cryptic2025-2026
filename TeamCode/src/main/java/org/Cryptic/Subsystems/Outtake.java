@@ -22,7 +22,7 @@ public class Outtake extends Subsystem {
     double height = 54; // height of back goalpost
     double radius = 5.0;  // radius of ball (be consistent with your units)
 
-    private static final double CPR = 500.0; // TODO change later check with gobilda specs
+    private static final double CPR = 145.6 ; // https://www.gobilda.com/content/spec_sheets/5202-2402-0005_spec_sheet.pdf
 
     @Override
     public void init(LinearOpMode opmode) throws InterruptedException {
@@ -62,7 +62,10 @@ public class Outtake extends Subsystem {
         double dist = Math.hypot(dx, dy) - 3;
         double launchAngle = Math.atan2((2 * height), dist);
 
-        angleServo.setPosition(launchAngle); // test later
+        double servoPosition = launchAngle / Math.PI; // maps [0, π] to [0, 1]
+        servoPosition = Math.max(0.0, Math.min(1.0, servoPosition));
+
+        angleServo.setPosition(servoPosition); // test later
 
         double robotAngle = Drive.localizer.getPose().heading.log(); // radians
         // double turretAngle = rotateMotor.getCurrentPosition();
@@ -108,6 +111,58 @@ public class Outtake extends Subsystem {
         double angleToMove = Math.atan2(offset.x, offset.y);
         double position = encoderToRadians(rotateMotor.getCurrentPosition()) + angleToMove;
         rotateMotor.setTargetPosition(radiansToEncoder(position));
+    }
+
+
+    // to be used in conjunction with autoUpdateAimAprilTag
+    public void launchAprilTag(boolean blueTeam) {
+        // 21 for GPP, 22 for PGP, 23 for PPG
+        // choose right ball
+        int target = ((this.robot.motif - 21) == robot.targetIndex) ? 1 : 0;
+        int step = 0;
+        int shootIndex = 0;
+        while (this.robot.currentBalls[shootIndex] != target && step < 3) {
+            step++;
+            shootIndex = (shootIndex + 1) % 3;
+        }
+        if (step == 3) {
+            System.out.println("There are probably either no green balls or no purple balls");
+        }
+        double pos = shootIndex / 3.0 + 0.5;
+        if (pos > 1) pos = pos - 1;
+        this.robot.currentBalls[shootIndex] = -1;
+        indexServo.setPosition(pos);
+
+
+        int aprilTagId = blueTeam ? 20 : 24;
+        AprilTagPoseFtc offset = robot.camera.getGoalOffset(blueTeam);
+
+
+        if (offset == null) {
+            // no tag detected  then don't try to shoot
+            return;
+        }
+
+        double horizontalDist = Math.hypot(offset.x, offset.y) - 3.0;
+
+        double launchAngle = Math.atan2(2.0 * height, horizontalDist);
+
+        double servoPosition = launchAngle / Math.PI; // maps [0, π] to [0, 1]
+        servoPosition = Math.max(0.0, Math.min(1.0, servoPosition));
+
+        angleServo.setPosition(servoPosition); // test later
+
+        double vel = Math.sqrt(2.0 * 9.81 * height) / Math.sin(launchAngle);
+        double rpm = (30.0 / (Math.PI * radius)) * vel;
+        double ticksPerSecond = rpm * CPR / 60.0;
+
+        powerMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        powerMotor.setVelocity(ticksPerSecond);
+
+        this.robot.currentIndex = shootIndex;
+        indexServo.setPosition(shootIndex / 3.0);
+        this.robot.targetIndex = (this.robot.targetIndex + 1) % 3;
+
     }
 
 

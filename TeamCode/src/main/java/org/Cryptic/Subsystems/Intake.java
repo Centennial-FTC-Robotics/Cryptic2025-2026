@@ -15,7 +15,7 @@ import org.Cryptic.Subsystem;
 
 public class Intake extends Subsystem {
 
-    private static final double CPR = 500.0; // change later check with gobilda specs
+    private static final double CPR = 145.6; // change later check with gobilda specs
 
     public DcMotorEx bandMotor;
     public Servo indexServo;
