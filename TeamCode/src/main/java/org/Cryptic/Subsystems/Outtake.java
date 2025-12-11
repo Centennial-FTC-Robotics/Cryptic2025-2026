@@ -143,7 +143,7 @@ public class Outtake extends Subsystem {
             return;
         }
 
-        double horizontalDist = Math.hypot(offset.x, offset.y) - 3.0;
+        double horizontalDist = offset.y - 3.0;
 
         double launchAngle = Math.atan2(2.0 * height, horizontalDist);
 
