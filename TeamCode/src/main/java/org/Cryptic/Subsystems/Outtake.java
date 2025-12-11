@@ -17,6 +17,15 @@ public class Outtake extends Subsystem {
     public Servo angleServo;
 
     public Servo indexServo;
+
+
+    public Servo transferServo;
+
+
+    public static final double liftUp = 0.33; // TODO
+
+    public static final double rest = 0.0;
+
     public DcMotorEx powerMotor;  // shooter flywheel
 
     double height = 54; // height of back goalpost
@@ -30,6 +39,7 @@ public class Outtake extends Subsystem {
         angleServo = opmode.hardwareMap.get(Servo.class, "angleServo");
         rotateMotor = opmode.hardwareMap.get(DcMotorEx.class, "rotateMotor");
         indexServo = opmode.hardwareMap.get(Servo.class, "indexServo");
+        transferServo = opmode.hardwareMap.get(Servo.class, "transferServo");
 
         powerMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         rotateMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -41,6 +51,8 @@ public class Outtake extends Subsystem {
         powerMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         this.robot.targetIndex = 0;
+
+        transferServo.setPosition(rest); // TODO
     }
 
     // this angles the turret so that in birds eye viw we're aiming the goal
@@ -133,6 +145,8 @@ public class Outtake extends Subsystem {
         this.robot.currentBalls[shootIndex] = -1;
         indexServo.setPosition(pos);
 
+        transferServo.setPosition(liftUp); // TODO
+
 
         int aprilTagId = blueTeam ? 20 : 24;
         AprilTagPoseFtc offset = robot.camera.getGoalOffset(blueTeam);
@@ -162,6 +176,8 @@ public class Outtake extends Subsystem {
         this.robot.currentIndex = shootIndex;
         indexServo.setPosition(shootIndex / 3.0);
         this.robot.targetIndex = (this.robot.targetIndex + 1) % 3;
+
+        transferServo.setPosition(rest);
 
     }
 
