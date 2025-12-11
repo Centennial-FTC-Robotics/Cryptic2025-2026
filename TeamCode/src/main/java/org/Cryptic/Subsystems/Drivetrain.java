@@ -21,7 +21,7 @@ public class Drivetrain extends Subsystem {
     public void drive(double drive, double strafe, double turn, double speedMult) {
         drivebase.setDrivePowers(new PoseVelocity2d(
                 new Vector2d(
-                        -(drive * speedMult),
+                        -(drive * speedMult), // initially negative
                         -(strafe * speedMult)
                 ),
                 -(turn * speedMult)

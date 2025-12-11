@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Vector2d;
@@ -8,12 +9,17 @@ import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.gamepad.ToggleButtonReader;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+
 
 import org.Cryptic.Robot;
 
+@TeleOp(name = "TestTeleOp")
 public class TestTeleOp extends LinearOpMode {
 
-    @Override
+    //@Override
     public void runOpMode() throws InterruptedException {
         Robot robot = new Robot();
         robot.initialize(this);
@@ -36,6 +42,13 @@ public class TestTeleOp extends LinearOpMode {
         FtcDashboard dashboard = FtcDashboard.getInstance();
 
         boolean autoAimMode = true;
+
+        DcMotorEx leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
+        DcMotorEx rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
+        DcMotorEx leftBack = hardwareMap.get(DcMotorEx.class, "leftBack");
+        DcMotorEx rightBack = hardwareMap.get(DcMotorEx.class, "leftFront");
+
+
 
         waitForStart();
         while (opModeIsActive()) {
@@ -72,13 +85,50 @@ public class TestTeleOp extends LinearOpMode {
                 robot.intake.grabBall(1000); // setup rpm later and constnats
             }
 
+
             robot.dt.drivebase.setDrivePowers(new PoseVelocity2d(
                     new Vector2d(
-                            -gamepad1.left_stick_y,
-                            -gamepad1.left_stick_x
+                            -gamepad1.left_stick_y * 0.75,
+                            -gamepad1.left_stick_x * 0.75
                     ),
                     -gamepad1.right_stick_x
             ));
+
+
+
+
+/*
+            double max;
+            double axial = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
+            double lateral = gamepad1.left_stick_x;
+            double yaw = gamepad1.right_stick_x;
+
+            // Combine the joystick requests for each axis-motion to determine each wheel's power.
+            // Set up a variable for each drive wheel to save the power level for telemetry.
+            double leftFrontDOUBLE = axial + lateral + yaw;
+            double rightFrontDOUBLE = axial - lateral - yaw;
+            double leftBackDOUBLE = axial - lateral + yaw;
+            double rightBackDOUBLE = axial + lateral - yaw;
+
+            // Normalize the values so no wheel power exceeds 100%
+            // This ensures that the robot maintains the desired motion.
+            max = Math.max(Math.abs(leftFrontDOUBLE), Math.abs(rightFrontDOUBLE));
+            max = Math.max(max, Math.abs(leftBackDOUBLE));
+            max = Math.max(max, Math.abs(rightBackDOUBLE));
+
+            if (max > 1.0) {
+                leftFrontDOUBLE /= max;
+                rightFrontDOUBLE /= max;
+                leftBackDOUBLE /= max;
+                rightBackDOUBLE /= max;
+            }
+
+            leftFront.setPower(leftFrontDOUBLE * 0.25);
+            rightFront.setPower(rightFrontDOUBLE * 0.25);
+            leftBack.setPower(leftBackDOUBLE * 0.25);
+            rightBack.setPower(rightBackDOUBLE * 0.25);
+
+*/
 
 
             // Outtake actually launch
