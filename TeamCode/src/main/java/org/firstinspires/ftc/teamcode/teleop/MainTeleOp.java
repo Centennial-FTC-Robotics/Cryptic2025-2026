@@ -12,6 +12,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
+import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 
 
 import org.Cryptic.Robot;
@@ -52,6 +54,8 @@ public class MainTeleOp extends LinearOpMode {
         DcMotorEx bandMotor = hardwareMap.get(DcMotorEx.class, "bandMotor");
         bandMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        NormalizedColorSensor colorSensor = hardwareMap.get(NormalizedColorSensor.class, "colorSensor");
+
 
         leftFront.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
         leftBack.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
@@ -78,6 +82,7 @@ public class MainTeleOp extends LinearOpMode {
             } else {
                 bandMotor.setPower(0.0);
             }
+
 
             if (gamepad1.left_trigger >= 0.5) {
                 robot.intake.grabBall(-850); // setup rpm later and constnats
@@ -106,10 +111,15 @@ public class MainTeleOp extends LinearOpMode {
             telemetry.addData("RF", robot.dt.drivebase.rightFront.getPower());
             telemetry.addData("RB", robot.dt.drivebase.rightBack.getPower());
 
+            NormalizedRGBA colors = colorSensor.getNormalizedColors();
 
-
+            telemetry.addData("red: ",colors.red);
+            telemetry.addData("green: ",colors.green);
+            telemetry.addData("blue: ",colors.blue);
 
 /*
+
+
             double max;
             double axial = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
             double lateral = gamepad1.left_stick_x;

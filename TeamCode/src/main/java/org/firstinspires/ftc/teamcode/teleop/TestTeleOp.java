@@ -12,6 +12,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
+import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 
 
 import org.Cryptic.Robot;
@@ -44,6 +46,23 @@ public class TestTeleOp extends LinearOpMode {
         boolean autoAimMode = true;
 
 
+        DcMotorEx leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
+        DcMotorEx leftBack = hardwareMap.get(DcMotorEx.class, "leftBack");
+        DcMotorEx rightBack = hardwareMap.get(DcMotorEx.class, "rightBack");
+        DcMotorEx rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
+
+        DcMotorEx bandMotor = hardwareMap.get(DcMotorEx.class, "bandMotor");
+        bandMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        NormalizedColorSensor colorSensor = hardwareMap.get(NormalizedColorSensor.class, "colorSensor");
+
+
+        leftFront.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
+        leftBack.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
+        rightBack.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
+        rightFront.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
+
+
 
         waitForStart();
         while (opModeIsActive()) {
@@ -58,27 +77,30 @@ public class TestTeleOp extends LinearOpMode {
             robot.intake.update();
             robot.outtake.update();
 
-            if (intakePad.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER) && autoAimMode) {
-                autoAimMode = false;
-            } else if (intakePad.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER) && !autoAimMode) {
-                autoAimMode = true;
-            }
-
-            if (autoAimMode) {
-                if (gamepad1.left_trigger >= 0.5) {
-                    robot.outtake.autoUpdateAim(72.0, -72.0, robot.dt.drivebase);
-                }
+            if (gamepad1.right_trigger >= 0.5) {
+                robot.intake.intaker(850); // setup rpm later and constnats
             } else {
-                if (gamepad1.dpad_left) {
-                    robot.outtake.manuallyUpdateAim(1000); // find rpm later
-                } else if (gamepad2.dpad_right) {
-                    robot.outtake.manuallyUpdateAim(-1000); // change rpm later
-                }
+                bandMotor.setPower(0.0);
             }
 
-            if (gamepad2.right_trigger >= 0.5) {
-                robot.intake.grabBall(850); // setup rpm later and constnats
+            if (drivePad.wasJustPressed(GamepadKeys.Button.Y)) {
+                robot.intake.indexIndexer();
             }
+
+
+/*
+            if (gamepad1.left_trigger >= 0.5) {
+                robot.intake.intaker(-850); // setup rpm later and constnats
+            } else {
+                bandMotor.setPower(0.0);
+            }*/
+
+
+
+            leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+            leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+            rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+            rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
 
             robot.dt.drivebase.setDrivePowers(new PoseVelocity2d(
@@ -94,10 +116,15 @@ public class TestTeleOp extends LinearOpMode {
             telemetry.addData("RF", robot.dt.drivebase.rightFront.getPower());
             telemetry.addData("RB", robot.dt.drivebase.rightBack.getPower());
 
+            NormalizedRGBA colors = colorSensor.getNormalizedColors();
 
-
+            telemetry.addData("red: ",colors.red);
+            telemetry.addData("green: ",colors.green);
+            telemetry.addData("blue: ",colors.blue);
 
 /*
+
+
             double max;
             double axial = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
             double lateral = gamepad1.left_stick_x;
