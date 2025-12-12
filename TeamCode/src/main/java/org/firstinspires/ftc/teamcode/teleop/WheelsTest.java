@@ -16,8 +16,8 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.Cryptic.Robot;
 
-@TeleOp(name = "TestTeleOp")
-public class TestTeleOp extends LinearOpMode {
+@TeleOp(name = "WheelsTest")
+public class WheelsTest extends LinearOpMode {
 
     //@Override
     public void runOpMode() throws InterruptedException {
@@ -44,6 +44,25 @@ public class TestTeleOp extends LinearOpMode {
         boolean autoAimMode = true;
 
 
+        DcMotor leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
+        DcMotor leftBack = hardwareMap.get(DcMotorEx.class, "leftBack");
+        DcMotor rightBack = hardwareMap.get(DcMotorEx.class, "rightBack");
+        DcMotor rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
+
+        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+
+        // maybe delete
+        for (DcMotor m : new DcMotor[]{leftFront, leftBack, rightFront, rightBack}) {
+            m.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            m.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);  // or RUN_USING_ENCODER, just be consistent
+            m.setPower(0);
+        }
+
+
 
         waitForStart();
         while (opModeIsActive()) {
@@ -65,32 +84,25 @@ public class TestTeleOp extends LinearOpMode {
             }
 
             if (autoAimMode) {
-                if (gamepad1.left_trigger >= 0.5) {
+                if (gamepad2.left_trigger >= 0.15) {
                     robot.outtake.autoUpdateAim(72.0, -72.0, robot.dt.drivebase);
                 }
             } else {
-                if (gamepad1.dpad_left) {
+                if (gamepad2.dpad_left) {
                     robot.outtake.manuallyUpdateAim(1000); // find rpm later
                 } else if (gamepad2.dpad_right) {
                     robot.outtake.manuallyUpdateAim(-1000); // change rpm later
                 }
             }
 
-            if (gamepad2.right_trigger >= 0.5) {
-                robot.intake.grabBall(850); // setup rpm later and constnats
+            if (gamepad2.right_trigger >= 0.15) {
+                robot.intake.grabBall(1000); // setup rpm later and constnats
             }
 
 
-            robot.dt.drivebase.setDrivePowers(new PoseVelocity2d(
-                    new Vector2d(
-                            -gamepad1.left_stick_y,
-                            -gamepad1.left_stick_x
-                    ),
-                    -gamepad1.right_stick_x
-            ));
 
-            telemetry.addData("LF", robot.dt.drivebase.leftFront.getPower());
-            telemetry.addData("LB", robot.dt.drivebase.leftBack.getPower());
+            telemetry.addData("RF", robot.dt.drivebase.rightFront.getPower());
+            telemetry.addData("RB", robot.dt.drivebase.rightBack.getPower());
             telemetry.addData("RF", robot.dt.drivebase.rightFront.getPower());
             telemetry.addData("RB", robot.dt.drivebase.rightBack.getPower());
 
