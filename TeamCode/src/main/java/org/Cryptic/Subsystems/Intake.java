@@ -29,6 +29,7 @@ public class Intake extends Subsystem {
 
         bandMotor = opmode.hardwareMap.get(DcMotorEx.class, "bandMotor");
         indexServo = opmode.hardwareMap.get(Servo.class, "indexServo");
+        indexServo.setPosition(0.0);
 
         bandMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
     }
@@ -48,9 +49,8 @@ public class Intake extends Subsystem {
 //            System.out.println("There are no available slots");
 //        }
         indexServo.setPosition(this.robot.currentIndex / 3.0);
+        // dont need to set power
         bandMotor.setVelocity(500 * CPR / 60.0);
-
-
     }
 
     public void scanBallColor() {
