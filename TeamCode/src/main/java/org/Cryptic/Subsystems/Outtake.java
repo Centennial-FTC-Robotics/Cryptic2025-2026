@@ -224,4 +224,3 @@ public class Outtake extends Subsystem {
         this.robot.targetIndex = (this.robot.targetIndex + 1) % 3;
     }
 }
-//testing
