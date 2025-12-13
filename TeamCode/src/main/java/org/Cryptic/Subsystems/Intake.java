@@ -44,6 +44,8 @@ public class Intake extends Subsystem {
         // CHECK THAT INDEXSERVO CAN MOVE
         // dont need to set power for indexServo
         bandMotor.setVelocity(500 * CPR / 60.0);
+        
+
     }
 
     public void scanBallColor() {

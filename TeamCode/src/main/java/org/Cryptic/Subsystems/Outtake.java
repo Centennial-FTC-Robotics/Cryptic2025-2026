@@ -18,6 +18,8 @@ public class Outtake extends Subsystem {
 
     public Servo transferServo;
 
+    public DcMotorEx bandMotor;
+
     public static final double liftUp = 0.33; // TODO
 
     public static final double rest = 0.0;
@@ -36,6 +38,7 @@ public class Outtake extends Subsystem {
         rotateMotor = opmode.hardwareMap.get(DcMotorEx.class, "rotateMotor");
         indexServo = opmode.hardwareMap.get(Servo.class, "indexServo");
         transferServo = opmode.hardwareMap.get(Servo.class, "transferServo");
+        bandMotor = opmode.hardwareMap.get(DcMotorEx.class, "bandMotor");
 
         powerMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         rotateMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -158,8 +161,10 @@ public class Outtake extends Subsystem {
         double pos = shootIndex / 3.0 + 0.5; if (pos > 1) pos = pos - 1;
         this.robot.currentBalls[shootIndex] = -1;
 
+        bandMotor.setVelocity(500 * CPR / 60.0);
         indexServo.setPosition(pos);
-        // TODO does bandMotor need to move as well?
+        // TODO does bandMotor need to move as well? Yes, to keep balls in
+
 
         transferServo.setPosition(liftUp); // TODO
     }
@@ -214,5 +219,6 @@ public class Outtake extends Subsystem {
 
         this.robot.currentIndex = 0;
         indexServo.setPosition(0.0);
+        bandMotor.setVelocity(0);
     }
 }
