@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
 import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Vector2d;
@@ -76,14 +75,14 @@ public class MainTeleOp extends LinearOpMode {
             robot.outtake.update();
 
             if (gamepad1.right_trigger >= 0.5) {
-                robot.intake.grabBall(850); // setup rpm later and constnats
+                robot.intake.intakeComplete(850); // setup rpm later and constnats
             } else {
                 bandMotor.setPower(0.0);
             }
 
 
             if (gamepad1.left_trigger >= 0.5) {
-                robot.intake.grabBall(-850); // setup rpm later and constnats
+                robot.intake.intakeComplete(-850); // setup rpm later and constnats
             } else {
                 bandMotor.setPower(0.0);
             }

@@ -65,7 +65,8 @@ public class Intake extends Subsystem {
         bandMotor.setVelocity(ticksPerSecond);
     }
 
-    public void grabBall(double rpm) { // color sensor is used
+    // overall method
+    public void intakeComplete(double rpm) { // color sensor is used
         intakeBall(rpm);
         scanBallColor();
         rotateToVacantSpot();

@@ -92,22 +92,10 @@ public class TestTeleOp extends LinearOpMode {
                 robot.intake.scanBallColor();
             }
 
-
-/*
-            if (gamepad1.left_trigger >= 0.5) {
-                robot.intake.intaker(-850); // setup rpm later and constnats
-            } else {
-                bandMotor.setPower(0.0);
-            }*/
-
-
-
             leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
             leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
             rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
             rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-
-
             robot.dt.drivebase.setDrivePowers(new PoseVelocity2d(
                     new Vector2d(
                             -gamepad1.left_stick_y,
@@ -127,8 +115,6 @@ public class TestTeleOp extends LinearOpMode {
             telemetry.addData("green: ",colorSensor.green());
             telemetry.addData("blue: ",colorSensor.blue());
             telemetry.addData("currentIndex, currentBalls: ", robot.currentIndex+", "+ Arrays.toString(robot.currentBalls));
-
-
 /*
 
 

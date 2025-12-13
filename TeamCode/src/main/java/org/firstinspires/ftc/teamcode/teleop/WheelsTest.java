@@ -1,10 +1,7 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
 import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-import com.acmerobotics.roadrunner.PoseVelocity2d;
-import com.acmerobotics.roadrunner.Vector2d;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.gamepad.ToggleButtonReader;
@@ -96,7 +93,7 @@ public class WheelsTest extends LinearOpMode {
             }
 
             if (gamepad2.right_trigger >= 0.15) {
-                robot.intake.grabBall(1000); // setup rpm later and constnats
+                robot.intake.intakeComplete(1000); // setup rpm later and constnats
             }
 
 
