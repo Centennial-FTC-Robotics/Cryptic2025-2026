@@ -10,9 +10,10 @@ import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.gamepad.ToggleButtonReader;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 
 
@@ -56,7 +57,7 @@ public class TestTeleOp extends LinearOpMode {
         DcMotorEx bandMotor = hardwareMap.get(DcMotorEx.class, "bandMotor");
         bandMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        NormalizedColorSensor colorSensor = hardwareMap.get(NormalizedColorSensor.class, "colorSensor");
+        ColorSensor colorSensor = hardwareMap.get(ColorSensor.class, "colorSensor");
 
 
         leftFront.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
@@ -120,11 +121,11 @@ public class TestTeleOp extends LinearOpMode {
             telemetry.addData("RF", robot.dt.drivebase.rightFront.getPower());
             telemetry.addData("RB", robot.dt.drivebase.rightBack.getPower());
 
-            NormalizedRGBA colors = colorSensor.getNormalizedColors();
+            // NormalizedRGBA colors = colorSensor.getNormalizedColors();
 
-            telemetry.addData("red: ",colors.red);
-            telemetry.addData("green: ",colors.green);
-            telemetry.addData("blue: ",colors.blue);
+            telemetry.addData("red: ",colorSensor.red());
+            telemetry.addData("green: ",colorSensor.green());
+            telemetry.addData("blue: ",colorSensor.blue());
 
 /*
 

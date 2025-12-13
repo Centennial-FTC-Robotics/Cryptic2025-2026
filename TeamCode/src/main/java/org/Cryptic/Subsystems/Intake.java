@@ -3,7 +3,7 @@ package org.Cryptic.Subsystems;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 
 import android.graphics.Color;
@@ -20,11 +20,11 @@ public class Intake extends Subsystem {
     public DcMotorEx bandMotor;
     public Servo indexServo;
 
-    public NormalizedColorSensor colorSensor;
+    public ColorSensor colorSensor;
 
     @Override
     public void init(LinearOpMode opmode) throws InterruptedException {
-        colorSensor = opmode.hardwareMap.get(NormalizedColorSensor.class, "colorSensor");
+        colorSensor = opmode.hardwareMap.get(ColorSensor.class, "colorSensor");
 
 
         bandMotor = opmode.hardwareMap.get(DcMotorEx.class, "bandMotor");
@@ -40,9 +40,9 @@ public class Intake extends Subsystem {
         // so if u look in TestTeleop, maybe we can auto index everything (based on motif too) just by clicing a button
 
         boolean isGreen = false;
-        NormalizedRGBA res = colorSensor.getNormalizedColors();
+        // NormalizedRGBA res = colorSensor.getNormalizedColors();
         float[] hsv = new float[3];
-        Color.RGBToHSV((int) (res.red * 256), (int) (res.green * 256), (int) (res.blue * 256), hsv);
+        Color.RGBToHSV((int) (colorSensor.red()), (int) (colorSensor.green()), (int) (colorSensor.blue()), hsv);
         // only hue, hsv[0], matters
         int purpleHue = 270;
         int greenHue = 120;
@@ -66,9 +66,9 @@ public class Intake extends Subsystem {
 
     public void grabBall(double rpm) { // color sensor is used
         boolean isGreen;
-        NormalizedRGBA res = colorSensor.getNormalizedColors();
+        // NormalizedRGBA res = colorSensor.getNormalizedColors();
         float[] hsv = new float[3];
-        Color.RGBToHSV((int) (res.red * 256), (int) (res.green * 256), (int) (res.blue * 256), hsv);
+        Color.RGBToHSV((int) (colorSensor.red()), (int) (colorSensor.green()), (int) (colorSensor.blue()), hsv);
         // only hue, hsv[0], matters
         int purpleHue = 270;
         int greenHue = 120;
@@ -83,9 +83,9 @@ public class Intake extends Subsystem {
             step++;
             this.robot.currentIndex = (this.robot.currentIndex + 1) % 3;
         }
-        if (step == 3) {
-            System.out.println("There are no available slots");
-        }
+//        if (step == 3) {
+//            System.out.println("There are no available slots");
+//        }
         indexServo.setPosition(this.robot.currentIndex / 3.0);
 
         // TODO actually control bandMotor to get ball
