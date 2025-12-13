@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
 import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Vector2d;
@@ -13,8 +12,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.ColorSensor;
-import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 
 
 import org.Cryptic.Robot;
@@ -81,13 +78,13 @@ public class TestTeleOp extends LinearOpMode {
             robot.outtake.update();
 
             if (gamepad1.right_trigger >= 0.5) {
-                robot.intake.intaker(850); // setup rpm later and constnats
+                robot.intake.intakeBall(850); // setup rpm later and constnats
             } else {
                 bandMotor.setPower(0.0);
             }
 
             if (drivePad.wasJustPressed(GamepadKeys.Button.Y)) {
-                robot.intake.indexIndexer();
+                robot.intake.rotateToVacantSpot();
 
             }
 

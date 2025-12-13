@@ -4,7 +4,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
-import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 
 import android.graphics.Color;
 
@@ -34,22 +33,16 @@ public class Intake extends Subsystem {
         bandMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
     }
 
-
-
-    public void indexIndexer() { // this is just half of the grabBall method.
-        // basically, the way we are using grabBall, it always indexes everytime we click right trigger (and run grab ball) even if we miss
-        // so if u look in TestTeleop, maybe we can auto index everything (based on motif too) just by clicing a button
-
+    public void rotateToVacantSpot() {
         int step = 0;
         while (this.robot.currentBalls[this.robot.currentIndex] != -1 && step < 3) {
             step++;
             this.robot.currentIndex = (this.robot.currentIndex + 1) % 3;
         }
-//        if (step == 3) {
-//            System.out.println("There are no available slots");
-//        }
+
         indexServo.setPosition(this.robot.currentIndex / 3.0);
-        // dont need to set power
+        // CHECK THAT INDEXSERVO CAN MOVE
+        // dont need to set power for indexServo
         bandMotor.setVelocity(500 * CPR / 60.0);
     }
 
@@ -64,55 +57,18 @@ public class Intake extends Subsystem {
         if (Math.abs(hsv[0] - purpleHue) > Math.abs(hsv[0] - greenHue)) {
             isGreen = true;
         }
-
         this.robot.currentBalls[this.robot.currentIndex] = (isGreen ? 1 : 0);
-        // note that the one just added is the current index
-
     }
 
-
-    public void intaker(double rpm) { // color sensor is used
-
+    public void intakeBall(double rpm) { // color sensor is used
         double ticksPerSecond = rpm * CPR / 60.0;
-
         bandMotor.setVelocity(ticksPerSecond);
-
     }
 
     public void grabBall(double rpm) { // color sensor is used
-        boolean isGreen;
-        // NormalizedRGBA res = colorSensor.getNormalizedColors();
-        float[] hsv = new float[3];
-        Color.RGBToHSV((int) (colorSensor.red()), (int) (colorSensor.green()), (int) (colorSensor.blue()), hsv);
-        // only hue, hsv[0], matters
-        int purpleHue = 270;
-        int greenHue = 120;
-        if (Math.abs(hsv[0] - purpleHue) > Math.abs(hsv[0] - greenHue)) {
-            isGreen = true;
-        } else {
-            isGreen = false;
-        }
-
-        int step = 0;
-        while (this.robot.currentBalls[this.robot.currentIndex] != -1 && step < 3) {
-            step++;
-            this.robot.currentIndex = (this.robot.currentIndex + 1) % 3;
-        }
-//        if (step == 3) {
-//            System.out.println("There are no available slots");
-//        }
-        indexServo.setPosition(this.robot.currentIndex / 3.0);
-
-
-        // TODO actually control bandMotor to get ball
-        double ticksPerSecond = rpm * CPR / 60.0;
-
-        bandMotor.setVelocity(ticksPerSecond);
-
-        this.robot.currentBalls[this.robot.currentIndex] = (isGreen ? 1 : 0);
-        // note that the one just added is the current index now
+        intakeBall(rpm);
+        scanBallColor();
+        rotateToVacantSpot();
     }
-
-
 
 }
