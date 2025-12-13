@@ -39,6 +39,21 @@ public class Intake extends Subsystem {
         // basically, the way we are using grabBall, it always indexes everytime we click right trigger (and run grab ball) even if we miss
         // so if u look in TestTeleop, maybe we can auto index everything (based on motif too) just by clicing a button
 
+        int step = 0;
+        while (this.robot.currentBalls[this.robot.currentIndex] != -1 && step < 3) {
+            step++;
+            this.robot.currentIndex = (this.robot.currentIndex + 1) % 3;
+        }
+//        if (step == 3) {
+//            System.out.println("There are no available slots");
+//        }
+        indexServo.setPosition(this.robot.currentIndex / 3.0);
+        bandMotor.setVelocity(500 * CPR / 60.0);
+
+
+    }
+
+    public void scanBallColor() {
         boolean isGreen = false;
         // NormalizedRGBA res = colorSensor.getNormalizedColors();
         float[] hsv = new float[3];
@@ -51,7 +66,7 @@ public class Intake extends Subsystem {
         }
 
         this.robot.currentBalls[this.robot.currentIndex] = (isGreen ? 1 : 0);
-        // note that the one just added is the current index now
+        // note that the one just added is the current index
 
     }
 
@@ -87,6 +102,7 @@ public class Intake extends Subsystem {
 //            System.out.println("There are no available slots");
 //        }
         indexServo.setPosition(this.robot.currentIndex / 3.0);
+
 
         // TODO actually control bandMotor to get ball
         double ticksPerSecond = rpm * CPR / 60.0;

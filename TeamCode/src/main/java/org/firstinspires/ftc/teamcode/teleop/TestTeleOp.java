@@ -91,6 +91,10 @@ public class TestTeleOp extends LinearOpMode {
 
             }
 
+            if (drivePad.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
+                robot.intake.scanBallColor();
+            }
+
 
 /*
             if (gamepad1.left_trigger >= 0.5) {
