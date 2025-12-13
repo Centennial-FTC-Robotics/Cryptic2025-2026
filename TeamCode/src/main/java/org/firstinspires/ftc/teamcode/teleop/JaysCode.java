@@ -12,16 +12,12 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
-import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 
 
 import org.Cryptic.Robot;
 
-import java.util.Arrays;
-
-@TeleOp(name = "TestTeleOp")
-public class TestTeleOp extends LinearOpMode {
+@TeleOp(name = "JaysCode")
+public class JaysCode extends LinearOpMode {
 
     //@Override
     public void runOpMode() throws InterruptedException {
@@ -48,21 +44,23 @@ public class TestTeleOp extends LinearOpMode {
         boolean autoAimMode = true;
 
 
-        DcMotorEx leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
-        DcMotorEx leftBack = hardwareMap.get(DcMotorEx.class, "leftBack");
-        DcMotorEx rightBack = hardwareMap.get(DcMotorEx.class, "rightBack");
-        DcMotorEx rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
+        DcMotor leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
+        DcMotor leftBack = hardwareMap.get(DcMotorEx.class, "leftBack");
+        DcMotor rightBack = hardwareMap.get(DcMotorEx.class, "rightBack");
+        DcMotor rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
 
-        DcMotorEx bandMotor = hardwareMap.get(DcMotorEx.class, "bandMotor");
-        bandMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        NormalizedColorSensor colorSensor = hardwareMap.get(NormalizedColorSensor.class, "colorSensor");
 
-
-        leftFront.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
-        leftBack.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
-        rightBack.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
-        rightFront.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
+        // maybe delete
+        for (DcMotor m : new DcMotor[]{leftFront, leftBack, rightFront, rightBack}) {
+            m.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            m.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);  // or RUN_USING_ENCODER, just be consistent
+            m.setPower(0);
+        }
 
 
 
@@ -79,56 +77,68 @@ public class TestTeleOp extends LinearOpMode {
             robot.intake.update();
             robot.outtake.update();
 
-            if (gamepad1.right_trigger >= 0.5) {
-                robot.intake.intaker(850); // setup rpm later and constnats
-            } else {
-                bandMotor.setPower(0.0);
+            if (intakePad.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER) && autoAimMode) {
+                autoAimMode = false;
+            } else if (intakePad.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER) && !autoAimMode) {
+                autoAimMode = true;
             }
 
-            if (drivePad.wasJustPressed(GamepadKeys.Button.Y)) {
-                robot.intake.indexIndexer();
-                telemetry.addData("currentIndex, currentBalls: ", robot.currentIndex+", "+ Arrays.toString(robot.currentBalls));
+            if (autoAimMode) {
+                if (gamepad2.left_trigger >= 0.15) {
+                    robot.outtake.autoUpdateAim(72.0, -72.0, robot.dt.drivebase);
+                }
+            } else {
+                if (gamepad2.dpad_left) {
+                    robot.outtake.manuallyUpdateAim(1000); // find rpm later
+                } else if (gamepad2.dpad_right) {
+                    robot.outtake.manuallyUpdateAim(-1000); // change rpm later
+                }
+            }
 
+            if (gamepad2.right_trigger >= 0.15) {
+                robot.intake.grabBall(1000); // setup rpm later and constnats
             }
 
 
-/*
-            if (gamepad1.left_trigger >= 0.5) {
-                robot.intake.intaker(-850); // setup rpm later and constnats
-            } else {
-                bandMotor.setPower(0.0);
-            }*/
+            double max;
+            double axial = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
+            double lateral = gamepad1.left_stick_x;
+            double yaw = gamepad1.right_stick_x;
 
+            // Combine the joystick requests for each axis-motion to determine each wheel's power.
+            // Set up a variable for each drive wheel to save the power level for telemetry.
+            double leftFrontDOUBLE = axial + lateral + yaw;
+            double rightFrontDOUBLE = axial - lateral - yaw;
+            double leftBackDOUBLE = axial - lateral + yaw;
+            double rightBackDOUBLE = axial + lateral - yaw;
 
+            // Normalize the values so no wheel power exceeds 100%
+            // This ensures that the robot maintains the desired motion.
+            max = Math.max(Math.abs(leftFrontDOUBLE), Math.abs(rightFrontDOUBLE));
+            max = Math.max(max, Math.abs(leftBackDOUBLE));
+            max = Math.max(max, Math.abs(rightBackDOUBLE));
 
-            leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-            leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-            rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-            rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+            if (max > 1.0) {
+                leftFrontDOUBLE /= max;
+                rightFrontDOUBLE /= max;
+                leftBackDOUBLE /= max;
+                rightBackDOUBLE /= max;
+            }
 
-
-            robot.dt.drivebase.setDrivePowers(new PoseVelocity2d(
-                    new Vector2d(
-                            -gamepad1.left_stick_y,
-                            -gamepad1.left_stick_x
-                    ),
-                    -gamepad1.right_stick_x
-            ));
+            leftFront.setPower(leftFrontDOUBLE * 0.7);
+            rightFront.setPower(-rightFrontDOUBLE * 0.7);
+            leftBack.setPower(leftBackDOUBLE * 0.7);
+            rightBack.setPower(-rightBackDOUBLE * 0.7);
 
             telemetry.addData("LF", robot.dt.drivebase.leftFront.getPower());
             telemetry.addData("LB", robot.dt.drivebase.leftBack.getPower());
             telemetry.addData("RF", robot.dt.drivebase.rightFront.getPower());
             telemetry.addData("RB", robot.dt.drivebase.rightBack.getPower());
 
-            NormalizedRGBA colors = colorSensor.getNormalizedColors();
 
-            telemetry.addData("red: ",colors.red);
-            telemetry.addData("green: ",colors.green);
-            telemetry.addData("blue: ",colors.blue);
+
 
 /*
-
-
             double max;
             double axial = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
             double lateral = gamepad1.left_stick_x;

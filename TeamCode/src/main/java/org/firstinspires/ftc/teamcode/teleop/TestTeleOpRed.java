@@ -8,9 +8,11 @@ import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.gamepad.ToggleButtonReader;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.Cryptic.Robot;
 
+@TeleOp(name = "TestTeleOpRed")
 public class TestTeleOpRed extends LinearOpMode {
 
     @Override

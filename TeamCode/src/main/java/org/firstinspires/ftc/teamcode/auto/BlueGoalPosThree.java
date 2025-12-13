@@ -82,12 +82,10 @@ public class BlueGoalPosThree extends LinearOpMode {
                 .stopAndAdd(robot.sampleActions.launch(scoreX,scoreY,robot))
                 .stopAndAdd(robot.sampleActions.launch(scoreX,scoreY,robot))
                 .stopAndAdd(robot.sampleActions.launch(scoreX,scoreY,robot))
-                // push the gate
-                .splineToLinearHeading(new Pose2d(new Vector2d(-2.5*t, 0), Math.toRadians(180)), Math.toRadians(180))
-        ;
+                ;
 
         TrajectoryActionBuilder clearRamp = launch.endTrajectory().fresh()
-                .splineToLinearHeading(new Pose2d(new Vector2d(-2.9*t, 0), Math.toRadians(180)), 0)
+                .splineToLinearHeading(new Pose2d(new Vector2d(-2.5*t, 0), Math.toRadians(180)), 0)
         ;
 
         Action driveToAprilTagA = driveToAprilTag.build();

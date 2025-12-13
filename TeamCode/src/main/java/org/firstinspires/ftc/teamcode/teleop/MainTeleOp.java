@@ -18,10 +18,8 @@ import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 
 import org.Cryptic.Robot;
 
-import java.util.Arrays;
-
-@TeleOp(name = "TestTeleOp")
-public class TestTeleOp extends LinearOpMode {
+@TeleOp(name = "MainTeleOp")
+public class MainTeleOp extends LinearOpMode {
 
     //@Override
     public void runOpMode() throws InterruptedException {
@@ -64,8 +62,6 @@ public class TestTeleOp extends LinearOpMode {
         rightBack.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
         rightFront.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
 
-
-
         waitForStart();
         while (opModeIsActive()) {
             TelemetryPacket packet = new TelemetryPacket();
@@ -80,26 +76,17 @@ public class TestTeleOp extends LinearOpMode {
             robot.outtake.update();
 
             if (gamepad1.right_trigger >= 0.5) {
-                robot.intake.intaker(850); // setup rpm later and constnats
+                robot.intake.grabBall(850); // setup rpm later and constnats
             } else {
                 bandMotor.setPower(0.0);
             }
 
-            if (drivePad.wasJustPressed(GamepadKeys.Button.Y)) {
-                robot.intake.indexIndexer();
-                telemetry.addData("currentIndex, currentBalls: ", robot.currentIndex+", "+ Arrays.toString(robot.currentBalls));
 
-            }
-
-
-/*
             if (gamepad1.left_trigger >= 0.5) {
-                robot.intake.intaker(-850); // setup rpm later and constnats
+                robot.intake.grabBall(-850); // setup rpm later and constnats
             } else {
                 bandMotor.setPower(0.0);
-            }*/
-
-
+            }
 
             leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
             leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
@@ -161,7 +148,6 @@ public class TestTeleOp extends LinearOpMode {
 
 */
 
-
             // Outtake actually launch
             if (drivePad.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
                 robot.outtake.launch(72.0,-72.0,robot.dt.drivebase);
@@ -174,8 +160,7 @@ public class TestTeleOp extends LinearOpMode {
 
             dashboard.sendTelemetryPacket(packet);
             telemetry.update();
-
-
         }
     }
 }
+

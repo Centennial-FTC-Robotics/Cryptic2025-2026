@@ -1,0 +1,43 @@
+package com.example.meepmeeptesting;
+
+import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.Vector2d;
+import com.noahbres.meepmeep.MeepMeep;
+import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder;
+import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
+
+public class RedGoalOneTripletTest {
+    public static void main(String[] args) {
+        // Test out auto
+        MeepMeep meepMeep = new MeepMeep(800);
+
+        RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
+                // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
+                .setConstraints(50, 30, Math.toRadians(180), Math.toRadians(180), 18)
+                .build();
+
+        double t = 23.5;
+        Pose2d initialPose = new Pose2d(t*(1.6), 2.6*t, Math.toRadians(90));
+
+        double ballX = (1.5)*t, ballY = 0.5*t; // coordinates of the first ball
+        double scoreX = 0, scoreY = t*2; // where to score from, in a launch zone
+        // double tx = -3*t, ty = 3*t; // coordinates of the goal
+
+        myBot.runAction(myBot.getDrive().actionBuilder(initialPose)
+                .strafeToLinearHeading(new Vector2d(0, t), Math.toRadians(90))
+                .splineToLinearHeading(new Pose2d(new Vector2d(ballX, ballY), Math.toRadians(0)), Math.toRadians(0))
+                .strafeToConstantHeading(new Vector2d(ballX + 5, ballY))
+                .waitSeconds(0.5)
+                .strafeToConstantHeading(new Vector2d(ballX + 10, ballY))
+                .strafeToConstantHeading(new Vector2d(scoreX, scoreY))
+                .splineToLinearHeading(new Pose2d(new Vector2d(2.5*t, 0), Math.toRadians(0)), 0)
+                .build());
+
+
+        meepMeep.setBackground(MeepMeep.Background.FIELD_INTO_THE_DEEP_OFFICIAL)
+                .setDarkMode(true)
+                .setBackgroundAlpha(0.95f)
+                .addEntity(myBot)
+                .start();
+    }
+}
