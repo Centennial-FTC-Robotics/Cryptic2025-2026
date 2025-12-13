@@ -62,8 +62,6 @@ public class MainTeleOp extends LinearOpMode {
         rightBack.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
         rightFront.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
 
-
-
         waitForStart();
         while (opModeIsActive()) {
             TelemetryPacket packet = new TelemetryPacket();
@@ -89,8 +87,6 @@ public class MainTeleOp extends LinearOpMode {
             } else {
                 bandMotor.setPower(0.0);
             }
-
-
 
             leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
             leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
@@ -152,7 +148,6 @@ public class MainTeleOp extends LinearOpMode {
 
 */
 
-
             // Outtake actually launch
             if (drivePad.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
                 robot.outtake.launch(72.0,-72.0,robot.dt.drivebase);
@@ -165,8 +160,6 @@ public class MainTeleOp extends LinearOpMode {
 
             dashboard.sendTelemetryPacket(packet);
             telemetry.update();
-
-
         }
     }
 }

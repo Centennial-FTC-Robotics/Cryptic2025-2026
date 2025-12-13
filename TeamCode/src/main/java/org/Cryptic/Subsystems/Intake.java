@@ -31,10 +31,6 @@ public class Intake extends Subsystem {
         indexServo = opmode.hardwareMap.get(Servo.class, "indexServo");
 
         bandMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-
-        this.robot.currentIndex = 0;
-        this.robot.currentBalls = new int[3];
-        for (int i=0; i<3; ++i) this.robot.currentBalls[i] = -1;
     }
 
 
@@ -43,7 +39,7 @@ public class Intake extends Subsystem {
         // basically, the way we are using grabBall, it always indexes everytime we click right trigger (and run grab ball) even if we miss
         // so if u look in TestTeleop, maybe we can auto index everything (based on motif too) just by clicing a button
 
-        boolean isGreen;
+        boolean isGreen = false;
         NormalizedRGBA res = colorSensor.getNormalizedColors();
         float[] hsv = new float[3];
         Color.RGBToHSV((int) (res.red * 256), (int) (res.green * 256), (int) (res.blue * 256), hsv);
@@ -52,10 +48,7 @@ public class Intake extends Subsystem {
         int greenHue = 120;
         if (Math.abs(hsv[0] - purpleHue) > Math.abs(hsv[0] - greenHue)) {
             isGreen = true;
-        } else {
-            isGreen = false;
         }
-
 
         this.robot.currentBalls[this.robot.currentIndex] = (isGreen ? 1 : 0);
         // note that the one just added is the current index now

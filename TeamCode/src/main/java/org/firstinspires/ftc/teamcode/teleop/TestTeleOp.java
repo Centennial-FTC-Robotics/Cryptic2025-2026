@@ -18,6 +18,8 @@ import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 
 import org.Cryptic.Robot;
 
+import java.util.Arrays;
+
 @TeleOp(name = "TestTeleOp")
 public class TestTeleOp extends LinearOpMode {
 
@@ -85,6 +87,8 @@ public class TestTeleOp extends LinearOpMode {
 
             if (drivePad.wasJustPressed(GamepadKeys.Button.Y)) {
                 robot.intake.indexIndexer();
+                telemetry.addData("currentIndex, currentBalls: ", robot.currentIndex+", "+ Arrays.toString(robot.currentBalls));
+
             }
 
 
