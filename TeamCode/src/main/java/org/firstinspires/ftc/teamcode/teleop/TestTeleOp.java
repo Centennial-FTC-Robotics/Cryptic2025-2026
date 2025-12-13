@@ -88,7 +88,6 @@ public class TestTeleOp extends LinearOpMode {
 
             if (drivePad.wasJustPressed(GamepadKeys.Button.Y)) {
                 robot.intake.indexIndexer();
-                telemetry.addData("currentIndex, currentBalls: ", robot.currentIndex+", "+ Arrays.toString(robot.currentBalls));
 
             }
 
@@ -126,6 +125,8 @@ public class TestTeleOp extends LinearOpMode {
             telemetry.addData("red: ",colorSensor.red());
             telemetry.addData("green: ",colorSensor.green());
             telemetry.addData("blue: ",colorSensor.blue());
+            telemetry.addData("currentIndex, currentBalls: ", robot.currentIndex+", "+ Arrays.toString(robot.currentBalls));
+
 
 /*
 
