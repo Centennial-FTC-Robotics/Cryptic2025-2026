@@ -62,9 +62,12 @@ public class TestTeleOp extends LinearOpMode {
         rightBack.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
         rightFront.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
 
+        boolean cooldown = false;
+
 
 
         waitForStart();
+        long startTime;
         while (opModeIsActive()) {
             TelemetryPacket packet = new TelemetryPacket();
 
@@ -79,12 +82,20 @@ public class TestTeleOp extends LinearOpMode {
 
             if (gamepad1.right_trigger >= 0.5) {
                 robot.intake.intaker(850); // setup rpm later and constnats
+            } else if (gamepad1.left_trigger >= 0.5) {
+                robot.intake.intaker(-850);
             } else {
                 bandMotor.setPower(0.0);
             }
 
-            robot.intake.colorIndexIndexer();
 
+            if () {
+                robot.intake.colorIndexIndexer(cooldown);
+            }
+
+            while (System.currentTimeMillis() - startTime > 500) {
+                robot.intake.colorIndexIndexer(true);
+            }
 
 
             leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);

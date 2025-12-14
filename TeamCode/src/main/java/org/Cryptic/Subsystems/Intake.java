@@ -1,6 +1,7 @@
 package org.Cryptic.Subsystems;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
@@ -20,18 +21,18 @@ public class Intake extends Subsystem {
     public DcMotorEx bandMotor;
     public Servo indexServo;
 
-    public NormalizedColorSensor colorSensor;
+    public ColorSensor colorSensor;
 
 
 
     private int counter = 0;
 
     public static final double INTAKE1 = 0.0;
-    public static final double INTAKE2 = 0.0;
-    public static final double INTAKE3 = 0.0;
-    public static final double OUTTAKE1 = 0.0;
-    public static final double OUTTAKE2 = 0.0;
-    public static final double OUTTAKE3 = 0.0;
+    public static final double INTAKE2 = 0.33;
+    public static final double INTAKE3 = 0.66;
+    public static final double OUTTAKE1 = 0.83;
+    public static final double OUTTAKE2 = 0.5;
+    public static final double OUTTAKE3 = 0.16;
 
     public static final double[] positions = {INTAKE1, INTAKE2, INTAKE3,OUTTAKE1,OUTTAKE2,OUTTAKE3};
 
@@ -39,7 +40,7 @@ public class Intake extends Subsystem {
 
     @Override
     public void init(LinearOpMode opmode) throws InterruptedException {
-        colorSensor = opmode.hardwareMap.get(NormalizedColorSensor.class, "colorSensor");
+        colorSensor = opmode.hardwareMap.get(ColorSensor.class, "colorSensor");
 
 
         bandMotor = opmode.hardwareMap.get(DcMotorEx.class, "bandMotor");
@@ -54,51 +55,31 @@ public class Intake extends Subsystem {
 
 
 
-    public void colorIndexIndexer() { // this is just half of the grabBall method.
+    public boolean colorIndexIndexer(boolean cooldown) { // this is just half of the grabBall method.
         // basically, the way we are using grabBall, it always indexes everytime we click right trigger (and run grab ball) even if we miss
         // so if u look in TestTeleop, maybe we can auto index everything (based on motif too) just by clicing a button
 
-        boolean isGreen = false;
-        boolean isDetected = false;
 
-        NormalizedRGBA res = colorSensor.getNormalizedColors();
-        float[] hsv = new float[3];
-        Color.RGBToHSV(
-                (int) (res.red * 255),
-                (int) (res.green * 255),
-                (int) (res.blue * 255),
-                hsv
-        );
-
-        int purpleHue = 270;
-        int greenHue = 120;
-
-        int tolerance = 30;
-
-        double distToPurple = Math.abs(hsv[0] - purpleHue);
-        double distToGreen = Math.abs(hsv[0] - greenHue);
-
-        if (distToPurple < tolerance || distToGreen < tolerance) {
-            isDetected = true;
-
-            isGreen = distToGreen < distToPurple;
-        }
-
-
-        if (isDetected) {
+        if (colorSensor.green() > 100) {
             double currentPosition = positions[counter];
             counter++;
-            indexServo.setPosition(currentPosition);
+
+            if (counter < 3) {
+                indexServo.setPosition(currentPosition);
+            }
+
 
             if (counter == 6) {
                 counter = 0;
             }
 
+            return true;
+
         }
 
+        return false;
 
-        this.robot.currentBalls[this.robot.currentIndex] = (isGreen ? 1 : 0);
-        // note that the one just added is the current index now
+
 
     }
 
@@ -108,7 +89,7 @@ public class Intake extends Subsystem {
     }
 
 
-
+/*
     public void grabBall(double rpm) { // color sensor is used
         boolean isGreen;
         NormalizedRGBA res = colorSensor.getNormalizedColors();
@@ -141,7 +122,7 @@ public class Intake extends Subsystem {
         this.robot.currentBalls[this.robot.currentIndex] = (isGreen ? 1 : 0);
         // note that the one just added is the current index now
     }
-
+*/
 
 
 
