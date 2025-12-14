@@ -78,19 +78,14 @@ public class TestTeleOp extends LinearOpMode {
             robot.outtake.update();
 
             if (gamepad1.right_trigger >= 0.5) {
-                robot.intake.intakeBall(850); // setup rpm later and constnats
+                robot.intake.intaker(850); // setup rpm later and constnats
             } else {
                 bandMotor.setPower(0.0);
             }
 
-            if (drivePad.wasJustPressed(GamepadKeys.Button.Y)) {
-                robot.intake.rotateToVacantSpot();
+            robot.intake.colorIndexIndexer();
 
-            }
 
-            if (drivePad.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
-                robot.intake.scanBallColor();
-            }
 
             leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
             leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
