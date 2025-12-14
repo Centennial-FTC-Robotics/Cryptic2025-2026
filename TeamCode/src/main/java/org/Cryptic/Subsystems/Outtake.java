@@ -206,6 +206,8 @@ public class Outtake extends Subsystem {
             double dy = ty - currentPos.position.y;
             // we should prob tune power
             double dist = Math.hypot(dx, dy) - 3;
+
+            prepareBallShot();
             aimRotateMotor(dx, dy, Drive);
             aimAngleServo(dist);
             executeLaunchSpeed(dist);

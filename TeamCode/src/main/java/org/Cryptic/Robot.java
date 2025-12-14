@@ -24,6 +24,7 @@ public class Robot {
     public Subsystem[] subsystems = new Subsystem[] {
             dt,
             intake,
+            outtake,
             imu,
             baseActions,
             camera

@@ -40,10 +40,11 @@ public class Intake extends Subsystem {
             this.robot.currentIndex = (this.robot.currentIndex + 1) % 3;
         }
 
-        indexServo.setPosition(this.robot.currentIndex / 3.0);
+        bandMotor.setVelocity(500 * CPR / 60.0);
+        indexServo.setPosition(this.robot.currentIndex / 3.0 * 10/14);
+        // bandMotor.setVelocity(0);
         // CHECK THAT INDEXSERVO CAN MOVE
         // dont need to set power for indexServo
-        bandMotor.setVelocity(500 * CPR / 60.0);
     }
 
     public void scanBallColor() {
