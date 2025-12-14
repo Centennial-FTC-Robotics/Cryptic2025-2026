@@ -47,6 +47,7 @@ public class Camera extends Subsystem {
         VisionPortal.Builder builder = new VisionPortal.Builder();
 
         builder.setCamera(opMode.hardwareMap.get(WebcamName.class, "Webcam 1"));
+        builder.setStreamFormat(VisionPortal.StreamFormat.MJPEG);
         // Choose a camera resolution. Not all cameras support all resolutions.
         //builder.setCameraResolution(new Size(640, 480));
 

@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
 import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Vector2d;
@@ -10,13 +9,14 @@ import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.gamepad.ToggleButtonReader;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
-import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 
 
 import org.Cryptic.Robot;
+
+import java.util.Arrays;
 
 @TeleOp(name = "TestTeleOp")
 public class TestTeleOp extends LinearOpMode {
@@ -54,7 +54,7 @@ public class TestTeleOp extends LinearOpMode {
         DcMotorEx bandMotor = hardwareMap.get(DcMotorEx.class, "bandMotor");
         bandMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        NormalizedColorSensor colorSensor = hardwareMap.get(NormalizedColorSensor.class, "colorSensor");
+        ColorSensor colorSensor = hardwareMap.get(ColorSensor.class, "colorSensor");
 
 
         leftFront.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
@@ -78,31 +78,24 @@ public class TestTeleOp extends LinearOpMode {
             robot.outtake.update();
 
             if (gamepad1.right_trigger >= 0.5) {
-                robot.intake.intaker(850); // setup rpm later and constnats
+                robot.intake.intakeBall(850); // setup rpm later and constnats
             } else {
                 bandMotor.setPower(0.0);
             }
 
             if (drivePad.wasJustPressed(GamepadKeys.Button.Y)) {
-                robot.intake.indexIndexer();
+                robot.intake.rotateToVacantSpot();
+
             }
 
-
-/*
-            if (gamepad1.left_trigger >= 0.5) {
-                robot.intake.intaker(-850); // setup rpm later and constnats
-            } else {
-                bandMotor.setPower(0.0);
-            }*/
-
-
+            if (drivePad.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
+                robot.intake.scanBallColor();
+            }
 
             leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
             leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
             rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
             rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-
-
             robot.dt.drivebase.setDrivePowers(new PoseVelocity2d(
                     new Vector2d(
                             -gamepad1.left_stick_y,
@@ -116,12 +109,12 @@ public class TestTeleOp extends LinearOpMode {
             telemetry.addData("RF", robot.dt.drivebase.rightFront.getPower());
             telemetry.addData("RB", robot.dt.drivebase.rightBack.getPower());
 
-            NormalizedRGBA colors = colorSensor.getNormalizedColors();
+            // NormalizedRGBA colors = colorSensor.getNormalizedColors();
 
-            telemetry.addData("red: ",colors.red);
-            telemetry.addData("green: ",colors.green);
-            telemetry.addData("blue: ",colors.blue);
-
+            telemetry.addData("red: ",colorSensor.red());
+            telemetry.addData("green: ",colorSensor.green());
+            telemetry.addData("blue: ",colorSensor.blue());
+            telemetry.addData("currentIndex, currentBalls: ", robot.currentIndex+", "+ Arrays.toString(robot.currentBalls));
 /*
 
 

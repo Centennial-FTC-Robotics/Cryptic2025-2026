@@ -17,11 +17,11 @@ public class SampleActions {
     public boolean hasBeenTime(int milli){
         return System.currentTimeMillis() - startTime >= milli;
     }
-    public class grabBall implements Action {
+    public class intakeComplete implements Action {
         private boolean initialized = false;
         private Robot robot;
 
-        public grabBall(Robot robot) {
+        public intakeComplete(Robot robot) {
             this.robot = robot;
         }
 
@@ -29,15 +29,15 @@ public class SampleActions {
         public boolean run(@NonNull TelemetryPacket packet) {
             if (!initialized) {
                 initialized = true;
-                robot.intake.grabBall(1000); // adjust RPM later
+                robot.intake.intakeComplete(1000); // adjust RPM later
                 initTime();
             }
             return (!hasBeenTime(300));
         }
     }
 
-    public Action grabBall(Robot robot) {
-        return new grabBall(robot);
+    public Action intakeComplete(Robot robot) {
+        return new intakeComplete(robot);
     }
 
     public class getMotif implements Action {

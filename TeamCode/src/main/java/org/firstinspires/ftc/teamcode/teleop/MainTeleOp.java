@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
 import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Vector2d;
@@ -62,8 +61,6 @@ public class MainTeleOp extends LinearOpMode {
         rightBack.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
         rightFront.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
 
-
-
         waitForStart();
         while (opModeIsActive()) {
             TelemetryPacket packet = new TelemetryPacket();
@@ -78,19 +75,17 @@ public class MainTeleOp extends LinearOpMode {
             robot.outtake.update();
 
             if (gamepad1.right_trigger >= 0.5) {
-                robot.intake.grabBall(850); // setup rpm later and constnats
+                robot.intake.intakeComplete(850); // setup rpm later and constnat
             } else {
                 bandMotor.setPower(0.0);
             }
 
 
             if (gamepad1.left_trigger >= 0.5) {
-                robot.intake.grabBall(-850); // setup rpm later and constnats
+                robot.intake.intakeComplete(-850); // setup rpm later and constnats
             } else {
                 bandMotor.setPower(0.0);
             }
-
-
 
             leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
             leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
@@ -152,7 +147,6 @@ public class MainTeleOp extends LinearOpMode {
 
 */
 
-
             // Outtake actually launch
             if (drivePad.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
                 robot.outtake.launch(72.0,-72.0,robot.dt.drivebase);
@@ -165,8 +159,6 @@ public class MainTeleOp extends LinearOpMode {
 
             dashboard.sendTelemetryPacket(packet);
             telemetry.update();
-
-
         }
     }
 }

@@ -30,13 +30,13 @@ public class Robot {
     };
     public SampleActions sampleActions = new SampleActions();
 
-    public int currentIndex; // index of the intake i think
+    public int currentIndex = 0; // index of the intake i think
     public int targetIndex; // index of motif to shoot
 
-    public int[] currentBalls; // 1 for green 0 for purple -1 for empty
+    public int[] currentBalls = {-1, -1, -1}; // 1 for green 0 for purple -1 for empty
     // currentBalls[i] is ball at intake if i/3 is the rotation of it
 
-    public int motif; // 21 for GPP, 22 for PGP, 23 for PPG
+    public int motif = 21; // 21 for GPP, 22 for PGP, 23 for PPG
 
     public void initialize(LinearOpMode opmode) throws InterruptedException {
 

@@ -29,12 +29,12 @@ public class BlueOneTriplet extends LinearOpMode {
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
 
         double ballX = (-1.5)*t, ballY = -1.5*t; // coords of the first ball
-        double scoreX = 0, scoreY = t*2; // where to score from, in a launch zone
+        double scoreX = -t, scoreY = t*2; // where to score from, in a launch zone
         double tx = -3*t, ty = 3*t; // coords of xthe goal
 
 
         TrajectoryActionBuilder driveToAprilTag = drive.actionBuilder(initialPose)
-                .strafeToLinearHeading(new Vector2d(0, t), Math.toRadians(90))
+                .strafeToLinearHeading(new Vector2d(scoreX, scoreY), Math.toRadians(60))
                 .stopAndAdd(robot.sampleActions.getMotif(robot))
                 // .stopAndAdd(robot.sampleActions.positionToScore(robot))
                 // .strafeToSplineHeading(new Vector2d(scoreX, ballY), Math.toRadians(225))
@@ -44,11 +44,11 @@ public class BlueOneTriplet extends LinearOpMode {
 
         TrajectoryActionBuilder launch = driveToAprilTag.endTrajectory().fresh()
                 .splineToLinearHeading(new Pose2d(new Vector2d(ballX, ballY), Math.toRadians(180)), Math.toRadians(180))
-                .stopAndAdd(robot.sampleActions.grabBall(robot))
+                .stopAndAdd(robot.sampleActions.intakeComplete(robot))
                 .strafeToConstantHeading(new Vector2d(ballX - 5, ballY))
-                .stopAndAdd(robot.sampleActions.grabBall(robot))
+                .stopAndAdd(robot.sampleActions.intakeComplete(robot))
                 .strafeToConstantHeading(new Vector2d(ballX - 10, ballY))
-                .stopAndAdd(robot.sampleActions.grabBall(robot))
+                .stopAndAdd(robot.sampleActions.intakeComplete(robot))
                 .strafeToConstantHeading(new Vector2d(scoreX, scoreY))
                 .stopAndAdd(robot.sampleActions.aimAtGoal(tx, ty, robot))
                 .stopAndAdd(robot.sampleActions.launch(scoreX,scoreY,robot))
