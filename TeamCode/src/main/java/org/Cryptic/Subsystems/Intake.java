@@ -22,6 +22,21 @@ public class Intake extends Subsystem {
 
     public NormalizedColorSensor colorSensor;
 
+
+
+    private int counter = 0;
+
+    public static final double INTAKE1 = 0.0;
+    public static final double INTAKE2 = 0.0;
+    public static final double INTAKE3 = 0.0;
+    public static final double OUTTAKE1 = 0.0;
+    public static final double OUTTAKE2 = 0.0;
+    public static final double OUTTAKE3 = 0.0;
+
+    public static final double[] positions = {INTAKE1, INTAKE2, INTAKE3,OUTTAKE1,OUTTAKE2,OUTTAKE3};
+
+
+
     @Override
     public void init(LinearOpMode opmode) throws InterruptedException {
         colorSensor = opmode.hardwareMap.get(NormalizedColorSensor.class, "colorSensor");
@@ -39,21 +54,46 @@ public class Intake extends Subsystem {
 
 
 
-    public void indexIndexer() { // this is just half of the grabBall method.
+    public void colorIndexIndexer() { // this is just half of the grabBall method.
         // basically, the way we are using grabBall, it always indexes everytime we click right trigger (and run grab ball) even if we miss
         // so if u look in TestTeleop, maybe we can auto index everything (based on motif too) just by clicing a button
 
-        boolean isGreen;
+        boolean isGreen = false;
+        boolean isDetected = false;
+
         NormalizedRGBA res = colorSensor.getNormalizedColors();
         float[] hsv = new float[3];
-        Color.RGBToHSV((int) (res.red * 256), (int) (res.green * 256), (int) (res.blue * 256), hsv);
-        // only hue, hsv[0], matters
+        Color.RGBToHSV(
+                (int) (res.red * 255),
+                (int) (res.green * 255),
+                (int) (res.blue * 255),
+                hsv
+        );
+
         int purpleHue = 270;
         int greenHue = 120;
-        if (Math.abs(hsv[0] - purpleHue) > Math.abs(hsv[0] - greenHue)) {
-            isGreen = true;
-        } else {
-            isGreen = false;
+
+        int tolerance = 30;
+
+        double distToPurple = Math.abs(hsv[0] - purpleHue);
+        double distToGreen = Math.abs(hsv[0] - greenHue);
+
+        if (distToPurple < tolerance || distToGreen < tolerance) {
+            isDetected = true;
+
+            isGreen = distToGreen < distToPurple;
+        }
+
+
+        if (isDetected) {
+            double currentPosition = positions[counter];
+            counter++;
+            indexServo.setPosition(currentPosition);
+
+            if (counter == 6) {
+                counter = 0;
+            }
+
         }
 
 
@@ -63,13 +103,11 @@ public class Intake extends Subsystem {
     }
 
 
-    public void intaker(double rpm) { // color sensor is used
-
-        double ticksPerSecond = rpm * CPR / 60.0;
-
-        bandMotor.setVelocity(ticksPerSecond);
+    public void indexIndexer() {
 
     }
+
+
 
     public void grabBall(double rpm) { // color sensor is used
         boolean isGreen;
@@ -102,6 +140,34 @@ public class Intake extends Subsystem {
 
         this.robot.currentBalls[this.robot.currentIndex] = (isGreen ? 1 : 0);
         // note that the one just added is the current index now
+    }
+
+
+
+
+
+    public void intaker(double rpm) { // color sensor is used
+
+        double ticksPerSecond = rpm * CPR / 60.0;
+
+        bandMotor.setVelocity(ticksPerSecond);
+
+    }
+
+
+
+    private enum Pos {
+        INTAKE1(0),
+        INTAKE2(0),
+        INTAKE3(0),
+        OUTTAKE1(0),
+        OUTTAKE2(0),
+        OUTTAKE3(0);
+
+        public final double pos;
+            Pos(double pos) {
+                this.pos = pos;
+            }
     }
 
 
