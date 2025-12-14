@@ -28,7 +28,6 @@ public class Intake extends Subsystem {
 
         bandMotor = opmode.hardwareMap.get(DcMotorEx.class, "bandMotor");
         indexServo = opmode.hardwareMap.get(Servo.class, "indexServo");
-        indexServo.setPosition(0.0);
 
         bandMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
     }

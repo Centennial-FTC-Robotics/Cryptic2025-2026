@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.Servo;
 
 
 import org.Cryptic.Robot;
@@ -56,16 +57,43 @@ public class TestTeleOp extends LinearOpMode {
 
         ColorSensor colorSensor = hardwareMap.get(ColorSensor.class, "colorSensor");
 
+        Servo indexServo = hardwareMap.get(Servo.class, "indexServo");
+        Servo transferServo = hardwareMap.get(Servo.class, "transferServo");
+
+        DcMotorEx powerMotor = hardwareMap.get(DcMotorEx.class, "powerMotor");
+
+        DcMotorEx rotateMotor = hardwareMap.get(DcMotorEx.class,"rotateMotor");
+        rotateMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         leftFront.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
         leftBack.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
         rightBack.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
         rightFront.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
 
+        double CPR = 145.6;
+
+        double ticksPerSecond = 850 * CPR / 60.0;
+
+        double SERVO_BOTTOM = 0.5;
+        double SERVO_TOP = 0.25;
+
+        boolean servoIsTop = false; // starts at bottom
+
+
+
+
 
 
         waitForStart();
+        indexServo.setPosition(0.01);
+        transferServo.setPosition(SERVO_BOTTOM);
+
+
         while (opModeIsActive()) {
+
+            rotateMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+
             TelemetryPacket packet = new TelemetryPacket();
 
             drivePad.readButtons();
@@ -77,20 +105,37 @@ public class TestTeleOp extends LinearOpMode {
             robot.intake.update();
             robot.outtake.update();
 
-            if (gamepad1.right_trigger >= 0.5) {
+
+            if (gamepad1.right_trigger >= 0.7 && gamepad2.left_trigger >= 0.7) {
+                bandMotor.setPower(0.0);
+            } else if (gamepad1.right_trigger >= 0.7) {
                 robot.intake.intakeBall(850); // setup rpm later and constnats
+            }  else if (gamepad2.left_trigger >= 0.7) {
+                robot.intake.intakeBall(-850); // setup rpm later and constnats
             } else {
                 bandMotor.setPower(0.0);
             }
 
+
+
+
+            if (gamepad1.left_trigger >= 0.7) {
+                //powerMotor.setVelocity(ticksPerSecond);
+                powerMotor.setPower(-1.0);
+            } else {
+                powerMotor.setPower(0.0);
+            }
+/*
             if (drivePad.wasJustPressed(GamepadKeys.Button.Y)) {
                 robot.intake.rotateToVacantSpot();
-
             }
+
 
             if (drivePad.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
                 robot.intake.scanBallColor();
             }
+
+ */
 
             leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
             leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
@@ -151,15 +196,48 @@ public class TestTeleOp extends LinearOpMode {
 */
 
 
-            // Outtake actually launch
-            if (drivePad.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
-                robot.outtake.launch(72.0,-72.0,robot.dt.drivebase);
+            if (intakePad.wasJustPressed(GamepadKeys.Button.B)) {
+                indexServo.setPosition(0.01);
             }
 
-            // Read motif
-            if (drivePad.wasJustPressed(GamepadKeys.Button.A)) {
-                robot.camera.getMotif();
+            if (intakePad.wasJustPressed(GamepadKeys.Button.Y)) {
+                indexServo.setPosition((0.33)); // a little higher
             }
+
+            if (intakePad.wasJustPressed(GamepadKeys.Button.X)) {
+                indexServo.setPosition(0.67);
+            }
+
+            if (intakePad.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
+                indexServo.setPosition(0.17); // lower
+            }
+
+            if (intakePad.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
+                indexServo.setPosition(0.5); // slightl lower
+            }
+
+            // dpad up (0,357) to (0,592)
+
+            if (intakePad.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
+                indexServo.setPosition(0.84); //
+            }
+
+            // Outtake actually launch
+
+
+
+
+
+            if (drivePad.wasJustPressed(GamepadKeys.Button.A)) {
+                servoIsTop = !servoIsTop; // toggle state
+
+                if (servoIsTop) {
+                    transferServo.setPosition(SERVO_TOP);
+                } else {
+                    transferServo.setPosition(SERVO_BOTTOM);
+                }
+            }
+
 
             dashboard.sendTelemetryPacket(packet);
             telemetry.update();

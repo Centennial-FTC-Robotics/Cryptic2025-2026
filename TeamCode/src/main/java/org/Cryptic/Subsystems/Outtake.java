@@ -18,9 +18,9 @@ public class Outtake extends Subsystem {
 
     public Servo transferServo;
 
-    public static final double liftUp = 0.33; // TODO
+    public static final double liftUp = 0.3; // TODO
 
-    public static final double rest = 0.0;
+    public static final double rest = 0.55;
 
     public DcMotorEx powerMotor;  // shooter flywheel
 
@@ -42,6 +42,9 @@ public class Outtake extends Subsystem {
 
         rotateMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rotateMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        rotateMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE); // take away later
+
 
         powerMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         powerMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -161,7 +164,6 @@ public class Outtake extends Subsystem {
         indexServo.setPosition(pos);
         // TODO does bandMotor need to move as well?
 
-        transferServo.setPosition(liftUp); // TODO
     }
 
     // to be used in conjunction with aimRotateMotorAprilTag
@@ -208,6 +210,7 @@ public class Outtake extends Subsystem {
             double dist = Math.hypot(dx, dy) - 3;
 
             prepareBallShot();
+            transferServo.setPosition(liftUp); // TODO
             aimRotateMotor(dx, dy, Drive);
             aimAngleServo(dist);
             executeLaunchSpeed(dist);
