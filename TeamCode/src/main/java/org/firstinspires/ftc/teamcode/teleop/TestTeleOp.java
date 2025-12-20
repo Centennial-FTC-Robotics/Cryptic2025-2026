@@ -60,6 +60,12 @@ public class TestTeleOp extends LinearOpMode {
         Servo indexServo = hardwareMap.get(Servo.class, "indexServo");
         Servo transferServo = hardwareMap.get(Servo.class, "transferServo");
 
+        Servo angleServo = hardwareMap.get(Servo.class, "angleServo");
+
+        double ANGLE_ONE = 0.65;
+        double ANGLE_TWO = 0.5;
+
+
         DcMotorEx powerMotor = hardwareMap.get(DcMotorEx.class, "powerMotor");
 
         DcMotorEx rotateMotor = hardwareMap.get(DcMotorEx.class,"rotateMotor");
@@ -88,6 +94,12 @@ public class TestTeleOp extends LinearOpMode {
         indexServo.setPosition(0.01);
         transferServo.setPosition(SERVO_BOTTOM);
 
+        angleServo.setPosition(0.0);
+
+        double angleServoPos = 0.0; // starting position
+        double SERVO_STEP = 0.0035;
+
+
 
         while (opModeIsActive()) {
 
@@ -114,6 +126,14 @@ public class TestTeleOp extends LinearOpMode {
                 robot.intake.intakeBall(-850); // setup rpm later and constnats
             } else {
                 bandMotor.setPower(0.0);
+            }
+
+            if (gamepad2.left_bumper) {
+                angleServo.setPosition(ANGLE_ONE);
+                angleServoPos = ANGLE_ONE;
+            } else if (gamepad2.right_bumper) {
+                angleServo.setPosition(ANGLE_TWO);
+                angleServoPos = ANGLE_TWO;
             }
 
 
@@ -223,6 +243,18 @@ public class TestTeleOp extends LinearOpMode {
             }
 
             // Outtake actually launch
+
+
+            double stickY = -gamepad2.right_stick_y;
+
+            if (Math.abs(stickY) > 0.1) {
+                angleServoPos += stickY * SERVO_STEP;
+
+                // clamp between valid servo range
+                angleServoPos = Math.max(0.0, Math.min(1.0, angleServoPos));
+
+                angleServo.setPosition(angleServoPos);
+            }
 
 
 
