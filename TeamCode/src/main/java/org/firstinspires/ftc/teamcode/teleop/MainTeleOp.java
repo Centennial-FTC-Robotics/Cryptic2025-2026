@@ -75,14 +75,14 @@ public class MainTeleOp extends LinearOpMode {
             robot.outtake.update();
 
             if (gamepad1.right_trigger >= 0.5) {
-                robot.intake.intakeComplete(850); // setup rpm later and constnat
+                robot.intake.intaker(850); // setup rpm later and constnat
             } else {
                 bandMotor.setPower(0.0);
             }
 
 
             if (gamepad1.left_trigger >= 0.5) {
-                robot.intake.intakeComplete(-850); // setup rpm later and constnats
+                robot.intake.intaker(-850); // setup rpm later and constnats
             } else {
                 bandMotor.setPower(0.0);
             }

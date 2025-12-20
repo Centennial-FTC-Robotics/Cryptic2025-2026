@@ -87,15 +87,10 @@ public class TestTeleOp extends LinearOpMode {
             } else {
                 bandMotor.setPower(0.0);
             }
-
-
-            if () {
-                robot.intake.colorIndexIndexer(cooldown);
-            }
-
+/*
             while (System.currentTimeMillis() - startTime > 500) {
                 robot.intake.colorIndexIndexer(true);
-            }
+            }*/
 
 
             leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
