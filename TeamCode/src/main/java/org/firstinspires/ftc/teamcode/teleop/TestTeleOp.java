@@ -121,11 +121,11 @@ public class TestTeleOp extends LinearOpMode {
             robot.outtake.update();
 
 
-            if (gamepad1.right_trigger >= 0.7 && gamepad2.left_trigger >= 0.7) {
+            if (gamepad1.right_trigger >= 0.2 && gamepad2.left_trigger >= 0.2) {
                 bandMotor.setPower(0.0);
-            } else if (gamepad1.right_trigger >= 0.7) {
+            } else if (gamepad1.right_trigger >= 0.2) {
                 robot.intake.intakeBall(850); // setup rpm later and constnats
-            }  else if (gamepad2.left_trigger >= 0.7) {
+            }  else if (gamepad2.left_trigger >= 0.2) {
                 robot.intake.intakeBall(-850); // setup rpm later and constnats
             } else {
                 bandMotor.setPower(0.0);

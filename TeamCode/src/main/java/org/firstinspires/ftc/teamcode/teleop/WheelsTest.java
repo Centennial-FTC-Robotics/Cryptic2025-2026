@@ -93,7 +93,7 @@ public class WheelsTest extends LinearOpMode {
             }
 
             if (gamepad2.right_trigger >= 0.15) {
-                robot.intake.intaker(850); // setup rpm later and constnats
+                robot.intake.intakeBall(850); // setup rpm later and constnats
             }
 
 

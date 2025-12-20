@@ -29,7 +29,7 @@ public class SampleActions {
         public boolean run(@NonNull TelemetryPacket packet) {
             if (!initialized) {
                 initialized = true;
-                robot.intake.intaker(850); // adjust RPM later
+                robot.intake.intakeComplete(850); // adjust RPM later
                 initTime();
             }
             return (!hasBeenTime(300));

@@ -73,7 +73,7 @@ public class TestTeleOpRed extends LinearOpMode {
             }
 
             if (gamepad2.right_trigger >= 0.15) {
-                robot.intake.intaker(850); // setup rpm later and constnats
+                robot.intake.intakeComplete(850); // setup rpm later and constnats
             }
 
             robot.dt.drivebase.setDrivePowers(new PoseVelocity2d(
