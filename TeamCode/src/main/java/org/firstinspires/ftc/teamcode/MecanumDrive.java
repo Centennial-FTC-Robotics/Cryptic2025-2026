@@ -251,9 +251,9 @@ public final class MecanumDrive {
 
 
         // reverse motor directions if needed
-        /*
+
         rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightBack.setDirection(DcMotorSimple.Direction.REVERSE);*/
+        rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
 
@@ -309,8 +309,8 @@ public final class MecanumDrive {
 
         leftFront.setPower(wheelVels.leftFront.get(0) / maxPowerMag);
         leftBack.setPower(wheelVels.leftBack.get(0) / maxPowerMag);
-        rightBack.setPower(-1 * wheelVels.rightBack.get(0) / maxPowerMag); // TODO change to -1 if needed
-        rightFront.setPower(-1 * wheelVels.rightFront.get(0) / maxPowerMag); // TODO
+        rightBack.setPower(wheelVels.rightBack.get(0) / maxPowerMag);
+        rightFront.setPower(wheelVels.rightFront.get(0) / maxPowerMag);
     }
 
 
