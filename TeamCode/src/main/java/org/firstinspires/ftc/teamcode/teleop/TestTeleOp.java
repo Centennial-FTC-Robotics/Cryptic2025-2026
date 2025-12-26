@@ -46,7 +46,6 @@ public class TestTeleOp extends LinearOpMode {
 
         boolean autoAimMode = true;
 
-
         DcMotorEx leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
         DcMotorEx leftBack = hardwareMap.get(DcMotorEx.class, "leftBack");
         DcMotorEx rightBack = hardwareMap.get(DcMotorEx.class, "rightBack");
@@ -78,6 +77,9 @@ public class TestTeleOp extends LinearOpMode {
         // rightBack.setDirection(DcMotorEx.Direction.FORWARD);
 
         boolean cooldown = false;
+
+        // if needed:
+        // rightBack.setDirection(DcMotorEx.Direction.FORWARD);
 
         double CPR = 145.6;
 
