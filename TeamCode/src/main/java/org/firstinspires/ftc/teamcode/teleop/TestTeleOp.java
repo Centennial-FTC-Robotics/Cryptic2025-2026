@@ -90,11 +90,6 @@ public class TestTeleOp extends LinearOpMode {
 
         boolean servoIsTop = false; // starts at bottom
 
-
-
-
-
-
         waitForStart();
         long startTime;
         indexServo.setPosition(0.01);
@@ -110,7 +105,6 @@ public class TestTeleOp extends LinearOpMode {
         while (opModeIsActive()) {
 
             rotateMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
 
             TelemetryPacket packet = new TelemetryPacket();
 
@@ -186,7 +180,8 @@ public class TestTeleOp extends LinearOpMode {
             telemetry.addData("green: ",colorSensor.green());
             telemetry.addData("blue: ",colorSensor.blue());
             telemetry.addData("currentIndex, currentBalls: ", robot.currentIndex+", "+ Arrays.toString(robot.currentBalls));
-/*
+            telemetry.addData("motif: ", robot.motif);
+            /*
 
 
             double max;
@@ -224,7 +219,12 @@ public class TestTeleOp extends LinearOpMode {
 
             // Outtake actually launch
             if (drivePad.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
-                robot.outtake.launch(72.0,-72.0,robot.dt.drivebase);
+                robot.outtake.launch(72.0,-72.0,robot.dt.drivebase); // TODO change coords of 0,0 to landing zone
+            }
+
+            // aiming with april tag?
+            if (drivePad.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
+                robot.outtake.launchAprilTag(true); // TODO make sure ok to hard code
             }
 
             // Read motif

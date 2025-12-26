@@ -71,7 +71,7 @@ public class Outtake extends Subsystem {
         double servoPosition = launchAngle / Math.PI; // maps [0, π] to [0, 1]
         servoPosition = Math.max(0.0, Math.min(1.0, servoPosition));
 
-        angleServo.setPosition(servoPosition); // test later
+        angleServo.setPosition(servoPosition); // TODO test later
     }
 
     // this code makes it so that turret is angled birds-eye view
@@ -166,8 +166,7 @@ public class Outtake extends Subsystem {
 
         bandMotor.setVelocity(500 * CPR / 60.0);
         indexServo.setPosition(pos);
-        // TODO does bandMotor need to move as well? Yes, to keep balls in
-
+        bandMotor.setVelocity(0.0);
 
     }
 
@@ -186,6 +185,7 @@ public class Outtake extends Subsystem {
             for (int i=0; i<3; ++i) if (this.robot.currentBalls[i] != -1) numBalls++;
 
             prepareBallShot();
+            transferServo.setPosition(liftUp);
             aimRotateMotorAprilTag(blueTeam);
             aimAngleServo(horizontalDist);
             executeLaunchSpeed(horizontalDist);
@@ -219,6 +219,7 @@ public class Outtake extends Subsystem {
             aimRotateMotor(dx, dy, Drive);
             aimAngleServo(dist);
             executeLaunchSpeed(dist);
+            transferServo.setPosition(rest);
             this.robot.targetIndex = (this.robot.targetIndex + 1) % 3;
         }
 
