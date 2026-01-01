@@ -187,9 +187,6 @@ public class TestTeleOp extends LinearOpMode {
             }
 
  */
-            if (drivePad.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
-                robot.outtake.transfer();
-            }
 
             leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
             leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
