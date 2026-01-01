@@ -30,6 +30,7 @@ public class Intake extends Subsystem {
         indexServo = opmode.hardwareMap.get(Servo.class, "indexServo");
 
         bandMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        indexServo.setPosition(0.5);
     }
 
     public void rotateToVacantSpot() {

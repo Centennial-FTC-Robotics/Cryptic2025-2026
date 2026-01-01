@@ -52,7 +52,10 @@ public class TestTeleOp extends LinearOpMode {
         DcMotorEx rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
 
         DcMotorEx bandMotor = hardwareMap.get(DcMotorEx.class, "bandMotor");
+        DcMotorEx encoder = hardwareMap.get(DcMotorEx.class, "spinEncoder");
         bandMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        encoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        encoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         ColorSensor colorSensor = hardwareMap.get(ColorSensor.class, "colorSensor");
 
@@ -85,17 +88,14 @@ public class TestTeleOp extends LinearOpMode {
 
         double ticksPerSecond = 850 * CPR / 60.0;
 
-        double SERVO_BOTTOM = 0.5;
-        double SERVO_TOP = 0.25;
-
         boolean servoIsTop = false; // starts at bottom
 
         waitForStart();
         long startTime;
-        indexServo.setPosition(0.01);
-        transferServo.setPosition(SERVO_BOTTOM);
 
-        angleServo.setPosition(0.0);
+        int[] targetPosition = {0, 8192*120/360, 8192*240/360, 8192*300/360, 8192*180/360, 8192*60/360, 0};
+        boolean rotating = false;
+        int spindexerStep = 0;
 
         double angleServoPos = 0.0; // starting position
         double SERVO_STEP = 0.0035;
@@ -145,6 +145,37 @@ public class TestTeleOp extends LinearOpMode {
             } else {
                 powerMotor.setPower(0.0);
             }
+
+            if (drivePad.wasJustPressed(GamepadKeys.Button.Y)) {
+                rotating = true;
+            }
+            if (rotating) {
+                int current = encoder.getCurrentPosition();
+                int error;
+                bandMotor.setVelocity(100 * CPR / 60);
+                if (spindexerStep < 3) {
+                    error = targetPosition[spindexerStep+1] - current;
+                    if (error <= 0) {
+                        spindexerStep++;
+                        indexServo.setPosition(0.5); // stop
+                        rotating = false;
+                    } else {
+                        double power = Math.max(0.1, error / 7000.0);
+                        indexServo.setPosition(0.5 + power * 0.5);
+                    }
+                } else {
+                    error = current - targetPosition[spindexerStep+1];
+                    if (error <= 0) {
+                        spindexerStep++;
+                        indexServo.setPosition(0.5); // stop
+                        rotating = false;
+                    } else {
+                        double power = Math.max(0.1, error / 7000.0);
+                        indexServo.setPosition(0.5 - power * 0.5);
+                    }
+                }
+            }
+            spindexerStep = spindexerStep % 6;
 /*
             if (drivePad.wasJustPressed(GamepadKeys.Button.Y)) {
                 robot.intake.rotateToVacantSpot();
@@ -156,6 +187,9 @@ public class TestTeleOp extends LinearOpMode {
             }
 
  */
+            if (drivePad.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
+                robot.outtake.transfer();
+            }
 
             leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
             leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
@@ -181,6 +215,8 @@ public class TestTeleOp extends LinearOpMode {
             telemetry.addData("blue: ",colorSensor.blue());
             telemetry.addData("currentIndex, currentBalls: ", robot.currentIndex+", "+ Arrays.toString(robot.currentBalls));
             telemetry.addData("motif: ", robot.motif);
+            telemetry.addData("Encoder", encoder.getCurrentPosition());
+            telemetry.addData("Step", spindexerStep);
             /*
 
 
