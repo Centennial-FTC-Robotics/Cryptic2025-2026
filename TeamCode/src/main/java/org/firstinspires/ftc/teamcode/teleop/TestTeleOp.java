@@ -190,7 +190,7 @@ public class TestTeleOp extends LinearOpMode {
             telemetry.addData("rotating", rotating);
             robot.dt.drivebase.updatePoseEstimate();
             telemetry.addData("currentX, currentY: ", robot.dt.drivebase.localizer.getPose().position.x+", "+robot.dt.drivebase.localizer.getPose().position.y);
-            double robotAngle = drive.localizer.getPose().heading.log(); // radians
+            double robotAngle = robot.dt.drivebase.localizer.getPose().heading.log(); // radians
             telemetry.addData("heading", robotAngle+" radians");
             /*
 

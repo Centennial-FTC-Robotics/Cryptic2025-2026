@@ -169,8 +169,7 @@ public class Outtake extends Subsystem {
         this.robot.currentBalls[shootIndex] = -1;
 
         bandMotor.setVelocity(500 * CPR / 60.0);
-        // indexServo.setPosition(pos);
-        encoderSpin((shootIndex*2-3)%6);
+        encoderSpin((shootIndex*2-3)%6); // since pos is all 6 intake/outtake positions
         bandMotor.setVelocity(0.0);
 
     }
@@ -185,51 +184,38 @@ public class Outtake extends Subsystem {
         }
         double horizontalDist = offset.y - 3.0;
 
-        int numBalls = 3;
-        while (numBalls > 0) {
-            for (int i=0; i<3; ++i) if (this.robot.currentBalls[i] != -1) numBalls++;
+        prepareBallShot();
+        transferServo.setPosition(liftUp);
+        aimRotateMotorAprilTag(blueTeam);
+        aimAngleServo(horizontalDist);
+        executeLaunchSpeed(horizontalDist);
 
-            prepareBallShot();
-            transferServo.setPosition(liftUp);
-            aimRotateMotorAprilTag(blueTeam);
-            aimAngleServo(horizontalDist);
-            executeLaunchSpeed(horizontalDist);
-
-            this.robot.targetIndex = (this.robot.targetIndex + 1) % 3;
-            transferServo.setPosition(rest);
-        }
+        this.robot.targetIndex = (this.robot.targetIndex + 1) % 3;
+        transferServo.setPosition(rest);
 
         this.robot.currentIndex = 0;
-        indexServo.setPosition(0.5);
     }
 
 
 
     // tx is x location of field goal and ty is y location
     public void launch(double tx, double ty, MecanumDrive Drive) { // using georgy's math
-        int numBalls = 3;
-        while (numBalls > 0) {
-            for (int i=0; i<3; ++i) numBalls += (this.robot.currentBalls[i] == -1 ? 0 : 1);
-            prepareBallShot();
+        Drive.updatePoseEstimate();
+        Pose2d currentPos = Drive.localizer.getPose();
+        double dx = tx - currentPos.position.x;
+        double dy = ty - currentPos.position.y;
+        // we should prob tune power
+        double dist = Math.hypot(dx, dy) - 3;
 
-            Drive.updatePoseEstimate();
-            Pose2d currentPos = Drive.localizer.getPose();
-            double dx = tx - currentPos.position.x;
-            double dy = ty - currentPos.position.y;
-            // we should prob tune power
-            double dist = Math.hypot(dx, dy) - 3;
-
-            prepareBallShot();
-            transferServo.setPosition(liftUp); // TODO
-            aimRotateMotor(dx, dy, Drive);
-            aimAngleServo(dist);
-            executeLaunchSpeed(dist);
-            transferServo.setPosition(rest);
-            this.robot.targetIndex = (this.robot.targetIndex + 1) % 3;
-        }
+        prepareBallShot();
+        transferServo.setPosition(liftUp); // TODO
+        aimRotateMotor(dx, dy, Drive);
+        aimAngleServo(dist);
+        executeLaunchSpeed(dist);
+        transferServo.setPosition(rest);
+        this.robot.targetIndex = (this.robot.targetIndex + 1) % 3;
 
         this.robot.currentIndex = 0;
-        indexServo.setPosition(0.5);
         bandMotor.setVelocity(0);
     }
 
