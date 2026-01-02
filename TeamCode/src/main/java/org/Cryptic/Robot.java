@@ -31,7 +31,7 @@ public class Robot {
     };
     public SampleActions sampleActions = new SampleActions();
 
-    public int currentIndex = 0; // index of the intake i think
+    public int currentIndex = 0; // index at either intake/outtake positions
     public int targetIndex; // index of motif to shoot
 
     public int[] currentBalls = {-1, -1, -1}; // 1 for green 0 for purple -1 for empty
@@ -39,10 +39,16 @@ public class Robot {
 
     public int motif = 21; // 21 for GPP, 22 for PGP, 23 for PPG
 
+    public int[] targetPosition2 = {0, 8192*120/360, 8192*240/360, 8192*300/360, 8192*180/360, 8192*60/360, 0};
+    public int[] targetPosition = {0, 8192/6, 8192*2/6, 8192*3/6, 8192*4/6, 8192*5/6};
+    // intake0, outtake2, intake1, outtake0, intake2, outtake1
+    public boolean rotating = false;
+
     public void initialize(LinearOpMode opmode) throws InterruptedException {
 
         for(Subsystem subsystem : subsystems) {
             subsystem.preInit(opmode, this);
         }
     }
+
 }

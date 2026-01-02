@@ -1,6 +1,7 @@
 package org.Cryptic.Subsystems;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
@@ -21,6 +22,9 @@ public class Intake extends Subsystem {
 
     public ColorSensor colorSensor;
 
+    public DcMotorEx encoder;
+    int spindexerStep = 0;
+
     @Override
     public void init(LinearOpMode opmode) throws InterruptedException {
         colorSensor = opmode.hardwareMap.get(ColorSensor.class, "colorSensor");
@@ -29,6 +33,9 @@ public class Intake extends Subsystem {
         bandMotor = opmode.hardwareMap.get(DcMotorEx.class, "bandMotor");
         indexServo = opmode.hardwareMap.get(Servo.class, "indexServo");
 
+        encoder = opmode.hardwareMap.get(DcMotorEx.class, "spinEncoder");
+        encoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        encoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         bandMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         indexServo.setPosition(0.5);
     }
@@ -73,4 +80,35 @@ public class Intake extends Subsystem {
         rotateToVacantSpot();
     }
 
+    public void encoderSpin(int pos) {
+        int current = encoder.getCurrentPosition();
+        int error;
+        bandMotor.setVelocity(100 * CPR / 60);
+        if (pos > this.robot.currentIndex) {
+            // our goal is positive
+            error = this.robot.targetPosition[pos] - current; // always positive, unless going from
+
+            if (error <= 0) {
+                spindexerStep++;
+                indexServo.setPosition(0.5); // stop
+                this.robot.rotating = false;
+                this.robot.currentIndex = pos;
+            } else {
+                double power = Math.max(0.1, error / 7000.0);
+                indexServo.setPosition(0.5 + power * 0.5);
+            }
+        } else if (pos < this.robot.currentIndex) {
+            // our goal is negative
+            error = current - this.robot.targetPosition[pos];
+            if (error <= 0) {
+                spindexerStep++;
+                indexServo.setPosition(0.5); // stop
+                this.robot.rotating = false;
+                this.robot.currentIndex = pos;
+            } else {
+                double power = Math.max(0.1, error / 7000.0);
+                indexServo.setPosition(0.5 - power * 0.5);
+            }
+        }
+    }
 }

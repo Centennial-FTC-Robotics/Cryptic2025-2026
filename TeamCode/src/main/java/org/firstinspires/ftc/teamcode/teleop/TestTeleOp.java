@@ -93,14 +93,10 @@ public class TestTeleOp extends LinearOpMode {
         waitForStart();
         long startTime;
 
-        int[] targetPosition = {0, 8192*120/360, 8192*240/360, 8192*300/360, 8192*180/360, 8192*60/360, 0};
         boolean rotating = false;
-        int spindexerStep = 0;
 
         double angleServoPos = 0.0; // starting position
         double SERVO_STEP = 0.0035;
-
-
 
         while (opModeIsActive()) {
 
@@ -147,35 +143,13 @@ public class TestTeleOp extends LinearOpMode {
             }
 
             if (drivePad.wasJustPressed(GamepadKeys.Button.Y)) {
-                rotating = true;
+                robot.rotating = true;
             }
-            if (rotating) {
-                int current = encoder.getCurrentPosition();
-                int error;
-                bandMotor.setVelocity(100 * CPR / 60);
-                if (spindexerStep < 3) {
-                    error = targetPosition[spindexerStep+1] - current;
-                    if (error <= 0) {
-                        spindexerStep++;
-                        indexServo.setPosition(0.5); // stop
-                        rotating = false;
-                    } else {
-                        double power = Math.max(0.1, error / 7000.0);
-                        indexServo.setPosition(0.5 + power * 0.5);
-                    }
-                } else {
-                    error = current - targetPosition[spindexerStep+1];
-                    if (error <= 0) {
-                        spindexerStep++;
-                        indexServo.setPosition(0.5); // stop
-                        rotating = false;
-                    } else {
-                        double power = Math.max(0.1, error / 7000.0);
-                        indexServo.setPosition(0.5 - power * 0.5);
-                    }
-                }
+
+            if (robot.rotating) {
+                robot.intake.encoderSpin((robot.currentIndex+1)%6);
             }
-            spindexerStep = spindexerStep % 6;
+
 /*
             if (drivePad.wasJustPressed(GamepadKeys.Button.Y)) {
                 robot.intake.rotateToVacantSpot();
@@ -213,7 +187,11 @@ public class TestTeleOp extends LinearOpMode {
             telemetry.addData("currentIndex, currentBalls: ", robot.currentIndex+", "+ Arrays.toString(robot.currentBalls));
             telemetry.addData("motif: ", robot.motif);
             telemetry.addData("Encoder", encoder.getCurrentPosition());
-            telemetry.addData("Step", spindexerStep);
+            telemetry.addData("rotating", rotating);
+            robot.dt.drivebase.updatePoseEstimate();
+            telemetry.addData("currentX, currentY: ", robot.dt.drivebase.localizer.getPose().position.x+", "+robot.dt.drivebase.localizer.getPose().position.y);
+            double robotAngle = drive.localizer.getPose().heading.log(); // radians
+            telemetry.addData("heading", robotAngle+" radians");
             /*
 
 
@@ -253,6 +231,13 @@ public class TestTeleOp extends LinearOpMode {
             // Outtake actually launch
             if (drivePad.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
                 robot.outtake.launch(72.0,-72.0,robot.dt.drivebase); // TODO change coords of 0,0 to landing zone
+            }
+
+            if (drivePad.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
+                robot.dt.drivebase.updatePoseEstimate();
+                double dx = -72.0 - robot.dt.drivebase.localizer.getPose().position.x;
+                double dy = 72.0 - robot.dt.drivebase.localizer.getPose().position.y;
+                robot.outtake.aimRotateMotor(dx, dy, robot.dt.drivebase);
             }
 
             // aiming with april tag?

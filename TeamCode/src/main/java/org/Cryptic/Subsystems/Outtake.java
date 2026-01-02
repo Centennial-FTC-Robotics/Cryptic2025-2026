@@ -20,14 +20,17 @@ public class Outtake extends Subsystem {
 
     public DcMotorEx bandMotor;
 
-    public static final double liftUp = 0.33; // TODO
+    public DcMotorEx encoder;
+    public static final double liftUp = 0.29; // TODO
 
-    public static final double rest = 0.55;
+    public static final double rest = 0.5;
 
     public DcMotorEx powerMotor;  // shooter flywheel
 
     double height = 54; // height of back goalpost
     double radius = 5.0;  // radius of ball (be consistent with your units)
+
+    int spindexerStep = 0;
 
     private static final double CPR = 145.6 ; // https://www.gobilda.com/content/spec_sheets/5202-2402-0005_spec_sheet.pdf
 
@@ -39,6 +42,7 @@ public class Outtake extends Subsystem {
         indexServo = opmode.hardwareMap.get(Servo.class, "indexServo");
         transferServo = opmode.hardwareMap.get(Servo.class, "transferServo");
         bandMotor = opmode.hardwareMap.get(DcMotorEx.class, "bandMotor");
+        encoder = opmode.hardwareMap.get(DcMotorEx.class, "spinEncoder");
 
         powerMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         rotateMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -161,11 +165,12 @@ public class Outtake extends Subsystem {
             step++;
             shootIndex = (shootIndex + 1) % 3;
         }
-        double pos = shootIndex / 3.0 + 0.5; if (pos > 1) pos = pos - 1;
+        // double pos = shootIndex / 3.0 + 0.5; if (pos > 1) pos = pos - 1;
         this.robot.currentBalls[shootIndex] = -1;
 
         bandMotor.setVelocity(500 * CPR / 60.0);
-        indexServo.setPosition(pos);
+        // indexServo.setPosition(pos);
+        encoderSpin((shootIndex*2-3)%6);
         bandMotor.setVelocity(0.0);
 
     }
@@ -195,7 +200,7 @@ public class Outtake extends Subsystem {
         }
 
         this.robot.currentIndex = 0;
-        indexServo.setPosition(0.0);
+        indexServo.setPosition(0.5);
     }
 
 
@@ -224,7 +229,39 @@ public class Outtake extends Subsystem {
         }
 
         this.robot.currentIndex = 0;
-        indexServo.setPosition(0.0);
+        indexServo.setPosition(0.5);
         bandMotor.setVelocity(0);
+    }
+
+    public void encoderSpin(int pos) {
+        int current = encoder.getCurrentPosition();
+        int error;
+        bandMotor.setVelocity(100 * CPR / 60);
+        if (pos > this.robot.currentIndex) {
+            // our goal is positive
+            error = this.robot.targetPosition[pos] - current; // always positive, unless going from
+
+            if (error <= 0) {
+                spindexerStep++;
+                indexServo.setPosition(0.5); // stop
+                this.robot.rotating = false;
+                this.robot.currentIndex = pos;
+            } else {
+                double power = Math.max(0.1, error / 7000.0);
+                indexServo.setPosition(0.5 + power * 0.5);
+            }
+        } else if (pos < this.robot.currentIndex) {
+            // our goal is negative
+            error = current - this.robot.targetPosition[pos];
+            if (error <= 0) {
+                spindexerStep++;
+                indexServo.setPosition(0.5); // stop
+                this.robot.rotating = false;
+                this.robot.currentIndex = pos;
+            } else {
+                double power = Math.max(0.1, error / 7000.0);
+                indexServo.setPosition(0.5 - power * 0.5);
+            }
+        }
     }
 }
