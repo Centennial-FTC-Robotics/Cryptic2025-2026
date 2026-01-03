@@ -99,7 +99,7 @@ public class Outtake extends Subsystem {
         // want to rotate turret to targetAngle
         rotateMotor.setTargetPosition(radiansToEncoder(targetAngle));
         rotateMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rotateMotor.setPower(0.4);
+        rotateMotor.setPower(0.2);
     }
 
     // this angles the turret so that in birds eye viw we're aiming the goal
@@ -142,7 +142,7 @@ public class Outtake extends Subsystem {
         double position = encoderToRadians(rotateMotor.getCurrentPosition()) + angleToMove;
         rotateMotor.setTargetPosition(radiansToEncoder(position));
         rotateMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rotateMotor.setPower(0.4);
+        rotateMotor.setPower(0.2);
     }
 
     public void executeLaunchSpeed(double dist) {
