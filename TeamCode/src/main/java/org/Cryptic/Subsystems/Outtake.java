@@ -86,20 +86,24 @@ public class Outtake extends Subsystem {
     * / (this is how turret should be pointing)
      */
     public void aimRotateMotor(double dx, double dy, MecanumDrive drive) {
-        double robotAngle = drive.localizer.getPose().heading.log(); // radians
-        // double turretAngle = rotateMotor.getCurrentPosition();
-        // turretAngle = encoderToRadians(turretAngle);
-        // tan(robotAngle+turretAngle) = dy/dx
-        double targetAngle = Math.atan2(dy, dx);
-        // correct if targetAngle is negative of what it should be
-        if (Math.sin(targetAngle) * dy < 0) {
-            targetAngle = -targetAngle;
-        }
-        targetAngle -= robotAngle;
-        // want to rotate turret to targetAngle
-        rotateMotor.setTargetPosition(radiansToEncoder(targetAngle));
+        double robotAngle = drive.localizer.getPose().heading.toDouble();
+        double fieldTargetAngle = Math.atan2(dy, dx);
+
+        // Relative angle the turret needs to be at
+        double relativeTargetAngle = fieldTargetAngle - robotAngle;
+
+        // Get current turret angle in radians
+        double currentTurretRadians = encoderToRadians(rotateMotor.getCurrentPosition());
+
+        // CRITICAL: Find the shortest path (so it doesn't spin 350 degrees)
+        double deltaAngle = Math.atan2(Math.sin(relativeTargetAngle - currentTurretRadians),
+                Math.cos(relativeTargetAngle - currentTurretRadians));
+
+        double finalTargetRadians = currentTurretRadians + deltaAngle;
+
+        rotateMotor.setTargetPosition(radiansToEncoder(finalTargetRadians));
         rotateMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rotateMotor.setPower(0.2);
+        rotateMotor.setPower(0.2); // TODO testing purposes
     }
 
     // this angles the turret so that in birds eye viw we're aiming the goal
