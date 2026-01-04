@@ -32,7 +32,10 @@ public class Outtake extends Subsystem {
 
     int spindexerStep = 0;
 
-    private static final double CPR = 145.6 ; // https://www.gobilda.com/content/spec_sheets/5202-2402-0005_spec_sheet.pdf
+    private static final double CPR_ROTATE = 145.6 * 40/7; // https://www.gobilda.com/content/spec_sheets/5202-2402-0005_spec_sheet.pdf
+    public static final double CPR_LAUNCH = 145.6;
+    public static final double CPR_BAND = 145.6;
+    // 28 to 160
 
     @Override
     public void init(LinearOpMode opmode) throws InterruptedException {
@@ -85,9 +88,13 @@ public class Outtake extends Subsystem {
     *  /
     * / (this is how turret should be pointing)
      */
-    public void aimRotateMotor(double dx, double dy, MecanumDrive drive) {
+    public void aimRotateMotor(double dx, double dy, MecanumDrive drive) { // difference  between current pos and goal
         double robotAngle = drive.localizer.getPose().heading.toDouble();
         double fieldTargetAngle = Math.atan2(dy, dx);
+//
+//        int testAngle = 5000;
+//        rotateMotor.setTargetPosition(testAngle);
+//        rotateMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         // Relative angle the turret needs to be at
         double relativeTargetAngle = fieldTargetAngle - robotAngle;
@@ -123,17 +130,17 @@ public class Outtake extends Subsystem {
     // this returns a value between pi and -pi then (once CPR is correct)
     // for this to work, turrent encoder 0 should be aligned with "robot facing forward"
     public double encoderToRadians(double encoderValue) {
-        return (encoderValue / CPR) * 2 * Math.PI;
+        return (encoderValue / CPR_ROTATE) * 2 * Math.PI;
     }
 
     public int radiansToEncoder(double radians) {
         double revolutions = radians / (2 * Math.PI);
-        return (int) (CPR * revolutions);
+        return (int) (CPR_ROTATE * revolutions);
     }
 
     public void manuallyUpdateAim(double rpm) { // if auto update fails, click left bumper to
         rotateMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        double ticksPerSecond = rpm * CPR / 60.0;
+        double ticksPerSecond = rpm * CPR_ROTATE / 60.0;
         rotateMotor.setVelocity(ticksPerSecond);
     }
 
@@ -153,15 +160,14 @@ public class Outtake extends Subsystem {
         double launchAngle = Math.atan2(2*height, dist);
         double vel = Math.sqrt(2.0 * 9.81 * height) / Math.sin(launchAngle);
         double rpm = (30.0 / (Math.PI * radius)) * vel;
-        double ticksPerSecond = rpm * CPR / 60.0;
+
+        double ticksPerSecond = rpm * CPR_LAUNCH / 60.0;
 
         powerMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         powerMotor.setVelocity(ticksPerSecond);
     }
 
-    // returns index of the ball shot
-    public void prepareBallShot() {
-        // 21 for GPP, 22 for PGP, 23 for PPG
+    public int calculateOuttakeSlot() {
         int target = ((this.robot.motif - 21) == robot.targetIndex) ? 1 : 0;
         int step = 0;
         int shootIndex = 0;
@@ -172,10 +178,22 @@ public class Outtake extends Subsystem {
         // double pos = shootIndex / 3.0 + 0.5; if (pos > 1) pos = pos - 1;
         this.robot.currentBalls[shootIndex] = -1;
 
-        bandMotor.setVelocity(500 * CPR / 60.0);
-        encoderSpin((shootIndex*2-3)%6); // since pos is all 6 intake/outtake positions
-        bandMotor.setVelocity(0.0);
+        return (shootIndex*2+3)%6;
+    }
 
+    // returns index of the ball shot
+    public void prepareBallShot() {
+        int po = calculateOuttakeSlot();
+        bandMotor.setVelocity(500 * CPR_BAND / 60.0);
+        if (robot.rotatingOuttake) encoderSpin(po); // since pos is all 6 intake/outtake positions
+        if (!robot.rotatingOuttake) bandMotor.setVelocity(0.0);
+
+    }
+
+    public void rotateToOuttakeSlot(int po) {
+        bandMotor.setVelocity(500 * CPR_BAND / 60.0);
+        if (robot.rotatingOuttake) encoderSpin(po); // since pos is all 6 intake/outtake positions
+        if (!robot.rotatingOuttake) bandMotor.setVelocity(0.0);
     }
 
     // to be used in conjunction with aimRotateMotorAprilTag
@@ -224,9 +242,13 @@ public class Outtake extends Subsystem {
     }
 
     public void encoderSpin(int pos) {
+        if (!robot.rotatingOuttake) {
+            indexServo.setPosition(0.5);
+        }
+
         int current = encoder.getCurrentPosition();
         int error;
-        bandMotor.setVelocity(100 * CPR / 60);
+        bandMotor.setVelocity(100 * CPR_BAND / 60);
         if (pos > this.robot.currentIndex) {
             // our goal is positive
             error = this.robot.targetPosition[pos] - current; // always positive, unless going from
@@ -235,9 +257,10 @@ public class Outtake extends Subsystem {
                 spindexerStep++;
                 indexServo.setPosition(0.5); // stop
                 this.robot.rotating = false;
+                this.robot.rotatingOuttake = false;
                 this.robot.currentIndex = pos;
             } else {
-                double power = Math.max(0.1, error / 7000.0);
+                double power = Math.max(robot.SPINDEXER_MIN_SPEED, error / robot.SPINDEXER_SPEED);
                 indexServo.setPosition(0.5 + power * 0.5);
             }
         } else if (pos < this.robot.currentIndex) {
@@ -247,11 +270,15 @@ public class Outtake extends Subsystem {
                 spindexerStep++;
                 indexServo.setPosition(0.5); // stop
                 this.robot.rotating = false;
+                this.robot.rotatingOuttake = false;
                 this.robot.currentIndex = pos;
             } else {
-                double power = Math.max(0.1, error / 7000.0);
+                double power = Math.max(robot.SPINDEXER_MIN_SPEED, error / robot.SPINDEXER_SPEED);
                 indexServo.setPosition(0.5 - power * 0.5);
             }
+        } else {
+            this.robot.rotating = false;
+            this.robot.rotatingOuttake = false;
         }
     }
 }

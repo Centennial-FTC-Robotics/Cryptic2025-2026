@@ -42,14 +42,14 @@ public class Intake extends Subsystem {
 
     public void rotateToVacantSpot() {
         int step = 0;
-        while (this.robot.currentBalls[this.robot.currentIndex] != -1 && step < 3) {
+        while (this.robot.currentBalls[this.robot.currentIntakeIndex] != -1 && step < 3) {
             step++;
-            this.robot.currentIndex = (this.robot.currentIndex + 1) % 3;
+            this.robot.currentIntakeIndex = (this.robot.currentIntakeIndex + 1) % 3;
         }
 
         bandMotor.setVelocity(500 * CPR / 60.0);
-        encoderSpin(this.robot.currentIndex*2); // because of
-        bandMotor.setVelocity(0);
+        if (robot.rotatingIntake) encoderSpin(this.robot.currentIntakeIndex*2);
+        if (!robot.rotatingIntake) bandMotor.setVelocity(0);
     }
 
     public void scanBallColor() {
@@ -63,7 +63,7 @@ public class Intake extends Subsystem {
         if (Math.abs(hsv[0] - purpleHue) > Math.abs(hsv[0] - greenHue)) {
             isGreen = true;
         }
-        this.robot.currentBalls[this.robot.currentIndex] = (isGreen ? 1 : 0);
+        this.robot.currentBalls[this.robot.currentIntakeIndex] = (isGreen ? 1 : 0);
     }
 
     public void intakeBall(double rpm) { // color sensor is used
@@ -79,6 +79,10 @@ public class Intake extends Subsystem {
     }
 
     public void encoderSpin(int pos) {
+        if (!robot.rotatingIntake) {
+            indexServo.setPosition(0.5);
+        }
+
         int current = encoder.getCurrentPosition();
         int error;
         bandMotor.setVelocity(100 * CPR / 60);
@@ -90,9 +94,10 @@ public class Intake extends Subsystem {
                 spindexerStep++;
                 indexServo.setPosition(0.5); // stop
                 this.robot.rotating = false;
+                this.robot.rotatingIntake = false;
                 this.robot.currentIndex = pos;
             } else {
-                double power = Math.max(0.1, error / 7000.0);
+                double power = Math.max(robot.SPINDEXER_MIN_SPEED, error / robot.SPINDEXER_SPEED);
                 indexServo.setPosition(0.5 + power * 0.5);
             }
         } else if (pos < this.robot.currentIndex) {
@@ -102,11 +107,15 @@ public class Intake extends Subsystem {
                 spindexerStep++;
                 indexServo.setPosition(0.5); // stop
                 this.robot.rotating = false;
+                this.robot.rotatingIntake = false;
                 this.robot.currentIndex = pos;
             } else {
-                double power = Math.max(0.1, error / 7000.0);
+                double power = Math.max(robot.SPINDEXER_MIN_SPEED, error / robot.SPINDEXER_SPEED);
                 indexServo.setPosition(0.5 - power * 0.5);
             }
+        } else {
+            this.robot.rotating = false;
+            this.robot.rotatingIntake = false;
         }
     }
 }

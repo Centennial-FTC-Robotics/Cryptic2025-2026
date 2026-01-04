@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.teleop;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
@@ -16,11 +17,12 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 
 import org.Cryptic.Robot;
+import org.Cryptic.Subsystems.Outtake;
 
 import java.util.Arrays;
 
-@TeleOp(name = "TestTeleOp")
-public class TestTeleOp extends LinearOpMode {
+@TeleOp(name = "BlueTeleOp")
+public class BlueTeleOp extends LinearOpMode {
 
     //@Override
     public void runOpMode() throws InterruptedException {
@@ -90,10 +92,15 @@ public class TestTeleOp extends LinearOpMode {
 
         boolean servoIsTop = false; // starts at bottom
 
+        robot.dt.drivebase.localizer.setPose(new Pose2d(0,0,0));
+        angleServo.setPosition(0.0);
+
         waitForStart();
         long startTime;
 
         boolean rotating = false;
+        boolean isTransferUp = false; // change to false after each launch too
+        int outtakePos = 0;
 
         double angleServoPos = 0.0; // starting position
         double SERVO_STEP = 0.0035;
@@ -113,7 +120,6 @@ public class TestTeleOp extends LinearOpMode {
             robot.intake.update();
             robot.outtake.update();
 
-
             if (gamepad1.right_trigger >= 0.2 && gamepad2.left_trigger >= 0.2) {
                 bandMotor.setPower(0.0);
             } else if (gamepad1.right_trigger >= 0.2) {
@@ -124,17 +130,30 @@ public class TestTeleOp extends LinearOpMode {
                 bandMotor.setPower(0.0);
             }
 
-            if (gamepad2.left_bumper) {
-                angleServo.setPosition(ANGLE_ONE);
-                angleServoPos = ANGLE_ONE;
-            } else if (gamepad2.right_bumper) {
-                angleServo.setPosition(ANGLE_TWO);
-                angleServoPos = ANGLE_TWO;
+            // transfer servo
+            if (drivePad.wasJustPressed(GamepadKeys.Button.B)) {
+                if (!isTransferUp) {
+                    isTransferUp = true;
+                    transferServo.setPosition(Outtake.liftUp);
+                } else {
+                    isTransferUp = false;
+                    transferServo.setPosition(Outtake.rest);
+
+                }
             }
 
 
 
+            // angle hood during competition
+//            if (gamepad2.left_bumper) {
+//                angleServo.setPosition(ANGLE_ONE);
+//                angleServoPos = ANGLE_ONE;
+//            } else if (gamepad2.right_bumper) {
+//                angleServo.setPosition(ANGLE_TWO);
+//                angleServoPos = ANGLE_TWO;
+//            }
 
+            // code to give power to flywheel
             if (gamepad1.left_trigger >= 0.7) {
                 //powerMotor.setVelocity(ticksPerSecond);
                 powerMotor.setPower(-1.0);
@@ -142,14 +161,34 @@ public class TestTeleOp extends LinearOpMode {
                 powerMotor.setPower(0.0);
             }
 
+//            if (gamepad2.dpad_right) {
+//                rotateMotor.setPower(0.2);
+//            } else if (gamepad2.dpad_left) {
+//                rotateMotor.setPower(-0.2);
+//            } else {
+//                rotateMotor.setPower(0.0);
+//            }
+
+            if (intakePad.wasJustPressed(GamepadKeys.Button.X)) {
+                robot.rotatingIntake = true;
+            }
+
+            if (robot.rotatingIntake) {
+                robot.intake.rotateToVacantSpot();
+            }
+
             if (drivePad.wasJustPressed(GamepadKeys.Button.Y)) {
-                robot.rotating = true;
+                outtakePos = robot.outtake.calculateOuttakeSlot();
+                robot.rotatingOuttake = true;
             }
 
-            if (robot.rotating) {
-                robot.intake.encoderSpin((robot.currentIndex+1)%6);
+            if (robot.rotatingOuttake) {
+                robot.outtake.rotateToOuttakeSlot(outtakePos);
             }
 
+            if (intakePad.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
+                robot.intake.scanBallColor();
+            }
 /*
             if (drivePad.wasJustPressed(GamepadKeys.Button.Y)) {
                 robot.intake.rotateToVacantSpot();
@@ -161,7 +200,6 @@ public class TestTeleOp extends LinearOpMode {
             }
 
  */
-
             leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
             leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
             rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
@@ -184,14 +222,18 @@ public class TestTeleOp extends LinearOpMode {
             telemetry.addData("red: ",colorSensor.red());
             telemetry.addData("green: ",colorSensor.green());
             telemetry.addData("blue: ",colorSensor.blue());
-            telemetry.addData("currentIndex, currentBalls: ", robot.currentIndex+", "+ Arrays.toString(robot.currentBalls));
+            telemetry.addData("currentIntakeIndex, currentBalls: ", robot.currentIntakeIndex+", "+ Arrays.toString(robot.currentBalls));
+            telemetry.addData("currentIndex", robot.currentIndex);
             telemetry.addData("motif: ", robot.motif);
-            telemetry.addData("Encoder", encoder.getCurrentPosition());
+//            telemetry.addData("Encoder", encoder.getCurrentPosition());
             telemetry.addData("rotating", rotating);
             robot.dt.drivebase.updatePoseEstimate();
             telemetry.addData("currentX, currentY: ", robot.dt.drivebase.localizer.getPose().position.x+", "+robot.dt.drivebase.localizer.getPose().position.y);
             double robotAngle = robot.dt.drivebase.localizer.getPose().heading.log(); // radians
             telemetry.addData("heading", robotAngle+" radians");
+            telemetry.addData("turret heading", robot.outtake.rotateMotor.getCurrentPosition());
+            telemetry.addData("turret target position", robot.outtake.rotateMotor.getTargetPosition());
+            telemetry.addData("turret power", robot.outtake.rotateMotor.getPower());
             /*
 
 
@@ -230,7 +272,8 @@ public class TestTeleOp extends LinearOpMode {
 
             // Outtake actually launch
             if (drivePad.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
-                robot.outtake.launch(72.0,-72.0,robot.dt.drivebase); // TODO change coords of 0,0 to landing zone
+                //robot.outtake.launch(-72.0,72.0,robot.dt.drivebase); // TODO change coords of 0,0 to landing zone
+                isTransferUp = false;
             }
 
             if (drivePad.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {

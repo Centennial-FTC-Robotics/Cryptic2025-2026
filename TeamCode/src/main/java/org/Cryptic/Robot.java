@@ -32,6 +32,9 @@ public class Robot {
     public SampleActions sampleActions = new SampleActions();
 
     public int currentIndex = 0; // index at either intake/outtake positions
+
+    public int currentIntakeIndex = 0;
+    public int currentOuttakeIndex = 0;
     public int targetIndex; // index of motif to shoot
 
     public int[] currentBalls = {-1, -1, -1}; // 1 for green 0 for purple -1 for empty
@@ -43,6 +46,11 @@ public class Robot {
     public int[] targetPosition = {0, 8192/6, 8192*2/6, 8192*3/6, 8192*4/6, 8192*5/6};
     // intake0, outtake2, intake1, outtake0, intake2, outtake1
     public boolean rotating = false;
+    public boolean rotatingIntake = false;
+    public boolean rotatingOuttake = false;
+
+    public double SPINDEXER_SPEED = 8000.0;
+    public double SPINDEXER_MIN_SPEED = 0.08;
 
     public void initialize(LinearOpMode opmode) throws InterruptedException {
 
