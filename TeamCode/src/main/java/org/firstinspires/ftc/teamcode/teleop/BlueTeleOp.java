@@ -105,6 +105,10 @@ public class BlueTeleOp extends LinearOpMode {
         double angleServoPos = 0.0; // starting position
         double SERVO_STEP = 0.0035;
 
+
+
+
+
         while (opModeIsActive()) {
 
             rotateMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);

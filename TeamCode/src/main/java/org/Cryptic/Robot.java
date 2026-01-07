@@ -52,6 +52,8 @@ public class Robot {
     public double SPINDEXER_SPEED = 8000.0;
     public double SPINDEXER_MIN_SPEED = 0.08;
 
+    public double currentTurretRadians;
+
     public void initialize(LinearOpMode opmode) throws InterruptedException {
 
         for(Subsystem subsystem : subsystems) {

@@ -37,6 +37,8 @@ public class Outtake extends Subsystem {
     public static final double CPR_BAND = 145.6;
     // 28 to 160
 
+
+
     @Override
     public void init(LinearOpMode opmode) throws InterruptedException {
         powerMotor = opmode.hardwareMap.get(DcMotorEx.class, "powerMotor");
@@ -100,13 +102,13 @@ public class Outtake extends Subsystem {
         double relativeTargetAngle = fieldTargetAngle - robotAngle;
 
         // Get current turret angle in radians
-        double currentTurretRadians = encoderToRadians(rotateMotor.getCurrentPosition());
+        robot.currentTurretRadians = encoderToRadians(rotateMotor.getCurrentPosition());
 
         // CRITICAL: Find the shortest path (so it doesn't spin 350 degrees)
-        double deltaAngle = Math.atan2(Math.sin(relativeTargetAngle - currentTurretRadians),
-                Math.cos(relativeTargetAngle - currentTurretRadians));
+        double deltaAngle = Math.atan2(Math.sin(relativeTargetAngle - robot.currentTurretRadians),
+                Math.cos(relativeTargetAngle - robot.currentTurretRadians));
 
-        double finalTargetRadians = currentTurretRadians + deltaAngle;
+        double finalTargetRadians = robot.currentTurretRadians + deltaAngle;
 
         rotateMotor.setTargetPosition(radiansToEncoder(finalTargetRadians));
         rotateMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -188,6 +190,18 @@ public class Outtake extends Subsystem {
         if (robot.rotatingOuttake) encoderSpin(po); // since pos is all 6 intake/outtake positions
         if (!robot.rotatingOuttake) bandMotor.setVelocity(0.0);
 
+    }
+
+    public void resetTurret(MecanumDrive Drive) {
+        Drive.updatePoseEstimate();
+        double robotAngle = Drive.localizer.getPose().heading.toDouble();
+
+
+        rotateMotor.setTargetPosition(radiansToEncoder(robotAngle));
+        rotateMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rotateMotor.setPower(0.2); // TODO testing purposes
+
+        robot.currentTurretRadians = 0;
     }
 
     public void rotateToOuttakeSlot(int po) {
@@ -281,4 +295,31 @@ public class Outtake extends Subsystem {
             this.robot.rotatingOuttake = false;
         }
     }
+
+
+    public boolean rotateToOuttakeSlotAuto(int po) {
+        robot.rotatingOuttake = true;
+
+        bandMotor.setVelocity(500 * CPR_BAND / 60.0);
+        encoderSpin(po);
+
+        if (!robot.rotatingOuttake) {
+            bandMotor.setVelocity(0.0);
+            indexServo.setPosition(0.5);
+            return true;
+        }
+        return false;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
 }

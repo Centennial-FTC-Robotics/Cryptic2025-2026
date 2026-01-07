@@ -118,4 +118,57 @@ public class Intake extends Subsystem {
             this.robot.rotatingIntake = false;
         }
     }
+
+
+
+
+
+
+
+
+
+
+
+
+    // random ahh auto implementation for indexing
+
+
+
+    // in Actions.runBlocking(), you run until false is returned for auto
+    // trying to mimick the telop
+
+    public boolean rotateToVacantSpotAuto() {
+        int step = 0;
+        while (this.robot.currentBalls[this.robot.currentIntakeIndex] != -1 && step < 3) {
+            step++;
+            this.robot.currentIntakeIndex = (this.robot.currentIntakeIndex + 1) % 3;
+        }
+
+        robot.rotatingIntake = true;
+
+        bandMotor.setVelocity(500 * CPR / 60.0);
+        encoderSpin(this.robot.currentIntakeIndex * 2);
+        if (!robot.rotatingIntake) {
+            bandMotor.setVelocity(0);
+            indexServo.setPosition(0.5);
+            return true;
+        }
+        return false;
+    }
+
+
+    /* you'd prolly do something like this in the sample action run method
+
+
+        robot.intake.scanBallColor();
+        return !robot.intake.rotateToVacantSpotAuto();
+
+
+
+
+     */
+
+
+
+
 }
