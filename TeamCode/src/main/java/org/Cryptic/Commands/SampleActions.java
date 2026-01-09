@@ -29,7 +29,7 @@ public class SampleActions {
         public boolean run(@NonNull TelemetryPacket packet) {
             if (!initialized) {
                 initialized = true;
-                robot.intake.intakeComplete(850); // adjust RPM later
+                robot.intake.intakeCompleteAuto(850); // adjust RPM later
                 initTime();
             }
             return (!hasBeenTime(300));
@@ -40,26 +40,26 @@ public class SampleActions {
         return new intakeComplete(robot);
     }
 
-    public class getMotif implements Action {
+//    public class getMotif implements Action {
+//
+//        private boolean initialized = false;
+//        private Robot robot;
+//
+//        public getMotif(Robot robot) { this.robot = robot; }
+//
+//        public boolean run(@NonNull TelemetryPacket packet) {
+//            if (!initialized) {
+//                initialized = true;
+//                robot.camera.getMotif();
+//                initTime();
+//            }
+//            return (!hasBeenTime(300));
+//        }
+//    }
 
-        private boolean initialized = false;
-        private Robot robot;
-
-        public getMotif(Robot robot) { this.robot = robot; }
-
-        public boolean run(@NonNull TelemetryPacket packet) {
-            if (!initialized) {
-                initialized = true;
-                robot.camera.getMotif();
-                initTime();
-            }
-            return (!hasBeenTime(300));
-        }
-    }
-
-    public Action getMotif(Robot robot) {
-        return new getMotif(robot);
-    }
+//    public Action getMotif(Robot robot) {
+//        return new getMotif(robot);
+//    }
 
     public class launch implements Action {
         private boolean initialized = false;
@@ -75,7 +75,7 @@ public class SampleActions {
         public boolean run(@NonNull TelemetryPacket packet) {
             if (!initialized) {
                 initialized = true;
-                robot.outtake.launch(tx, ty, robot.dt.drivebase);
+                robot.outtake.launchAuto(tx, ty, robot.dt.drivebase);
                 initTime();
             }
             return (!hasBeenTime(300));
@@ -117,9 +117,5 @@ public class SampleActions {
     public Action aimAtGoal(double tx, double ty, Robot robot) {
         return new aimAtGoal(tx, ty, robot);
     }
-
-
-
-
 
 }

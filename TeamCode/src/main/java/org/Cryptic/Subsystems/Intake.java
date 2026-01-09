@@ -69,6 +69,7 @@ public class Intake extends Subsystem {
     public void intakeBall(double rpm) { // color sensor is used
         double ticksPerSecond = rpm * CPR / 60.0;
         bandMotor.setVelocity(ticksPerSecond);
+
     }
 
     // overall method
@@ -76,6 +77,13 @@ public class Intake extends Subsystem {
         intakeBall(rpm);
         scanBallColor();
         rotateToVacantSpot();
+    }
+
+    public void intakeCompleteAuto(double rpm) {
+        intakeBall(rpm);
+        bandMotor.setVelocity(0.0);
+        scanBallColor();
+        rotateToVacantSpotAuto();
     }
 
     public void encoderSpin(int pos) {
@@ -119,41 +127,24 @@ public class Intake extends Subsystem {
         }
     }
 
-
-
-
-
-
-
-
-
-
-
-
     // random ahh auto implementation for indexing
-
-
-
     // in Actions.runBlocking(), you run until false is returned for auto
     // trying to mimick the telop
-
-    public boolean rotateToVacantSpotAuto() {
+    public void rotateToVacantSpotAuto() {
         int step = 0;
         while (this.robot.currentBalls[this.robot.currentIntakeIndex] != -1 && step < 3) {
             step++;
             this.robot.currentIntakeIndex = (this.robot.currentIntakeIndex + 1) % 3;
         }
 
-        robot.rotatingIntake = true;
-
         bandMotor.setVelocity(500 * CPR / 60.0);
-        encoderSpin(this.robot.currentIntakeIndex * 2);
-        if (!robot.rotatingIntake) {
-            bandMotor.setVelocity(0);
-            indexServo.setPosition(0.5);
-            return true;
+//        if (robot.rotatingIntake) encoderSpin(this.robot.currentIntakeIndex*2);
+//        if (!robot.rotatingIntake) bandMotor.setVelocity(0);
+        robot.rotatingIntake = true;
+        while (robot.rotatingIntake) {
+            encoderSpin(this.robot.currentIntakeIndex*2);
         }
-        return false;
+        bandMotor.setVelocity(0.0);
     }
 
 

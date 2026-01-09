@@ -207,8 +207,18 @@ public class Outtake extends Subsystem {
         bandMotor.setVelocity(500 * CPR_BAND / 60.0);
         if (robot.rotatingOuttake) encoderSpin(po); // since pos is all 6 intake/outtake positions
         if (!robot.rotatingOuttake) bandMotor.setVelocity(0.0);
-
     }
+
+    public void prepareBallShotAuto() {
+        int po = calculateOuttakeSlot();
+        bandMotor.setVelocity(500 * CPR_BAND / 60.0);
+        robot.rotatingOuttake = true;
+        while (robot.rotatingOuttake) {
+            encoderSpin(po);
+        }
+        bandMotor.setVelocity(0.0);
+    }
+
 
     public void resetTurret(MecanumDrive Drive) {
         Drive.updatePoseEstimate();
@@ -258,7 +268,6 @@ public class Outtake extends Subsystem {
         Pose2d currentPos = Drive.localizer.getPose();
         double dx = tx - currentPos.position.x;
         double dy = ty - currentPos.position.y;
-        // we should prob tune power
         double dist = Math.hypot(dx, dy) - 3;
 
         prepareBallShot();
@@ -271,6 +280,18 @@ public class Outtake extends Subsystem {
 
         this.robot.currentIndex = 0;
         bandMotor.setVelocity(0);
+    }
+
+    public void launchAuto(double tx, double ty, MecanumDrive Drive) {
+        Drive.updatePoseEstimate();
+        Pose2d currentPos = Drive.localizer.getPose();
+        double dx = tx - currentPos.position.x;
+        double dy = ty - currentPos.position.y;
+        double dist = Math.hypot(dx, dy) - 3;
+
+        prepareBallShotAuto();
+        transferServo.setPosition(liftUp);
+        aimRotateMotor(dx, dy, Drive);
     }
 
     public void encoderSpin(int pos) {

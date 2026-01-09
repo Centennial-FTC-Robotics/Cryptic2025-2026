@@ -34,13 +34,9 @@ public class BlueGoalOneTriplet extends LinearOpMode {
 
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
 
-        telemetry.addData("intiial pose", robot.dt.drivebase.localizer.getPose().position.x+" "+robot.dt.drivebase.localizer.getPose().position.y);
-        telemetry.update();
-
         double ballX = (-1.5)*t, ballY = 0.5*t; // coords of the first ball
         double scoreX = -t, scoreY = t*2; // where to score from, in a launch zone
         double tx = -3*t, ty = 3*t; // coords of the goal
-
 
         TrajectoryActionBuilder driveToAprilTag = drive.actionBuilder(initialPose)
                 .strafeToLinearHeading(new Vector2d(scoreX, scoreY), Math.toRadians(60))
