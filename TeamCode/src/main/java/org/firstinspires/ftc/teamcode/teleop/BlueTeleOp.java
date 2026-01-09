@@ -93,7 +93,7 @@ public class BlueTeleOp extends LinearOpMode {
         boolean servoIsTop = false; // starts at bottom
 
         robot.dt.drivebase.localizer.setPose(new Pose2d(0,0,0));
-        angleServo.setPosition(0.0);
+        // angleServo.setPosition(0.0);
 
         waitForStart();
         long startTime;
@@ -158,12 +158,12 @@ public class BlueTeleOp extends LinearOpMode {
 //            }
 
             // code to give power to flywheel
-            if (gamepad1.left_trigger >= 0.7) {
-                //powerMotor.setVelocity(ticksPerSecond);
-                powerMotor.setPower(-1.0);
-            } else {
-                powerMotor.setPower(0.0);
-            }
+//            if (gamepad1.left_trigger >= 0.7) {
+//                //powerMotor.setVelocity(ticksPerSecond);
+//                powerMotor.setPower(-1.0);
+//            } else {
+//                powerMotor.setPower(0.0);
+//            }
 
 //            if (gamepad2.dpad_right) {
 //                rotateMotor.setPower(0.2);
@@ -193,17 +193,18 @@ public class BlueTeleOp extends LinearOpMode {
             if (intakePad.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
                 robot.intake.scanBallColor();
             }
-/*
-            if (drivePad.wasJustPressed(GamepadKeys.Button.Y)) {
-                robot.intake.rotateToVacantSpot();
-            }
-
 
             if (drivePad.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
-                robot.intake.scanBallColor();
+                robot.dt.drivebase.updatePoseEstimate();
+                double dx = -72.0 - robot.dt.drivebase.localizer.getPose().position.x;
+                double dy = 72.0 - robot.dt.drivebase.localizer.getPose().position.y;
+                robot.outtake.executeLaunchSpeed(Math.sqrt(dx * dx + dy * dy));
             }
 
- */
+            if (drivePad.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
+                robot.outtake.moveTransfer();
+            }
+
             leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
             leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
             rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
@@ -287,10 +288,10 @@ public class BlueTeleOp extends LinearOpMode {
                 robot.outtake.aimRotateMotor(dx, dy, robot.dt.drivebase);
             }
 
-            // aiming with april tag?
-            if (drivePad.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
-                robot.outtake.launchAprilTag(true); // TODO make sure ok to hard code
-            }
+//            // aiming with april tag?
+//            if (drivePad.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
+//                robot.outtake.launchAprilTag(true); // TODO make sure ok to hard code
+//            }
 
             // Read motif
             if (drivePad.wasJustPressed(GamepadKeys.Button.A)) {

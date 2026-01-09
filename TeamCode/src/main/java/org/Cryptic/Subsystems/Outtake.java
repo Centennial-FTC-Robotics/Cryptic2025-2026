@@ -32,12 +32,14 @@ public class Outtake extends Subsystem {
 
     int spindexerStep = 0;
 
+    public boolean transferUp = false;
+
     private static final double CPR_ROTATE = 145.6 * 40/7; // https://www.gobilda.com/content/spec_sheets/5202-2402-0005_spec_sheet.pdf
     public static final double CPR_LAUNCH = 145.6;
     public static final double CPR_BAND = 145.6;
     // 28 to 160
 
-
+    public static final double LAUNCH_ANGLE = 47.52; // DEGREES
 
     @Override
     public void init(LinearOpMode opmode) throws InterruptedException {
@@ -63,7 +65,8 @@ public class Outtake extends Subsystem {
 
         this.robot.targetIndex = 0;
 
-        transferServo.setPosition(rest); // TODO
+        transferServo.setPosition(rest);
+        angleServo.setPosition(0.2); // 47.52 degrees
     }
 
     // helper method that properly angles the angleServo to theta
@@ -74,14 +77,14 @@ public class Outtake extends Subsystem {
     *   / (angle here theta)   \
     *  /______(this length dist)\
      */
-    public void aimAngleServo(double dist) {
-        double launchAngle = Math.atan2((2 * height), dist);
-
-        double servoPosition = launchAngle / Math.PI; // maps [0, π] to [0, 1]
-        servoPosition = Math.max(0.0, Math.min(1.0, servoPosition));
-
-        angleServo.setPosition(servoPosition); // TODO test later
-    }
+//    public void aimAngleServo(double dist) {
+//        double launchAngle = Math.atan2((2 * height), dist);
+//
+//        double servoPosition = launchAngle / Math.PI; // maps [0, π] to [0, 1]
+//        servoPosition = Math.max(0.0, Math.min(1.0, servoPosition));
+//
+//        angleServo.setPosition(servoPosition); // TODO test later
+//    }
 
     // this code makes it so that turret is angled birds-eye view
     /*     * (if this is target which is dx,dy away)
@@ -124,7 +127,7 @@ public class Outtake extends Subsystem {
         double dx = tx - currentPos.position.x, dy = ty - currentPos.position.y;
         double dist = Math.hypot(dx, dy) - 3;
 
-        aimAngleServo(dist);
+        // aimAngleServo(dist);
         aimRotateMotor(dx, dy, Drive);
     }
 
@@ -159,14 +162,29 @@ public class Outtake extends Subsystem {
     }
 
     public void executeLaunchSpeed(double dist) {
-        double launchAngle = Math.atan2(2*height, dist);
-        double vel = Math.sqrt(2.0 * 9.81 * height) / Math.sin(launchAngle);
-        double rpm = (30.0 / (Math.PI * radius)) * vel;
-
-        double ticksPerSecond = rpm * CPR_LAUNCH / 60.0;
+        // double launchAngle = Math.atan2(2*height, dist);
+        // double vel = Math.sqrt(2.0 * 9.81 * height) / Math.sin(launchAngle); units: meters/s;
+        double vel = Math.sqrt(386.09 * dist * dist /
+                (2 * Math.pow(Math.cos(Math.toRadians(LAUNCH_ANGLE)), 2) *
+                        (dist * Math.tan(Math.toRadians(LAUNCH_ANGLE)) - height))); // inches per second
+        // in/s * t/rev * rev/in = in/s * 145.6 * 1/(circumference)
+        double tps = vel * CPR_LAUNCH * 3.77953;
 
         powerMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        powerMotor.setVelocity(ticksPerSecond);
+        powerMotor.setVelocity(-tps);
+    }
+
+    public void stopFlywheel() {
+        powerMotor.setVelocity(0);
+    }
+
+    public void moveTransfer() {
+        if (transferUp) {
+            transferServo.setPosition(rest);
+        } else {
+            transferServo.setPosition(liftUp);
+        }
+        transferUp = !transferUp;
     }
 
     public int calculateOuttakeSlot() {
@@ -212,25 +230,25 @@ public class Outtake extends Subsystem {
 
     // to be used in conjunction with aimRotateMotorAprilTag
     // modified so that it will launch all balls it can
-    public void launchAprilTag(boolean blueTeam) {
-        AprilTagPoseFtc offset = robot.camera.getGoalOffset(blueTeam);
-        if (offset == null) {
-            // no tag detected  then don't try to shoot
-            return;
-        }
-        double horizontalDist = offset.y - 3.0;
-
-        prepareBallShot();
-        transferServo.setPosition(liftUp);
-        aimRotateMotorAprilTag(blueTeam);
-        aimAngleServo(horizontalDist);
-        executeLaunchSpeed(horizontalDist);
-
-        this.robot.targetIndex = (this.robot.targetIndex + 1) % 3;
-        transferServo.setPosition(rest);
-
-        this.robot.currentIndex = 0;
-    }
+//    public void launchAprilTag(boolean blueTeam) {
+//        AprilTagPoseFtc offset = robot.camera.getGoalOffset(blueTeam);
+//        if (offset == null) {
+//            // no tag detected  then don't try to shoot
+//            return;
+//        }
+//        double horizontalDist = offset.y - 3.0;
+//
+//        prepareBallShot();
+//        transferServo.setPosition(liftUp);
+//        aimRotateMotorAprilTag(blueTeam);
+//        aimAngleServo(horizontalDist);
+//        executeLaunchSpeed(horizontalDist);
+//
+//        this.robot.targetIndex = (this.robot.targetIndex + 1) % 3;
+//        transferServo.setPosition(rest);
+//
+//        this.robot.currentIndex = 0;
+//    }
 
 
 
@@ -246,7 +264,7 @@ public class Outtake extends Subsystem {
         prepareBallShot();
         transferServo.setPosition(liftUp); // TODO
         aimRotateMotor(dx, dy, Drive);
-        aimAngleServo(dist);
+        // aimAngleServo(dist);
         executeLaunchSpeed(dist);
         transferServo.setPosition(rest);
         this.robot.targetIndex = (this.robot.targetIndex + 1) % 3;
