@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.Cryptic.Robot;
+import org.Cryptic.Subsystems.Outtake;
 
 @Autonomous(name = "StupidAuto")
 public class StupidAuto extends LinearOpMode {
@@ -31,10 +32,7 @@ public class StupidAuto extends LinearOpMode {
 
         DcMotorEx powerMotor = hardwareMap.get(DcMotorEx.class, "powerMotor");
 
-        double ANGLE_ONE = 0.65;
-
-        double SERVO_BOTTOM = 0.5;
-        double SERVO_TOP = 0.25;
+        // double ANGLE_ONE = 0.65;
 
         int DRIVE_TIME_MS = 1000;
 
@@ -46,9 +44,10 @@ public class StupidAuto extends LinearOpMode {
         waitForStart();
         if (isStopRequested()) return;
 
-        indexServo.setPosition(0.17);
-        transferServo.setPosition(SERVO_BOTTOM);
-        angleServo.setPosition(ANGLE_ONE);
+        // indexServo.setPosition(0.0);
+        robot.intake.encoderSpin(5);
+        transferServo.setPosition(Outtake.rest);
+        angleServo.setPosition(0.0);
 
         sleep(200);
 
@@ -60,33 +59,35 @@ public class StupidAuto extends LinearOpMode {
         robot.dt.drivebase.setDrivePowers(new PoseVelocity2d(new Vector2d(0, 0), 0));
         sleep(150);
 
-        powerMotor.setPower(-1.0);
+        powerMotor.setPower(-1.0); // might need to adjust
         sleep(FLYWHEEL_SPINUP_MS);
 
         sleep(INDEX_SETTLE_MS);
 
-        transferServo.setPosition(SERVO_TOP);
+        transferServo.setPosition(Outtake.liftUp);
         sleep(TRANSFER_UP_MS);
 
-        transferServo.setPosition(SERVO_BOTTOM);
+        transferServo.setPosition(Outtake.rest);
         sleep(TRANSFER_DOWN_MS);
 
-        indexServo.setPosition(0.5);
+        // indexServo.setPosition(0.5);
+        robot.intake.encoderSpin(3);
         sleep(INDEX_SETTLE_MS);
 
-        transferServo.setPosition(SERVO_TOP);
+        transferServo.setPosition(Outtake.liftUp);
         sleep(TRANSFER_UP_MS);
 
-        transferServo.setPosition(SERVO_BOTTOM);
+        transferServo.setPosition(Outtake.rest);
         sleep(TRANSFER_DOWN_MS);
 
-        indexServo.setPosition(0.84);
+        // indexServo.setPosition(0.84);
+        robot.intake.encoderSpin(1);
         sleep(INDEX_SETTLE_MS);
 
-        transferServo.setPosition(SERVO_TOP);
+        transferServo.setPosition(Outtake.liftUp);
         sleep(TRANSFER_UP_MS);
 
-        transferServo.setPosition(SERVO_BOTTOM);
+        transferServo.setPosition(Outtake.rest);
         sleep(TRANSFER_DOWN_MS);
 
         powerMotor.setPower(0.0);

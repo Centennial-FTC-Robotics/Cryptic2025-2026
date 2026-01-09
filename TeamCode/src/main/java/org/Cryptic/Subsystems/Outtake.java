@@ -40,6 +40,7 @@ public class Outtake extends Subsystem {
     // 28 to 160
 
     public static final double LAUNCH_ANGLE = 47.52; // DEGREES
+    public static final double LAUNCH_POS = 0.2;
 
     @Override
     public void init(LinearOpMode opmode) throws InterruptedException {
@@ -66,7 +67,7 @@ public class Outtake extends Subsystem {
         this.robot.targetIndex = 0;
 
         transferServo.setPosition(rest);
-        angleServo.setPosition(0.2); // 47.52 degrees
+        angleServo.setPosition(LAUNCH_POS); // 47.52 degrees
     }
 
     // helper method that properly angles the angleServo to theta
@@ -263,6 +264,7 @@ public class Outtake extends Subsystem {
 
 
     // tx is x location of field goal and ty is y location
+    // DO NOT RUN THIS IN A TELEOP
     public void launch(double tx, double ty, MecanumDrive Drive) { // using georgy's math
         Drive.updatePoseEstimate();
         Pose2d currentPos = Drive.localizer.getPose();
@@ -335,7 +337,6 @@ public class Outtake extends Subsystem {
         }
     }
 
-
     public boolean rotateToOuttakeSlotAuto(int po) {
         robot.rotatingOuttake = true;
 
@@ -349,16 +350,4 @@ public class Outtake extends Subsystem {
         }
         return false;
     }
-
-
-
-
-
-
-
-
-
-
-
-
 }
