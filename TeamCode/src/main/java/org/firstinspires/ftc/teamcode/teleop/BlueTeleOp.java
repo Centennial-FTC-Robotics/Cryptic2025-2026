@@ -202,7 +202,10 @@ public class BlueTeleOp extends LinearOpMode {
             }
 
             if (drivePad.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
-                robot.outtake.moveTransfer();
+                robot.outtake.stopFlywheel();
+            }
+
+            if (drivePad.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
             }
 
             leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
@@ -274,24 +277,12 @@ public class BlueTeleOp extends LinearOpMode {
 
 */
 
-
-            // Outtake actually launch
-            if (drivePad.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
-                //robot.outtake.launch(-72.0,72.0,robot.dt.drivebase); // TODO change coords of 0,0 to landing zone
-                isTransferUp = false;
-            }
-
             if (drivePad.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
                 robot.dt.drivebase.updatePoseEstimate();
                 double dx = -72.0 - robot.dt.drivebase.localizer.getPose().position.x;
                 double dy = 72.0 - robot.dt.drivebase.localizer.getPose().position.y;
                 robot.outtake.aimRotateMotor(dx, dy, robot.dt.drivebase);
             }
-
-//            // aiming with april tag?
-//            if (drivePad.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
-//                robot.outtake.launchAprilTag(true); // TODO make sure ok to hard code
-//            }
 
             // Read motif
             if (drivePad.wasJustPressed(GamepadKeys.Button.A)) {

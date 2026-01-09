@@ -30,9 +30,10 @@ public class SampleActions {
             if (!initialized) {
                 initialized = true;
                 robot.intake.intakeCompleteAuto(850); // adjust RPM later
-                initTime();
+                // initTime();
             }
-            return (!hasBeenTime(300));
+            return false;
+            // return (!hasBeenTime(300));
         }
     }
 
@@ -40,26 +41,26 @@ public class SampleActions {
         return new intakeComplete(robot);
     }
 
-//    public class getMotif implements Action {
-//
-//        private boolean initialized = false;
-//        private Robot robot;
-//
-//        public getMotif(Robot robot) { this.robot = robot; }
-//
-//        public boolean run(@NonNull TelemetryPacket packet) {
-//            if (!initialized) {
-//                initialized = true;
-//                robot.camera.getMotif();
-//                initTime();
-//            }
-//            return (!hasBeenTime(300));
-//        }
-//    }
+    public class getMotif implements Action {
 
-//    public Action getMotif(Robot robot) {
-//        return new getMotif(robot);
-//    }
+        private boolean initialized = false;
+        private Robot robot;
+
+        public getMotif(Robot robot) { this.robot = robot; }
+
+        public boolean run(@NonNull TelemetryPacket packet) {
+            if (!initialized) {
+                initialized = true;
+                robot.camera.getMotif();
+                initTime();
+            }
+            return (!hasBeenTime(300));
+        }
+    }
+
+    public Action getMotif(Robot robot) {
+        return new getMotif(robot);
+    }
 
     public class launch implements Action {
         private boolean initialized = false;
@@ -76,9 +77,10 @@ public class SampleActions {
             if (!initialized) {
                 initialized = true;
                 robot.outtake.launchAuto(tx, ty, robot.dt.drivebase);
-                initTime();
+//                initTime();
             }
-            return (!hasBeenTime(300));
+//          return (!hasBeenTime(300));
+            return false;
         }
     }
 

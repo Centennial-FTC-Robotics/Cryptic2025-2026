@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.auto;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
@@ -7,6 +8,7 @@ import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.Cryptic.Robot;
@@ -15,6 +17,8 @@ import org.firstinspires.ftc.teamcode.MecanumDrive;
 
 // assuming blue alliance
 // starting at goal
+@Config
+@Autonomous(name="BlueGoalOneThree")
 public class BlueGoalPosThree extends LinearOpMode {
 
     @Override
@@ -35,7 +39,7 @@ public class BlueGoalPosThree extends LinearOpMode {
 
         TrajectoryActionBuilder driveToAprilTag = drive.actionBuilder(initialPose)
                 .strafeToLinearHeading(new Vector2d(scoreX, scoreY), Math.toRadians(60))
-                .stopAndAdd(robot.sampleActions.getMotif(robot))
+                // .stopAndAdd(robot.sampleActions.getMotif(robot))
                 // .stopAndAdd(robot.sampleActions.positionToScore(robot))
                 // .strafeToSplineHeading(new Vector2d(scoreX, ballY), Math.toRadians(225))
                 // .stopAndAdd(robot.sampleActions.launchSample(robot))
