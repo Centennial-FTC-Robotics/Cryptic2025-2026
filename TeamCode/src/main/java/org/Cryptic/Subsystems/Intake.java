@@ -137,7 +137,6 @@ public class Intake extends Subsystem {
             this.robot.currentIntakeIndex = (this.robot.currentIntakeIndex + 1) % 3;
         }
 
-        bandMotor.setVelocity(500 * CPR / 60.0);
 //        if (robot.rotatingIntake) encoderSpin(this.robot.currentIntakeIndex*2);
 //        if (!robot.rotatingIntake) bandMotor.setVelocity(0);
         robot.rotatingIntake = true;

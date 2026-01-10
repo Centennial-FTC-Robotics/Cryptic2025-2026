@@ -255,10 +255,6 @@ public final class MecanumDrive {
         rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
         rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
 
-
-
-
-
         //   leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // make sure your config has an IMU with this name (can be BNO or BHI)
@@ -268,11 +264,8 @@ public final class MecanumDrive {
 
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
 
-        double startX = 0; // TODO
-        double startY = 0;
-        double heading = 0;
         // localizer = new TwoDeadWheelLocalizer(hardwareMap, lazyImu.get(), PARAMS.inPerTick, new Pose2d(startX, startY, heading));
-        localizer = new PinpointLocalizer(hardwareMap, PARAMS.inPerTick, new Pose2d(startX, startY, heading));
+        localizer = new PinpointLocalizer(hardwareMap, PARAMS.inPerTick, pose);
 
         FlightRecorder.write("MECANUM_PARAMS", PARAMS);
     }

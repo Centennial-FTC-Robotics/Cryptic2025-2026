@@ -42,15 +42,15 @@ public class Robot {
 
     public int motif = 21; // 21 for GPP, 22 for PGP, 23 for PPG
 
-    public int[] targetPosition2 = {0, 8192*120/360, 8192*240/360, 8192*300/360, 8192*180/360, 8192*60/360, 0};
-    public int[] targetPosition = {0, 8192/6, 8192*2/6, 8192*3/6, 8192*4/6, 8192*5/6};
+    public final int encoderTicks = 6200;
+    public final int[] targetPosition = {0, encoderTicks/6, encoderTicks*2/6, encoderTicks*3/6, encoderTicks*4/6, encoderTicks*5/6};
     // intake0, outtake2, intake1, outtake0, intake2, outtake1
     public boolean rotating = false;
     public boolean rotatingIntake = false;
     public boolean rotatingOuttake = false;
 
-    public double SPINDEXER_SPEED = 8000.0;
-    public double SPINDEXER_MIN_SPEED = 0.08;
+    public double SPINDEXER_SPEED = 10_000.0;
+    public double SPINDEXER_MIN_SPEED = 0.05;
 
     public double currentTurretRadians;
 

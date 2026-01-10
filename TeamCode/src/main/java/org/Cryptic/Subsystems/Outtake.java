@@ -21,13 +21,13 @@ public class Outtake extends Subsystem {
     public DcMotorEx bandMotor;
 
     public DcMotorEx encoder;
-    public static final double liftUp = 0.29; // TODO
+    public static final double liftUp = 0.25; // TODO
 
     public static final double rest = 0.5;
 
     public DcMotorEx powerMotor;  // shooter flywheel
 
-    double height = 54; // height of back goalpost
+    double height = 48; // height of back goalpost
     double radius = 5.0;  // radius of ball (be consistent with your units)
 
     int spindexerStep = 0;
