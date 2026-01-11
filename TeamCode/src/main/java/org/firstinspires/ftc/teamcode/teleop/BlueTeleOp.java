@@ -94,10 +94,12 @@ public class BlueTeleOp extends LinearOpMode {
 
         boolean servoIsTop = false; // starts at bottom
 
-//        robot.dt.drivebase.localizer.setPose(new Pose2d(24.0*3-9,-(24.0*3-9),0));
-        robot.dt.drivebase = new MecanumDrive(hardwareMap, new Pose2d(24.0*3-9, -(24.0*3-9), 0.0));
+        robot.dt.drivebase.localizer.setPose(new Pose2d(24.0*3-9,-(24.0*3-9),0));
+
         // angleServo.setPosition(0.0);
-        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        if (FtcDashboard.getInstance() != null) {
+            telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        }
 
         waitForStart();
         long startTime;
@@ -217,10 +219,11 @@ public class BlueTeleOp extends LinearOpMode {
             telemetry.addData("motif: ", robot.motif);
             telemetry.addData("Encoder", encoder.getCurrentPosition());
             telemetry.addData("rotating", rotating);
-            robot.dt.drivebase.updatePoseEstimate();
-            telemetry.addData("currentX, currentY: ", robot.dt.drivebase.localizer.getPose().position.x+", "+robot.dt.drivebase.localizer.getPose().position.y);
-            double robotAngle = robot.dt.drivebase.localizer.getPose().heading.log(); // radians
-            telemetry.addData("heading", robotAngle+" radians");
+            robot.dt.drivebase.updatePoseEstimate();// For RoadRunner 1.0
+            Pose2d currentPose = robot.dt.drivebase.localizer.getPose();
+            telemetry.addData("x", currentPose.position.x);
+            telemetry.addData("y", currentPose.position.y);
+            telemetry.addData("heading", Math.toDegrees(currentPose.heading.toDouble()));
             telemetry.addData("turret heading", robot.outtake.rotateMotor.getCurrentPosition());
             telemetry.addData("turret target position", robot.outtake.rotateMotor.getTargetPosition());
             telemetry.addData("turret power", robot.outtake.rotateMotor.getPower());

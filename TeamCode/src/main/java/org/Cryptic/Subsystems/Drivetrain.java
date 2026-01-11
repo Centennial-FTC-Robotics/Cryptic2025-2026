@@ -18,10 +18,6 @@ public class Drivetrain extends Subsystem {
         drivebase = new MecanumDrive(opMode.hardwareMap, new Pose2d(0, 0, 0));
     }
 
-    public void init(LinearOpMode opMode, Pose2d initialPose) {
-        drivebase = new MecanumDrive(opMode.hardwareMap, initialPose);
-    }
-
     public void drive(double drive, double strafe, double turn, double speedMult) {
         drivebase.setDrivePowers(new PoseVelocity2d(
                 new Vector2d(
