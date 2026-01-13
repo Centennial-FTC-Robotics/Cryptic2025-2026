@@ -62,7 +62,8 @@ public class BlueTeleOp extends LinearOpMode {
         DcMotorEx encoder = hardwareMap.get(DcMotorEx.class, "spinEncoder");
         bandMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         encoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        encoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        // encoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        encoder.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         ColorSensor colorSensor = hardwareMap.get(ColorSensor.class, "colorSensor");
 
@@ -212,6 +213,8 @@ public class BlueTeleOp extends LinearOpMode {
             telemetry.addData("motif: ", robot.motif);
             telemetry.addData("Encoder", encoder.getCurrentPosition());
             telemetry.addData("rotating", rotating);
+            telemetry.addData("rotatingIntake", robot.rotatingIntake);
+            telemetry.addData("outtake po", outtakePos);
             robot.dt.drivebase.updatePoseEstimate();// For RoadRunner 1.0
             Pose2d currentPose = robot.dt.drivebase.localizer.getPose();
             telemetry.addData("x", currentPose.position.x);
@@ -220,6 +223,7 @@ public class BlueTeleOp extends LinearOpMode {
             telemetry.addData("turret heading", robot.outtake.rotateMotor.getCurrentPosition());
             telemetry.addData("turret target position", robot.outtake.rotateMotor.getTargetPosition());
             telemetry.addData("turret power", robot.outtake.rotateMotor.getPower());
+            telemetry.addData("shooter power", robot.outtake.powerMotor.getVelocity()); // -1700
 
             /*
             double max;

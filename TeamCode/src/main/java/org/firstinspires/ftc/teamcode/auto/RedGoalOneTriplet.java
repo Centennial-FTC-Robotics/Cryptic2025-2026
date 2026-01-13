@@ -30,7 +30,7 @@ public class RedGoalOneTriplet extends LinearOpMode {
 
         double t = 23.5; // 23.5 inches per tile
         // Pose2d initialPose = new Pose2d((t*(-2) - 4), (t*2 + 6), Math.toRadians(315));
-        Pose2d initialPose = new Pose2d(t*(1.6), 2.6*t, Math.toRadians(90));
+        Pose2d initialPose = new Pose2d(t*(2.0), 2.4*t, Math.toRadians(45));
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
 
         double ballX = 1.5*t, ballY = 0.5*t; // coords of the first ball
@@ -49,11 +49,11 @@ public class RedGoalOneTriplet extends LinearOpMode {
 
         TrajectoryActionBuilder launch = driveToAprilTag.endTrajectory().fresh()
                 .splineToLinearHeading(new Pose2d(new Vector2d(ballX, ballY), Math.toRadians(0)), Math.toRadians(0))
-                .stopAndAdd(robot.scoringActions.intakeComplete(robot))
+                .stopAndAdd(robot.scoringActions.scanSpin(robot))
                 .strafeToConstantHeading(new Vector2d(ballX + 5, ballY))
-                .stopAndAdd(robot.scoringActions.intakeComplete(robot))
+                .stopAndAdd(robot.scoringActions.scanSpin(robot))
                 .strafeToConstantHeading(new Vector2d(ballX + 10, ballY))
-                .stopAndAdd(robot.scoringActions.intakeComplete(robot))
+                .stopAndAdd(robot.scoringActions.scanSpin(robot))
                 .strafeToConstantHeading(new Vector2d(scoreX, scoreY))
                 .stopAndAdd(robot.scoringActions.aimAtGoal(tx, ty, robot))
                 .stopAndAdd(robot.scoringActions.launch(scoreX,scoreY,robot))

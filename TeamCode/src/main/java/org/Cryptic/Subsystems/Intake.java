@@ -34,8 +34,8 @@ public class Intake extends Subsystem {
         indexServo = opmode.hardwareMap.get(Servo.class, "indexServo");
 
         encoder = opmode.hardwareMap.get(DcMotorEx.class, "spinEncoder");
-        encoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        encoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        // encoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        // encoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         bandMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         indexServo.setPosition(0.5);
     }
@@ -79,11 +79,18 @@ public class Intake extends Subsystem {
         rotateToVacantSpot();
     }
 
-    public void intakeCompleteAuto(double rpm) {
+    public void intakeAuto(double rpm) {
         intakeBall(rpm);
-        bandMotor.setVelocity(0.0);
+    }
+
+    public void scanSpinAuto() {
+//        bandMotor.setVelocity(0.0);
         scanBallColor();
         rotateToVacantSpotAuto();
+    }
+
+    public void stopSpinAuto() {
+        bandMotor.setVelocity(0.0);
     }
 
     public void encoderSpin(int pos) {

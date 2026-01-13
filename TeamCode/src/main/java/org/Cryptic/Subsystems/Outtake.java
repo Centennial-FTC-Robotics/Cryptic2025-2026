@@ -169,10 +169,11 @@ public class Outtake extends Subsystem {
                 (2 * Math.pow(Math.cos(Math.toRadians(LAUNCH_ANGLE)), 2) *
                         (dist * Math.tan(Math.toRadians(LAUNCH_ANGLE)) - height))); // inches per second
         // in/s * t/rev * rev/in = in/s * 145.6 * 1/(circumference)
-        double tps = vel * CPR_LAUNCH * 3.77953;
+        double tps = vel * CPR_LAUNCH * 1 / (3.77953 * Math.PI);
+        double testFactor = 0.35; // TODO cut this
 
         powerMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        powerMotor.setVelocity(-tps);
+        powerMotor.setVelocity(-tps * testFactor);
     }
 
     public void stopFlywheel() {

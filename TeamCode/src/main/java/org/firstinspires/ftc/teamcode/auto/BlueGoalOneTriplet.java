@@ -18,9 +18,17 @@ import org.firstinspires.ftc.teamcode.MecanumDrive;
 // assuming blue alliance
 // starting at goal
 // ONLY PICKING UP 1 TRIPLET OF BALLS (CLOSEST)
+// NOTE: CENTER OF ROBOT IS TOP LEFT
 @Config
 @Autonomous(name="BlueGoalOneTriplet")
 public class BlueGoalOneTriplet extends LinearOpMode {
+
+//    private boolean isBlue = true;
+//
+//    public Pose2d mapPose(Pose2d pose) {
+//        if (blue) return pose;
+//        return new Pose2d(pose.position.x, )
+//    }
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -35,14 +43,18 @@ public class BlueGoalOneTriplet extends LinearOpMode {
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
         // MecanumDrive drive = robot.dt.drivebase;
 
-        double ballX = (-1.5)*t + 5, ballY = 0.5*t; // coords of the first ball
-        double scoreX = -t, scoreY = t; // where to score from, in a launch zone
+        double ballX = (-1.5)*t + 9, ballY = 0.5*t + 12; // coords of the first ball
+        double scoreX = -t, scoreY = t + 6; // where to score from, in a launch zone
         double tx = -3*t, ty = 3*t; // coords of the goal
 
         // robot.dt.drivebase.localizer.setPose(initialPose);
 
         TrajectoryActionBuilder scorePreloaded = drive.actionBuilder(initialPose)
-                .strafeToLinearHeading(new Vector2d(scoreX, scoreY), Math.toRadians(60))
+                .strafeToLinearHeading(new Vector2d(scoreX + 12, scoreY), Math.toRadians(60))
+                .waitSeconds(0.2) // TESTING PURPOSES
+                .strafeToLinearHeading(new Vector2d(scoreX + 36, ballY), Math.toRadians(120))
+                .waitSeconds(0.2) // TESTING PURPOSES
+                .turnTo(Math.toRadians(180))
                 .waitSeconds(0.2) // TESTING PURPOSES
                 // .stopAndAdd(robot.sampleActions.getMotif(robot))
                 // .stopAndAdd(robot.sampleActions.positionToScore(robot))
@@ -53,10 +65,13 @@ public class BlueGoalOneTriplet extends LinearOpMode {
 
         TrajectoryActionBuilder launch = scorePreloaded.endTrajectory().fresh()
                 .splineToLinearHeading(new Pose2d(new Vector2d(ballX, ballY), Math.toRadians(180)), Math.toRadians(180))
-                // .stopAndAdd(robot.sampleActions.intakeComplete(robot))
+                .stopAndAdd(robot.scoringActions.intake(robot))
+                .stopAndAdd(robot.scoringActions.scanSpin(robot))
                 .strafeToConstantHeading(new Vector2d(ballX - 5, ballY))
+                .waitSeconds(0.2) // TESTING PURPOSES
 //                .stopAndAdd(robot.sampleActions.intakeComplete(robot))
                 .strafeToConstantHeading(new Vector2d(ballX - 10, ballY))
+                .waitSeconds(0.2) // TESTING PURPOSES
 //                .stopAndAdd(robot.sampleActions.intakeComplete(robot))
                 .strafeToConstantHeading(new Vector2d(scoreX, scoreY))
 //                .stopAndAdd(robot.sampleActions.aimAtGoal(tx, ty, robot))
@@ -69,7 +84,7 @@ public class BlueGoalOneTriplet extends LinearOpMode {
                 .splineToLinearHeading(new Pose2d(new Vector2d(-2.9*t, 0), Math.toRadians(180)), Math.toRadians(180))
                 ;
 
-        Action driveToAprilTagA = scorePreloaded.build();
+        Action scorePreloadedA = scorePreloaded.build();
         Action launchA = launch.build();
         Action clearRampA = clearRamp.build();
 
@@ -81,7 +96,7 @@ public class BlueGoalOneTriplet extends LinearOpMode {
                 new ParallelAction(
                         new SequentialAction(
 
-                                driveToAprilTagA,
+                                scorePreloadedA,
                                 launchA,
                                 clearRampA
                         )

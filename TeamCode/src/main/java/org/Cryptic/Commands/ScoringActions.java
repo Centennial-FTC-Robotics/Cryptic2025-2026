@@ -17,11 +17,36 @@ public class ScoringActions {
     public boolean hasBeenTime(int milli){
         return System.currentTimeMillis() - startTime >= milli;
     }
-    public class intakeComplete implements Action {
+
+    public class intake implements Action {
+        private boolean initialized = false;
+
+        private Robot robot;
+
+        public intake(Robot robot) {
+            this.robot = robot;
+        }
+
+        @Override
+        public boolean run(@NonNull TelemetryPacket packet) {
+            if (!initialized) {
+                initTime();
+                initialized = true;
+            }
+            robot.intake.intakeAuto(850);
+
+            return (!hasBeenTime(300));
+        }
+    }
+
+    public Action intake(Robot robot) {
+        return new intake(robot);
+    }
+    public class scanSpin implements Action {
         private boolean initialized = false;
         private Robot robot;
 
-        public intakeComplete(Robot robot) {
+        public scanSpin(Robot robot) {
             this.robot = robot;
         }
 
@@ -29,7 +54,7 @@ public class ScoringActions {
         public boolean run(@NonNull TelemetryPacket packet) {
             if (!initialized) {
                 initialized = true;
-                robot.intake.intakeCompleteAuto(850); // adjust RPM later
+                robot.intake.scanSpinAuto(); // adjust RPM later
                 // initTime();
             }
             return false;
@@ -37,8 +62,32 @@ public class ScoringActions {
         }
     }
 
-    public Action intakeComplete(Robot robot) {
-        return new intakeComplete(robot);
+    public Action scanSpin(Robot robot) {
+        return new scanSpin(robot);
+    }
+
+    public class stopSpin implements Action {
+        private boolean initialized = false;
+        private Robot robot;
+
+        public stopSpin(Robot robot) {
+            this.robot = robot;
+        }
+
+        @Override
+        public boolean run(@NonNull TelemetryPacket packet) {
+            if (!initialized) {
+                initialized = true;
+                robot.intake.stopSpinAuto(); // adjust RPM later
+                // initTime();
+            }
+            return false;
+            // return (!hasBeenTime(300));
+        }
+    }
+
+    public Action stopSpin(Robot robot) {
+        return new stopSpin(robot);
     }
 
     public class getMotif implements Action {

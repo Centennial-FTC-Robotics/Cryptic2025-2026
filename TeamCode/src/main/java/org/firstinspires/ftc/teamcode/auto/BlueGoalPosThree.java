@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.MecanumDrive;
 // assuming blue alliance
 // starting at goal
 @Config
-@Autonomous(name="BlueGoalOneThree")
+@Autonomous(name="BlueGoalPosThree")
 public class BlueGoalPosThree extends LinearOpMode {
 
     @Override
@@ -52,11 +52,11 @@ public class BlueGoalPosThree extends LinearOpMode {
 
         TrajectoryActionBuilder launch = driveToAprilTag.endTrajectory().fresh()
                 .splineToLinearHeading(new Pose2d(new Vector2d(ballX, ballY + motifIndex*t), Math.toRadians(180)), Math.toRadians(180))
-                .stopAndAdd(robot.scoringActions.intakeComplete(robot))
+//                .stopAndAdd(robot.scoringActions.scanSpin(robot))
                 .strafeToConstantHeading(new Vector2d(ballX - 5, ballY + motifIndex*t))
-                .stopAndAdd(robot.scoringActions.intakeComplete(robot))
+                .stopAndAdd(robot.scoringActions.scanSpin(robot))
                 .strafeToConstantHeading(new Vector2d(ballX - 10, ballY + motifIndex*t))
-                .stopAndAdd(robot.scoringActions.intakeComplete(robot))
+                .stopAndAdd(robot.scoringActions.scanSpin(robot))
                 .strafeToConstantHeading(new Vector2d(scoreX, scoreY))
                 .stopAndAdd(robot.scoringActions.aimAtGoal(tx, ty, robot))
                 .stopAndAdd(robot.scoringActions.launch(scoreX,scoreY,robot))
@@ -64,11 +64,11 @@ public class BlueGoalPosThree extends LinearOpMode {
                 .stopAndAdd(robot.scoringActions.launch(scoreX,scoreY,robot))
                 // do for other balls
                 .splineToLinearHeading(new Pose2d(new Vector2d(ballX, ballY + motifIndex2*t), Math.toRadians(180)), Math.toRadians(180))
-                .stopAndAdd(robot.scoringActions.intakeComplete(robot))
+                .stopAndAdd(robot.scoringActions.scanSpin(robot))
                 .strafeToConstantHeading(new Vector2d(ballX - 5, ballY + motifIndex2*t))
-                .stopAndAdd(robot.scoringActions.intakeComplete(robot))
+                .stopAndAdd(robot.scoringActions.scanSpin(robot))
                 .strafeToConstantHeading(new Vector2d(ballX - 10, ballY + motifIndex2*t))
-                .stopAndAdd(robot.scoringActions.intakeComplete(robot))
+                .stopAndAdd(robot.scoringActions.scanSpin(robot))
                 .strafeToConstantHeading(new Vector2d(scoreX, scoreY))
                 .stopAndAdd(robot.scoringActions.aimAtGoal(tx, ty, robot))
                 .stopAndAdd(robot.scoringActions.launch(scoreX,scoreY,robot))
@@ -76,11 +76,11 @@ public class BlueGoalPosThree extends LinearOpMode {
                 .stopAndAdd(robot.scoringActions.launch(scoreX,scoreY,robot))
                 // last one
                 .splineToLinearHeading(new Pose2d(new Vector2d(ballX, ballY + motifIndex3*t), Math.toRadians(180)), Math.toRadians(180))
-                .stopAndAdd(robot.scoringActions.intakeComplete(robot))
+                .stopAndAdd(robot.scoringActions.scanSpin(robot))
                 .strafeToConstantHeading(new Vector2d(ballX - 5, ballY + motifIndex3*t))
-                .stopAndAdd(robot.scoringActions.intakeComplete(robot))
+                .stopAndAdd(robot.scoringActions.scanSpin(robot))
                 .strafeToConstantHeading(new Vector2d(ballX - 10, ballY + motifIndex3*t))
-                .stopAndAdd(robot.scoringActions.intakeComplete(robot))
+                .stopAndAdd(robot.scoringActions.scanSpin(robot))
                 .strafeToConstantHeading(new Vector2d(scoreX, scoreY))
                 .stopAndAdd(robot.scoringActions.aimAtGoal(tx, ty, robot))
                 .stopAndAdd(robot.scoringActions.launch(scoreX,scoreY,robot))
