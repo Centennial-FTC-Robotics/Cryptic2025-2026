@@ -25,6 +25,8 @@ public class Intake extends Subsystem {
     public DcMotorEx encoder;
     int spindexerStep = 0;
 
+    public double bandSpeed = 0;
+
     @Override
     public void init(LinearOpMode opmode) throws InterruptedException {
         colorSensor = opmode.hardwareMap.get(ColorSensor.class, "colorSensor");
@@ -46,10 +48,11 @@ public class Intake extends Subsystem {
             step++;
             this.robot.currentIntakeIndex = (this.robot.currentIntakeIndex + 1) % 3;
         }
-
-        bandMotor.setVelocity(500 * CPR / 60.0);
+        bandSpeed = 500 * CPR / 60.0;
+        bandMotor.setVelocity(bandSpeed);
         if (robot.rotatingIntake) encoderSpin(this.robot.currentIntakeIndex*2);
-        if (!robot.rotatingIntake) bandMotor.setVelocity(0);
+        bandSpeed = 0;
+        if (!robot.rotatingIntake) bandMotor.setVelocity(bandSpeed);
     }
 
     public void scanBallColor() {
@@ -67,8 +70,8 @@ public class Intake extends Subsystem {
     }
 
     public void intakeBall(double rpm) { // color sensor is used
-        double ticksPerSecond = rpm * CPR / 60.0;
-        bandMotor.setVelocity(ticksPerSecond);
+        bandSpeed = rpm * CPR / 60.0;
+        bandMotor.setVelocity(bandSpeed);
 
     }
 
@@ -84,13 +87,15 @@ public class Intake extends Subsystem {
     }
 
     public void scanSpinAuto() {
-//        bandMotor.setVelocity(0.0);
+        //bandSpeed = 0
+//        bandMotor.setVelocity(bandSpeed);
         scanBallColor();
         rotateToVacantSpotAuto();
     }
 
     public void stopSpinAuto() {
-        bandMotor.setVelocity(0.0);
+        bandSpeed = 0.0;
+        bandMotor.setVelocity(bandSpeed);
     }
 
     public void encoderSpin(int pos) {
@@ -100,7 +105,8 @@ public class Intake extends Subsystem {
 
         int current = encoder.getCurrentPosition();
         int error;
-        bandMotor.setVelocity(100 * CPR / 60);
+        bandSpeed = 100 * CPR / 60.0;
+        bandMotor.setVelocity(bandSpeed);
         if (pos > this.robot.currentIndex) {
             // our goal is positive
             error = this.robot.targetPosition[pos] - current; // always positive, unless going from
@@ -150,6 +156,11 @@ public class Intake extends Subsystem {
         while (robot.rotatingIntake) {
             encoderSpin(this.robot.currentIntakeIndex*2);
         }
-        bandMotor.setVelocity(0.0);
+//        bandSpeed = 0;
+//        bandMotor.setVelocity(bandSpeed);
+    }
+
+    public void update() {
+        bandMotor.setVelocity(bandSpeed);
     }
 }

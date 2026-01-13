@@ -32,6 +32,8 @@ public class Outtake extends Subsystem {
 
     int spindexerStep = 0;
 
+    public double shooterSpeed = 0;
+
     public boolean transferUp = false;
 
     private static final double CPR_ROTATE = 145.6 * 40/7; // https://www.gobilda.com/content/spec_sheets/5202-2402-0005_spec_sheet.pdf
@@ -130,6 +132,7 @@ public class Outtake extends Subsystem {
 
         // aimAngleServo(dist);
         aimRotateMotor(dx, dy, Drive);
+        executeLaunchSpeed(dist);
     }
 
     // via christian, the range of motion is pi one way pi the other
@@ -173,11 +176,13 @@ public class Outtake extends Subsystem {
         double testFactor = 0.35; // TODO cut this
 
         powerMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        powerMotor.setVelocity(-tps * testFactor);
+        shooterSpeed = -tps * testFactor;
+        powerMotor.setVelocity(shooterSpeed);
     }
 
     public void stopFlywheel() {
-        powerMotor.setVelocity(0);
+        shooterSpeed = 0.0;
+        powerMotor.setVelocity(shooterSpeed);
     }
 
     public void moveTransfer() {
@@ -265,13 +270,11 @@ public class Outtake extends Subsystem {
 
         prepareBallShotAuto();
         transferServo.setPosition(liftUp);
-        aimRotateMotor(dx, dy, Drive);
-        executeLaunchSpeed(dist);
         transferServo.setPosition(rest);
-        stopFlywheel();
 
         this.robot.targetIndex = (this.robot.targetIndex + 1) % 3;
     }
+
 
     public void encoderSpin(int pos) {
         if (!robot.rotatingOuttake) {
@@ -326,5 +329,9 @@ public class Outtake extends Subsystem {
             return true;
         }
         return false;
+    }
+
+    public void update() {
+        powerMotor.setVelocity(shooterSpeed);
     }
 }

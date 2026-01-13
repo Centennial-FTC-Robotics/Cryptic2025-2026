@@ -140,13 +140,13 @@ public class ScoringActions {
 
 
 
-    public class aimAtGoal implements Action {
+    public class prepareShot implements Action {
         private final Robot robot;
         private final double tx, ty;
         private boolean initialized = false;
         private long startTime;
 
-        public aimAtGoal(double tx, double ty, Robot robot) {
+        public prepareShot(double tx, double ty, Robot robot) {
             this.robot = robot;
             this.tx = tx;
             this.ty = ty;
@@ -165,8 +165,59 @@ public class ScoringActions {
         }
     }
 
-    public Action aimAtGoal(double tx, double ty, Robot robot) {
-        return new aimAtGoal(tx, ty, robot);
+    public Action prepareShot(double tx, double ty, Robot robot) {
+        return new prepareShot(tx, ty, robot);
     }
 
+
+    public class stopFlywheel implements Action {
+        private final Robot robot;
+        private boolean initialized = false;
+        private long startTime;
+
+        public stopFlywheel(Robot robot) {
+            this.robot = robot;
+        }
+
+        @Override
+        public boolean run(@NonNull TelemetryPacket packet) {
+            if (!initialized) {
+                initialized = true;
+                startTime = System.currentTimeMillis();
+            }
+
+            robot.outtake.stopFlywheel();
+
+            return false;
+        }
+    }
+
+    public Action stopFlywheel(Robot robot) {
+        return new stopFlywheel(robot);
+    }
+
+    public class robotUpdate implements Action {
+        private boolean initialized = false;
+        private Robot robot = new Robot();
+
+        public robotUpdate (Robot robot) {
+            this.robot = robot;
+        }
+
+        @Override
+        public boolean run(@NonNull TelemetryPacket packet) {
+            if (!initialized) {
+                initialized = true;
+            }
+            robot.intake.update();
+            robot.outtake.update();
+
+            // MUST BE SET TO TRUE IF YOU WANT IT TO RUN ALL THE TIME
+            return true;
+        }
+    }
+
+    public Action robotUpdate(Robot robot) {
+        return new robotUpdate(robot);
+    }
 }

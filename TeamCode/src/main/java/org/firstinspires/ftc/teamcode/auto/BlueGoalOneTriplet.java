@@ -43,7 +43,7 @@ public class BlueGoalOneTriplet extends LinearOpMode {
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
         // MecanumDrive drive = robot.dt.drivebase;
 
-        double ballX = (-1.5)*t + 9, ballY = 0.5*t + 12; // coords of the first ball
+        double ballX = (-1.5)*t, ballY = 0.5*t+10; // coords of the first ball
         double scoreX = -t, scoreY = t + 6; // where to score from, in a launch zone
         double tx = -3*t, ty = 3*t; // coords of the goal
 
@@ -51,41 +51,55 @@ public class BlueGoalOneTriplet extends LinearOpMode {
 
         TrajectoryActionBuilder scorePreloaded = drive.actionBuilder(initialPose)
                 .strafeToLinearHeading(new Vector2d(scoreX + 12, scoreY), Math.toRadians(60))
-                .waitSeconds(0.2) // TESTING PURPOSES
-                .strafeToLinearHeading(new Vector2d(scoreX + 36, ballY), Math.toRadians(120))
-                .waitSeconds(0.2) // TESTING PURPOSES
-                .turnTo(Math.toRadians(180))
-                .waitSeconds(0.2) // TESTING PURPOSES
-                // .stopAndAdd(robot.sampleActions.getMotif(robot))
-                // .stopAndAdd(robot.sampleActions.positionToScore(robot))
+                .waitSeconds(0.5) // TESTING PURPOSES
+                .strafeToLinearHeading(new Vector2d(scoreX + 12, ballY), Math.toRadians(120))
+                .waitSeconds(0.5) // TESTING PURPOSES
+
+                //start shooting
+                .stopAndAdd(robot.scoringActions.prepareShot(tx, ty, robot))
+                .waitSeconds(2)//KEEP THIS
+                .stopAndAdd(robot.scoringActions.launch(tx, ty, robot))
+                .stopAndAdd(robot.scoringActions.launch(tx, ty, robot))
+                .stopAndAdd(robot.scoringActions.launch(tx, ty, robot))
+                .stopAndAdd(robot.scoringActions.stopFlywheel(robot))
+
+                .waitSeconds(2) // TESTING PURPOSES
+                // .stopAndAdd(robot.scoringActions.getMotif(robot))
+                // .stopAndAdd(robot.scoringActions.positionToScore(robot))
                 // .strafeToSplineHeading(new Vector2d(scoreX, ballY), Math.toRadians(225))
-                // .stopAndAdd(robot.sampleActions.launchSample(robot))
-                // .stopAndAdd(robot.sampleActions.reset(robot))
+                // .stopAndAdd(robot.scoringActions.launchSample(robot))
+                // .stopAndAdd(robot.scoringActions.reset(robot))
                 ;
 
-        TrajectoryActionBuilder launch = scorePreloaded.endTrajectory().fresh()
-                .splineToLinearHeading(new Pose2d(new Vector2d(ballX, ballY), Math.toRadians(180)), Math.toRadians(180))
+        TrajectoryActionBuilder intake3 = scorePreloaded.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(scoreX + 15, ballY), Math.toRadians(180))
+                //.splineToLinearHeading(new Pose2d(new Vector2d(ballX, ballY), Math.toRadians(180)), Math.toRadians(180))
+                .strafeToLinearHeading(new Vector2d(ballX+2, ballY), Math.toRadians(180))
                 .stopAndAdd(robot.scoringActions.intake(robot))
                 .stopAndAdd(robot.scoringActions.scanSpin(robot))
-                .strafeToConstantHeading(new Vector2d(ballX - 5, ballY))
-                .waitSeconds(0.2) // TESTING PURPOSES
-//                .stopAndAdd(robot.sampleActions.intakeComplete(robot))
+                .waitSeconds(0.5) // TESTING PURPOSES
+                .strafeToConstantHeading(new Vector2d(ballX - 4, ballY))
+                .stopAndAdd(robot.scoringActions.scanSpin(robot))
+                .waitSeconds(0.5) // TESTING PURPOSES
                 .strafeToConstantHeading(new Vector2d(ballX - 10, ballY))
-                .waitSeconds(0.2) // TESTING PURPOSES
-//                .stopAndAdd(robot.sampleActions.intakeComplete(robot))
+                .stopAndAdd(robot.scoringActions.scanSpin(robot))
+                .waitSeconds(0.5) // TESTING PURPOSES
+                .stopAndAdd(robot.scoringActions.stopSpin(robot))
                 .strafeToConstantHeading(new Vector2d(scoreX, scoreY))
-//                .stopAndAdd(robot.sampleActions.aimAtGoal(tx, ty, robot))
-//                .stopAndAdd(robot.sampleActions.launch(scoreX,scoreY,robot))
-//                .stopAndAdd(robot.sampleActions.launch(scoreX,scoreY,robot))
-//                .stopAndAdd(robot.sampleActions.launch(scoreX,scoreY,robot))
+                .waitSeconds(2);
+//                .stopAndAdd(robot.scoringActions.prepareShot(tx, ty, robot))
+//                .stopAndAdd(robot.scoringActions.launch(scoreX,scoreY,robot))
+//                .stopAndAdd(robot.scoringActions.launch(scoreX,scoreY,robot))
+//                .stopAndAdd(robot.scoringActions.launch(scoreX,scoreY,robot))
                 ;
 
-        TrajectoryActionBuilder clearRamp = launch.endTrajectory().fresh()
-                .splineToLinearHeading(new Pose2d(new Vector2d(-2.9*t, 0), Math.toRadians(180)), Math.toRadians(180))
+        TrajectoryActionBuilder clearRamp = intake3.endTrajectory().fresh()
+                //.splineToLinearHeading(new Pose2d(new Vector2d(-2.0*t, -8), Math.toRadians(180)), Math.toRadians(180))
+                .strafeToLinearHeading(new Vector2d(-2.0*t, -8), Math.toRadians(180))
                 ;
 
         Action scorePreloadedA = scorePreloaded.build();
-        Action launchA = launch.build();
+        Action intakeA = intake3.build();
         Action clearRampA = clearRamp.build();
 
         waitForStart();
@@ -97,9 +111,10 @@ public class BlueGoalOneTriplet extends LinearOpMode {
                         new SequentialAction(
 
                                 scorePreloadedA,
-                                launchA,
+                                intakeA,
                                 clearRampA
-                        )
+                        ),
+                        robot.scoringActions.robotUpdate(robot)
                 )
         );
 
