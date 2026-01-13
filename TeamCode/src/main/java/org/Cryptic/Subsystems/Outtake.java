@@ -196,6 +196,13 @@ public class Outtake extends Subsystem {
             step++;
             shootIndex = (shootIndex + 1) % 3;
         }
+        if (step == 3) {
+            step = 0;
+            while (this.robot.currentBalls[shootIndex] == -1 && step < 3) {
+                step++;
+                shootIndex = (shootIndex + 1) % 3;
+            }
+        }
         // double pos = shootIndex / 3.0 + 0.5; if (pos > 1) pos = pos - 1;
         this.robot.currentBalls[shootIndex] = -1;
 
@@ -218,19 +225,6 @@ public class Outtake extends Subsystem {
             encoderSpin(po);
         }
         bandMotor.setVelocity(0.0);
-    }
-
-
-    public void resetTurret(MecanumDrive Drive) {
-        Drive.updatePoseEstimate();
-        double robotAngle = Drive.localizer.getPose().heading.toDouble();
-
-
-        rotateMotor.setTargetPosition(radiansToEncoder(robotAngle));
-        rotateMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rotateMotor.setPower(0.2); // TODO testing purposes
-
-        robot.currentTurretRadians = 0;
     }
 
     public void rotateToOuttakeSlot(int po) {
@@ -261,29 +255,6 @@ public class Outtake extends Subsystem {
 //        this.robot.currentIndex = 0;
 //    }
 
-
-
-    // tx is x location of field goal and ty is y location
-    // DO NOT RUN THIS IN A TELEOP
-    public void launch(double tx, double ty, MecanumDrive Drive) { // using georgy's math
-        Drive.updatePoseEstimate();
-        Pose2d currentPos = Drive.localizer.getPose();
-        double dx = tx - currentPos.position.x;
-        double dy = ty - currentPos.position.y;
-        double dist = Math.hypot(dx, dy) - 3;
-
-        prepareBallShot();
-        transferServo.setPosition(liftUp); // TODO
-        aimRotateMotor(dx, dy, Drive);
-        // aimAngleServo(dist);
-        executeLaunchSpeed(dist);
-        transferServo.setPosition(rest);
-        this.robot.targetIndex = (this.robot.targetIndex + 1) % 3;
-
-        this.robot.currentIndex = 0;
-        bandMotor.setVelocity(0);
-    }
-
     public void launchAuto(double tx, double ty, MecanumDrive Drive) {
         Drive.updatePoseEstimate();
         Pose2d currentPos = Drive.localizer.getPose();
@@ -294,6 +265,11 @@ public class Outtake extends Subsystem {
         prepareBallShotAuto();
         transferServo.setPosition(liftUp);
         aimRotateMotor(dx, dy, Drive);
+        executeLaunchSpeed(dist);
+        transferServo.setPosition(rest);
+        stopFlywheel();
+
+        this.robot.targetIndex = (this.robot.targetIndex + 1) % 3;
     }
 
     public void encoderSpin(int pos) {

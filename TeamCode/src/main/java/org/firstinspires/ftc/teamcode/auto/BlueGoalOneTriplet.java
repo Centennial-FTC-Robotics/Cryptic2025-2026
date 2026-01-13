@@ -30,20 +30,20 @@ public class BlueGoalOneTriplet extends LinearOpMode {
 
         double t = 23.5; // 23.5 inches per tile
         // Pose2d initialPose = new Pose2d((t*(-2) - 4), (t*2 + 6), Math.toRadians(315));
-        Pose2d initialPose = new Pose2d(t*(-1.6), 2.6*t, Math.toRadians(90));
+        Pose2d initialPose = new Pose2d(t*(-2.0), 2.4*t, Math.toRadians(135));
 
-        //MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
-        MecanumDrive drive = robot.dt.drivebase;
+        MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
+        // MecanumDrive drive = robot.dt.drivebase;
 
-        double ballX = (-1.5)*t, ballY = 0.5*t; // coords of the first ball
-        double scoreX = -t, scoreY = t*2; // where to score from, in a launch zone
+        double ballX = (-1.5)*t + 5, ballY = 0.5*t; // coords of the first ball
+        double scoreX = -t, scoreY = t; // where to score from, in a launch zone
         double tx = -3*t, ty = 3*t; // coords of the goal
 
-        robot.dt.drivebase.localizer.setPose(initialPose);
+        // robot.dt.drivebase.localizer.setPose(initialPose);
 
-        TrajectoryActionBuilder driveToAprilTag = drive.actionBuilder(initialPose)
+        TrajectoryActionBuilder scorePreloaded = drive.actionBuilder(initialPose)
                 .strafeToLinearHeading(new Vector2d(scoreX, scoreY), Math.toRadians(60))
-                .waitSeconds(0.2)
+                .waitSeconds(0.2) // TESTING PURPOSES
                 // .stopAndAdd(robot.sampleActions.getMotif(robot))
                 // .stopAndAdd(robot.sampleActions.positionToScore(robot))
                 // .strafeToSplineHeading(new Vector2d(scoreX, ballY), Math.toRadians(225))
@@ -51,7 +51,7 @@ public class BlueGoalOneTriplet extends LinearOpMode {
                 // .stopAndAdd(robot.sampleActions.reset(robot))
                 ;
 
-        TrajectoryActionBuilder launch = driveToAprilTag.endTrajectory().fresh()
+        TrajectoryActionBuilder launch = scorePreloaded.endTrajectory().fresh()
                 .splineToLinearHeading(new Pose2d(new Vector2d(ballX, ballY), Math.toRadians(180)), Math.toRadians(180))
                 // .stopAndAdd(robot.sampleActions.intakeComplete(robot))
                 .strafeToConstantHeading(new Vector2d(ballX - 5, ballY))
@@ -69,7 +69,7 @@ public class BlueGoalOneTriplet extends LinearOpMode {
                 .splineToLinearHeading(new Pose2d(new Vector2d(-2.9*t, 0), Math.toRadians(180)), Math.toRadians(180))
                 ;
 
-        Action driveToAprilTagA = driveToAprilTag.build();
+        Action driveToAprilTagA = scorePreloaded.build();
         Action launchA = launch.build();
         Action clearRampA = clearRamp.build();
 

@@ -39,7 +39,7 @@ public class BlueOneTriplet extends LinearOpMode {
 
         TrajectoryActionBuilder driveToAprilTag = drive.actionBuilder(initialPose)
                 .strafeToLinearHeading(new Vector2d(scoreX, scoreY), Math.toRadians(60))
-                .stopAndAdd(robot.sampleActions.getMotif(robot))
+                .stopAndAdd(robot.scoringActions.getMotif(robot))
                 // .stopAndAdd(robot.sampleActions.positionToScore(robot))
                 // .strafeToSplineHeading(new Vector2d(scoreX, ballY), Math.toRadians(225))
                 // .stopAndAdd(robot.sampleActions.launchSample(robot))
@@ -48,16 +48,16 @@ public class BlueOneTriplet extends LinearOpMode {
 
         TrajectoryActionBuilder launch = driveToAprilTag.endTrajectory().fresh()
                 .splineToLinearHeading(new Pose2d(new Vector2d(ballX, ballY), Math.toRadians(180)), Math.toRadians(180))
-                .stopAndAdd(robot.sampleActions.intakeComplete(robot))
+                .stopAndAdd(robot.scoringActions.intakeComplete(robot))
                 .strafeToConstantHeading(new Vector2d(ballX - 5, ballY))
-                .stopAndAdd(robot.sampleActions.intakeComplete(robot))
+                .stopAndAdd(robot.scoringActions.intakeComplete(robot))
                 .strafeToConstantHeading(new Vector2d(ballX - 10, ballY))
-                .stopAndAdd(robot.sampleActions.intakeComplete(robot))
+                .stopAndAdd(robot.scoringActions.intakeComplete(robot))
                 .strafeToConstantHeading(new Vector2d(scoreX, scoreY))
-                .stopAndAdd(robot.sampleActions.aimAtGoal(tx, ty, robot))
-                .stopAndAdd(robot.sampleActions.launch(scoreX,scoreY,robot))
-                .stopAndAdd(robot.sampleActions.launch(scoreX,scoreY,robot))
-                .stopAndAdd(robot.sampleActions.launch(scoreX,scoreY,robot))
+                .stopAndAdd(robot.scoringActions.aimAtGoal(tx, ty, robot))
+                .stopAndAdd(robot.scoringActions.launch(scoreX,scoreY,robot))
+                .stopAndAdd(robot.scoringActions.launch(scoreX,scoreY,robot))
+                .stopAndAdd(robot.scoringActions.launch(scoreX,scoreY,robot))
                 ;
 
         TrajectoryActionBuilder clearRamp = launch.endTrajectory().fresh()

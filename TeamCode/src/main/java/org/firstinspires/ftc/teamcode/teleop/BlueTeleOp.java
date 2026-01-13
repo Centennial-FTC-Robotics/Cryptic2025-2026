@@ -26,6 +26,9 @@ import java.util.Arrays;
 @TeleOp(name = "BlueTeleOp")
 public class BlueTeleOp extends LinearOpMode {
 
+    public final static double GOAL_X = -72.0;
+    public final static double GOAL_Y = 72.0;
+
     //@Override
     public void runOpMode() throws InterruptedException {
         Robot robot = new Robot();
@@ -94,7 +97,8 @@ public class BlueTeleOp extends LinearOpMode {
 
         boolean servoIsTop = false; // starts at bottom
 
-        robot.dt.drivebase.localizer.setPose(new Pose2d(24.0*3-9,-(24.0*3-9),0));
+        robot.dt.drivebase.localizer.update();
+        robot.dt.drivebase.localizer.setPose(new Pose2d(24.0*3-6.5,-(24.0*3-6.5),0));
 
         // angleServo.setPosition(0.0);
         if (FtcDashboard.getInstance() != null) {
@@ -102,14 +106,10 @@ public class BlueTeleOp extends LinearOpMode {
         }
 
         waitForStart();
-        long startTime;
 
         boolean rotating = false;
         boolean isTransferUp = false; // change to false after each launch too
         int outtakePos = 0;
-
-        double angleServoPos = 0.0; // starting position
-        double SERVO_STEP = 0.0035;
 
         while (opModeIsActive()) {
 
@@ -163,8 +163,8 @@ public class BlueTeleOp extends LinearOpMode {
 
             if (intakePad.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
                 robot.dt.drivebase.updatePoseEstimate();
-                double dx = -72.0 - robot.dt.drivebase.localizer.getPose().position.x;
-                double dy = 72.0 - robot.dt.drivebase.localizer.getPose().position.y;
+                double dx = GOAL_X - robot.dt.drivebase.localizer.getPose().position.x;
+                double dy = GOAL_Y - robot.dt.drivebase.localizer.getPose().position.y;
                 robot.outtake.aimRotateMotor(dx, dy, robot.dt.drivebase);
                 robot.outtake.executeLaunchSpeed(Math.sqrt(dx * dx + dy * dy));
             }
@@ -184,13 +184,6 @@ public class BlueTeleOp extends LinearOpMode {
             if (intakePad.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
                 robot.outtake.stopFlywheel();
             }
-
-//            if (drivePad.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
-//                robot.dt.drivebase.updatePoseEstimate();
-//                double dx = -72.0 - robot.dt.drivebase.localizer.getPose().position.x;
-//                double dy = 72.0 - robot.dt.drivebase.localizer.getPose().position.y;
-//                robot.outtake.aimRotateMotor(dx, dy, robot.dt.drivebase);
-//            }
 
             leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
             leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
@@ -223,7 +216,7 @@ public class BlueTeleOp extends LinearOpMode {
             Pose2d currentPose = robot.dt.drivebase.localizer.getPose();
             telemetry.addData("x", currentPose.position.x);
             telemetry.addData("y", currentPose.position.y);
-            telemetry.addData("heading", Math.toDegrees(currentPose.heading.toDouble()));
+            telemetry.addData("heading", Math.toDegrees(currentPose.heading.toDouble())+" degrees");
             telemetry.addData("turret heading", robot.outtake.rotateMotor.getCurrentPosition());
             telemetry.addData("turret target position", robot.outtake.rotateMotor.getTargetPosition());
             telemetry.addData("turret power", robot.outtake.rotateMotor.getPower());

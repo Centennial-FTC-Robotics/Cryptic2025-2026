@@ -7,7 +7,7 @@ import com.acmerobotics.roadrunner.Action;
 
 import org.Cryptic.Robot;
 
-public class SampleActions {
+public class ScoringActions {
 
     private long startTime;
 

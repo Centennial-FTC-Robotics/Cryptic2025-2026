@@ -20,7 +20,7 @@ public class BlueGoalOneTripletTest {
         Pose2d initialPose = new Pose2d(t*(-1.6), 2.6*t, Math.toRadians(90));
 
         double ballX = (-1.5)*t, ballY = 0.5*t; // coords of the first ball
-        double scoreX = 0, scoreY = t*2; // where to score from, in a launch zone
+        double scoreX = -t, scoreY = t*2; // where to score from, in a launch zone
         // double tx = -3*t, ty = 3*t; // coordinates of the goal
 
         myBot.runAction(myBot.getDrive().actionBuilder(initialPose)

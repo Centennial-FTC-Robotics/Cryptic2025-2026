@@ -147,10 +147,6 @@ public class MainTeleOp extends LinearOpMode {
 
 */
 
-            // Outtake actually launch
-            if (drivePad.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
-                robot.outtake.launch(72.0,-72.0,robot.dt.drivebase);
-            }
 
             // Read motif
             if (drivePad.wasJustPressed(GamepadKeys.Button.A)) {

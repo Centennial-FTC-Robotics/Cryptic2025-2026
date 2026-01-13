@@ -145,20 +145,4 @@ public class Intake extends Subsystem {
         }
         bandMotor.setVelocity(0.0);
     }
-
-
-    /* you'd prolly do something like this in the sample action run method
-
-
-        robot.intake.scanBallColor();
-        return !robot.intake.rotateToVacantSpotAuto();
-
-
-
-
-     */
-
-
-
-
 }

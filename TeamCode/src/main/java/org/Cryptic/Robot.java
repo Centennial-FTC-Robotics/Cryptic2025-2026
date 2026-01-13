@@ -1,7 +1,7 @@
 package org.Cryptic;
 
 import org.Cryptic.Commands.BaseActions;
-import org.Cryptic.Commands.SampleActions;
+import org.Cryptic.Commands.ScoringActions;
 import org.Cryptic.Subsystems.Camera;
 import org.Cryptic.Subsystems.Drivetrain;
 import org.Cryptic.Subsystems.IMU;
@@ -29,7 +29,7 @@ public class Robot {
             baseActions,
             camera
     };
-    public SampleActions sampleActions = new SampleActions();
+    public ScoringActions scoringActions = new ScoringActions();
 
     public int currentIndex = 0; // index at either intake/outtake positions
 
