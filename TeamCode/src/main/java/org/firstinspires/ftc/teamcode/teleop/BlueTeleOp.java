@@ -128,10 +128,10 @@ public class BlueTeleOp extends LinearOpMode {
             robot.outtake.update();
 
             // drivepad control intake
-            if (gamepad1.right_trigger >= 0.2) {
+            if (gamepad1.right_trigger >= 0.4) {
                 robot.intake.intakeBall(850);
             } else {
-                bandMotor.setVelocity(0.0);
+                robot.intake.intakeBall(0.0);
             }
 
 //            //angle hood during competition
@@ -202,6 +202,7 @@ public class BlueTeleOp extends LinearOpMode {
             telemetry.addData("LB", robot.dt.drivebase.leftBack.getPower());
             telemetry.addData("RF", robot.dt.drivebase.rightFront.getPower());
             telemetry.addData("RB", robot.dt.drivebase.rightBack.getPower());
+            telemetry.addData("intake trigger", gamepad1.right_trigger);
 
             // NormalizedRGBA colors = colorSensor.getNormalizedColors();
 
