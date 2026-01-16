@@ -97,6 +97,7 @@ public class BlueTeleOp extends LinearOpMode {
         double ticksPerSecond = 850 * CPR / 60.0;
 
         boolean servoIsTop = false; // starts at bottom
+        Pose2d initialPose = new Pose2d(24.0*3-6.5, -(24.0*3-6.5) - 9.0, 0); // -9.0 to adjust odo? TODO CHANGE LATER
 
         robot.dt.drivebase.localizer.update();
         robot.dt.drivebase.localizer.setPose(new Pose2d(24.0*3-6.5,-(24.0*3-6.5),0));
@@ -133,15 +134,6 @@ public class BlueTeleOp extends LinearOpMode {
             } else {
                 robot.intake.intakeBall(0.0);
             }
-
-//            //angle hood during competition
-//            if (intakePad.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
-//                angleServo.setPosition(ANGLE_ONE);
-//                //angleServoPos = ANGLE_ONE;
-//            } else if (intakePad.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
-//                angleServo.setPosition(ANGLE_TWO);
-//                //angleServoPos = ANGLE_TWO;
-//            }
 
             if (intakePad.wasJustPressed(GamepadKeys.Button.X)) {
                 robot.rotatingIntake = true;
@@ -184,6 +176,10 @@ public class BlueTeleOp extends LinearOpMode {
 
             if (intakePad.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
                 robot.outtake.stopFlywheel();
+            }
+            // RESET THE POSE IF WRONG, MOVE TO CORNER
+            if (drivePad.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
+                robot.dt.drivebase.localizer.setPose(initialPose);
             }
 
             leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);

@@ -142,8 +142,6 @@ public class ScoringActions {
         return new launch(tx, ty, robot, drive);
     }
 
-
-
     public class prepareShot implements Action {
         private final Robot robot;
         private final double tx, ty;
@@ -203,9 +201,29 @@ public class ScoringActions {
         return new stopFlywheel(robot);
     }
 
+    public class lowerScoop implements Action {
+        private Robot robot;
+        private boolean initialized = false;
+        public lowerScoop(Robot robot) {
+            this.robot = robot;
+        }
+
+        @Override
+        public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+            if (!initialized) {
+                initialized = true;
+                robot.outtake.moveTransfer();
+            }
+            return false;
+        }
+    }
+
+    public Action lowerScoop(Robot robot) {
+        return new lowerScoop(robot);
+    }
     public class robotUpdate implements Action {
         private boolean initialized = false;
-        private Robot robot = new Robot();
+        private Robot robot;
 
         public robotUpdate (Robot robot) {
             this.robot = robot;

@@ -36,6 +36,8 @@ public class Outtake extends Subsystem {
 
     public boolean transferUp = false;
 
+    public boolean turretMovingToPos = false;
+
     private static final double CPR_ROTATE = 145.6 * 40/7; // https://www.gobilda.com/content/spec_sheets/5202-2402-0005_spec_sheet.pdf
     public static final double CPR_LAUNCH = 145.6;
     public static final double CPR_BAND = 145.6;
@@ -119,6 +121,16 @@ public class Outtake extends Subsystem {
         rotateMotor.setTargetPosition(radiansToEncoder(finalTargetRadians));
         rotateMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rotateMotor.setPower(0.2); // TODO testing purposes
+
+        turretMovingToPos = true;
+    }
+
+    public void stopRotateMotor() {
+        // Setting power to 0 stops the active PID loop
+        rotateMotor.setPower(0);
+
+        // Switching back to RUN_USING_ENCODER "releases" the RUN_TO_POSITION lock
+        rotateMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     // this angles the turret so that in birds eye viw we're aiming the goal
@@ -250,13 +262,13 @@ public class Outtake extends Subsystem {
 //        double horizontalDist = offset.y - 3.0;
 //
 //        prepareBallShot();
-//        transferServo.setPosition(liftUp);
+//        moveTransfer();
 //        aimRotateMotorAprilTag(blueTeam);
 //        aimAngleServo(horizontalDist);
 //        executeLaunchSpeed(horizontalDist);
 //
 //        this.robot.targetIndex = (this.robot.targetIndex + 1) % 3;
-//        transferServo.setPosition(rest);
+//        moveTransfer();
 //
 //        this.robot.currentIndex = 0;
 //    }
@@ -269,8 +281,7 @@ public class Outtake extends Subsystem {
         double dist = Math.hypot(dx, dy) - 3;
 
         prepareBallShotAuto();
-        transferServo.setPosition(liftUp);
-        transferServo.setPosition(rest);
+        moveTransfer();
 
         this.robot.targetIndex = (this.robot.targetIndex + 1) % 3;
     }
@@ -333,5 +344,12 @@ public class Outtake extends Subsystem {
 
     public void update() {
         powerMotor.setVelocity(shooterSpeed);
+
+        if (turretMovingToPos && !rotateMotor.isBusy()) {
+            // The motor reached its target!
+            // Kill the power and the whine.
+            stopRotateMotor();
+            turretMovingToPos = false;
+        }
     }
 }
