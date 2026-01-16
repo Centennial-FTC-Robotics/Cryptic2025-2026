@@ -55,10 +55,10 @@ public class RedOneTriplet extends LinearOpMode {
                 .strafeToConstantHeading(new Vector2d(ballX + 10, ballY))
                 .stopAndAdd(robot.scoringActions.scanSpin(robot))
                 .strafeToConstantHeading(new Vector2d(scoreX, scoreY))
-                .stopAndAdd(robot.scoringActions.prepareShot(tx, ty, robot))
-                .stopAndAdd(robot.scoringActions.launch(scoreX,scoreY,robot))
-                .stopAndAdd(robot.scoringActions.launch(scoreX,scoreY,robot))
-                .stopAndAdd(robot.scoringActions.launch(scoreX,scoreY,robot))
+                .stopAndAdd(robot.scoringActions.prepareShot(tx, ty, robot, drive))
+                .stopAndAdd(robot.scoringActions.launch(scoreX, scoreY, robot, drive))
+                .stopAndAdd(robot.scoringActions.launch(scoreX, scoreY, robot, drive))
+                .stopAndAdd(robot.scoringActions.launch(scoreX, scoreY, robot, drive))
                 ;
 
         TrajectoryActionBuilder clearRamp = launch.endTrajectory().fresh()

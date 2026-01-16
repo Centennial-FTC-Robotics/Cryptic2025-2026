@@ -56,11 +56,11 @@ public class BlueGoalOneTriplet extends LinearOpMode {
                 .waitSeconds(0.5) // TESTING PURPOSES
 
                 //start shooting
-                .stopAndAdd(robot.scoringActions.prepareShot(tx, ty, robot))
+                .stopAndAdd(robot.scoringActions.prepareShot(tx, ty, robot, drive))
                 .waitSeconds(2)//KEEP THIS
-                .stopAndAdd(robot.scoringActions.launch(tx, ty, robot))
-                .stopAndAdd(robot.scoringActions.launch(tx, ty, robot))
-                .stopAndAdd(robot.scoringActions.launch(tx, ty, robot))
+                .stopAndAdd(robot.scoringActions.launch(tx, ty, robot, drive))
+                .stopAndAdd(robot.scoringActions.launch(tx, ty, robot, drive))
+                .stopAndAdd(robot.scoringActions.launch(tx, ty, robot, drive))
                 .stopAndAdd(robot.scoringActions.stopFlywheel(robot))
 
                 .waitSeconds(2) // TESTING PURPOSES

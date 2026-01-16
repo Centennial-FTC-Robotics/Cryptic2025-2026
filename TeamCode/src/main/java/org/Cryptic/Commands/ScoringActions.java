@@ -6,6 +6,7 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 
 import org.Cryptic.Robot;
+import org.firstinspires.ftc.teamcode.MecanumDrive;
 
 public class ScoringActions {
 
@@ -116,16 +117,19 @@ public class ScoringActions {
         private final Robot robot;
         private final double tx, ty;
 
-        public launch(double tx, double ty, Robot robot) {
+        private MecanumDrive drive;
+
+        public launch(double tx, double ty, Robot robot, MecanumDrive drive) {
             this.robot = robot;
             this.tx = tx;
             this.ty = ty;
+            this.drive = drive;
         }
 
         public boolean run(@NonNull TelemetryPacket packet) {
             if (!initialized) {
                 initialized = true;
-                robot.outtake.launchAuto(tx, ty, robot.dt.drivebase);
+                robot.outtake.launchAuto(tx, ty, drive);
 //                initTime();
             }
 //          return (!hasBeenTime(300));
@@ -134,8 +138,8 @@ public class ScoringActions {
     }
 
 
-    public Action launch(double tx, double ty, Robot robot) {
-        return new launch(tx, ty, robot);
+    public Action launch(double tx, double ty, Robot robot, MecanumDrive drive) {
+        return new launch(tx, ty, robot, drive);
     }
 
 
@@ -146,10 +150,13 @@ public class ScoringActions {
         private boolean initialized = false;
         private long startTime;
 
-        public prepareShot(double tx, double ty, Robot robot) {
+        private MecanumDrive drive;
+
+        public prepareShot(double tx, double ty, Robot robot, MecanumDrive drive) {
             this.robot = robot;
             this.tx = tx;
             this.ty = ty;
+            this.drive = drive;
         }
 
         @Override
@@ -159,14 +166,14 @@ public class ScoringActions {
                 startTime = System.currentTimeMillis();
             }
 
-            robot.outtake.autoUpdateAim(tx, ty, robot.dt.drivebase);
+            robot.outtake.autoUpdateAim(tx, ty, drive);
 
             return System.currentTimeMillis() - startTime < 5000; // adjust later
         }
     }
 
-    public Action prepareShot(double tx, double ty, Robot robot) {
-        return new prepareShot(tx, ty, robot);
+    public Action prepareShot(double tx, double ty, Robot robot, MecanumDrive drive) {
+        return new prepareShot(tx, ty, robot, drive);
     }
 
 
