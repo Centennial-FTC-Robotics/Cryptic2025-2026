@@ -21,7 +21,7 @@ public class Outtake extends Subsystem {
     public DcMotorEx bandMotor;
 
     public DcMotorEx encoder;
-    public static final double liftUp = 0.25; // TODO
+    public static final double liftUp = 0.22; // TODO
 
     public static final double rest = 0.5;
 
@@ -98,13 +98,9 @@ public class Outtake extends Subsystem {
     *  /
     * / (this is how turret should be pointing)
      */
-    public void aimRotateMotor(double dx, double dy, MecanumDrive drive) { // difference  between current pos and goal
+    public void aimRotateMotor(double dx, double dy, MecanumDrive drive) {
         double robotAngle = drive.localizer.getPose().heading.toDouble();
         double fieldTargetAngle = Math.atan2(dy, dx);
-//
-//        int testAngle = 5000;
-//        rotateMotor.setTargetPosition(testAngle);
-//        rotateMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         // Relative angle the turret needs to be at
         double relativeTargetAngle = fieldTargetAngle - robotAngle;
@@ -118,9 +114,26 @@ public class Outtake extends Subsystem {
 
         double finalTargetRadians = robot.currentTurretRadians + deltaAngle;
 
+        // NEW: Prevent crossing -180/180 boundary
+        // Normalize current angle to [-π, π]
+        double currentNormalized = Math.atan2(Math.sin(robot.currentTurretRadians),
+                Math.cos(robot.currentTurretRadians));
+        // Normalize target angle to [-π, π]
+        double targetNormalized = Math.atan2(Math.sin(relativeTargetAngle),
+                Math.cos(relativeTargetAngle));
+
+        // Check if we would cross the -180/180 boundary
+        // This happens when signs differ and the absolute difference is > π
+        if (Math.signum(currentNormalized) != Math.signum(targetNormalized) &&
+                Math.abs(currentNormalized - targetNormalized) > Math.PI) {
+
+            // Adjust the final target to go the "long way" to avoid crossing -180/180
+            finalTargetRadians = robot.currentTurretRadians - deltaAngle;
+        }
+
         rotateMotor.setTargetPosition(radiansToEncoder(finalTargetRadians));
         rotateMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rotateMotor.setPower(0.2); // TODO testing purposes
+        rotateMotor.setPower(0.2);
 
         turretMovingToPos = true;
     }
@@ -145,6 +158,17 @@ public class Outtake extends Subsystem {
         // aimAngleServo(dist);
         aimRotateMotor(dx, dy, Drive);
         executeLaunchSpeed(dist);
+    }
+
+    public void autoUpdateAimAuto(double tx, double ty, MecanumDrive Drive, double testFactor) {
+        Drive.updatePoseEstimate();
+        Pose2d currentPos = Drive.localizer.getPose();
+
+        double dx = tx - currentPos.position.x, dy = ty - currentPos.position.y;
+        double dist = Math.hypot(dx, dy) - 3;
+
+        aimRotateMotor(dx, dy, Drive);
+        executeLaunchSpeed(dist, testFactor);
     }
 
     // via christian, the range of motion is pi one way pi the other
@@ -178,6 +202,9 @@ public class Outtake extends Subsystem {
     }
 
     public void executeLaunchSpeed(double dist) {
+        executeLaunchSpeed(dist, 0.4);
+    }
+    public void executeLaunchSpeed(double dist, double testFactor) {
         // double launchAngle = Math.atan2(2*height, dist);
         // double vel = Math.sqrt(2.0 * 9.81 * height) / Math.sin(launchAngle); units: meters/s;
         double vel = Math.sqrt(386.09 * dist * dist /
@@ -185,7 +212,7 @@ public class Outtake extends Subsystem {
                         (dist * Math.tan(Math.toRadians(LAUNCH_ANGLE)) - height))); // inches per second
         // in/s * t/rev * rev/in = in/s * 145.6 * 1/(circumference)
         double tps = vel * CPR_LAUNCH * 1 / (3.77953 * Math.PI);
-        double testFactor = 0.35; // TODO cut this
+//        double testFactor = 0.4; // TODO cut this
 
         powerMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         shooterSpeed = -tps * testFactor;
@@ -195,6 +222,15 @@ public class Outtake extends Subsystem {
     public void stopFlywheel() {
         shooterSpeed = 0.0;
         powerMotor.setVelocity(shooterSpeed);
+    }
+
+    public void zeroTurret() {
+        rotateMotor.setTargetPosition(0);
+
+        rotateMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rotateMotor.setPower(0.2);
+
+        turretMovingToPos = true;
     }
 
     public void moveTransfer() {

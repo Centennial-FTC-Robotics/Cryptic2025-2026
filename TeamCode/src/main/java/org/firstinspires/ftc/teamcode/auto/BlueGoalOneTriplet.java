@@ -50,8 +50,8 @@ public class BlueGoalOneTriplet extends LinearOpMode {
         // robot.dt.drivebase.localizer.setPose(initialPose);
 
         TrajectoryActionBuilder scorePreloaded = drive.actionBuilder(initialPose)
-                .strafeToLinearHeading(new Vector2d(scoreX + 12, scoreY), Math.toRadians(60))
-                .waitSeconds(0.5) // TESTING PURPOSES
+//                .strafeToLinearHeading(new Vector2d(scoreX + 12, scoreY), Math.toRadians(60))
+//                .waitSeconds(0.5) // TESTING PURPOSES
                 .strafeToLinearHeading(new Vector2d(scoreX + 12, ballY), Math.toRadians(120))
                 .waitSeconds(0.5) // TESTING PURPOSES
 
@@ -62,20 +62,23 @@ public class BlueGoalOneTriplet extends LinearOpMode {
                 .waitSeconds(0.5) // TESTING PURPOSES
                 .stopAndAdd(robot.scoringActions.scanSpin(robot))
                 .waitSeconds(0.5) // TESTING PURPOSES
-                .stopAndAdd(robot.scoringActions.prepareShot(tx, ty, robot, drive))
-                .waitSeconds(2)//KEEP THIS
+                .stopAndAdd(robot.scoringActions.prepareShot(tx, ty, robot, drive, 0.3))
+                .waitSeconds(0.5) //KEEP THIS
                 .stopAndAdd(robot.scoringActions.launch(tx, ty, robot, drive))
-                .waitSeconds(2)
+                .waitSeconds(0.5)
                 .stopAndAdd(robot.scoringActions.lowerScoop(robot))
+                .waitSeconds(0.5)
                 .stopAndAdd(robot.scoringActions.launch(tx, ty, robot, drive))
-                .waitSeconds(2)
+                .waitSeconds(0.5)
                 .stopAndAdd(robot.scoringActions.lowerScoop(robot))
+                .waitSeconds(0.5)
                 .stopAndAdd(robot.scoringActions.launch(tx, ty, robot, drive))
-                .waitSeconds(2)
+                .waitSeconds(0.5)
                 .stopAndAdd(robot.scoringActions.lowerScoop(robot))
                 .stopAndAdd(robot.scoringActions.stopFlywheel(robot))
+                .stopAndAdd(robot.scoringActions.zeroTurret(robot))
 
-                .waitSeconds(2) // TESTING PURPOSES
+                .waitSeconds(1) // TESTING PURPOSES
                 // .stopAndAdd(robot.scoringActions.getMotif(robot))
                 // .stopAndAdd(robot.scoringActions.positionToScore(robot))
                 // .strafeToSplineHeading(new Vector2d(scoreX, ballY), Math.toRadians(225))
@@ -84,21 +87,30 @@ public class BlueGoalOneTriplet extends LinearOpMode {
                 ;
 
         TrajectoryActionBuilder intake3 = scorePreloaded.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(scoreX + 15, ballY), Math.toRadians(180))
+                .strafeToLinearHeading(new Vector2d(scoreX + 15, ballY - 12), Math.toRadians(180))
+                .stopAndAdd(robot.scoringActions.intakeSpin(robot))
                 //.splineToLinearHeading(new Pose2d(new Vector2d(ballX, ballY), Math.toRadians(180)), Math.toRadians(180))
-                .strafeToLinearHeading(new Vector2d(ballX+2, ballY), Math.toRadians(180))
+                .strafeToLinearHeading(new Vector2d(ballX+2, ballY - 12), Math.toRadians(180))
                 .stopAndAdd(robot.scoringActions.intake(robot))
                 .stopAndAdd(robot.scoringActions.scanSpin(robot))
                 .waitSeconds(0.5) // TESTING PURPOSES
-                .strafeToConstantHeading(new Vector2d(ballX - 4, ballY))
+                .strafeToConstantHeading(new Vector2d(ballX - 4, ballY - 12))
                 .stopAndAdd(robot.scoringActions.scanSpin(robot))
                 .waitSeconds(0.5) // TESTING PURPOSES
-                .strafeToConstantHeading(new Vector2d(ballX - 10, ballY))
+                .strafeToConstantHeading(new Vector2d(ballX - 10, ballY - 12))
                 .stopAndAdd(robot.scoringActions.scanSpin(robot))
                 .waitSeconds(0.5) // TESTING PURPOSES
                 .stopAndAdd(robot.scoringActions.stopSpin(robot))
-                .strafeToConstantHeading(new Vector2d(scoreX, scoreY))
-                .waitSeconds(2);
+//                .strafeToConstantHeading(new Vector2d(scoreX, scoreY))
+//                SCORE BALLS IF WE WANT
+//                .waitSeconds(0.5)
+//                .stopAndAdd(robot.scoringActions.prepareShot(tx, ty, robot, drive))
+//                .waitSeconds(3)
+//                .stopAndAdd(robot.scoringActions.launch(tx, ty, robot, drive))
+//                .waitSeconds(0.5)
+//                .stopAndAdd(robot.scoringActions.lowerScoop(robot))
+//                .stopAndAdd(robot.scoringActions.stopFlywheel(robot))
+                ;
 //                .stopAndAdd(robot.scoringActions.prepareShot(tx, ty, robot))
 //                .stopAndAdd(robot.scoringActions.launch(scoreX,scoreY,robot))
 //                .stopAndAdd(robot.scoringActions.launch(scoreX,scoreY,robot))
@@ -107,7 +119,7 @@ public class BlueGoalOneTriplet extends LinearOpMode {
 
         TrajectoryActionBuilder clearRamp = intake3.endTrajectory().fresh()
                 //.splineToLinearHeading(new Pose2d(new Vector2d(-2.0*t, -8), Math.toRadians(180)), Math.toRadians(180))
-                .strafeToLinearHeading(new Vector2d(-2.0*t, -8), Math.toRadians(180))
+                .strafeToLinearHeading(new Vector2d(-2.0*t, -16), Math.toRadians(180))
                 ;
 
         Action scorePreloadedA = scorePreloaded.build();
@@ -123,8 +135,8 @@ public class BlueGoalOneTriplet extends LinearOpMode {
                         new SequentialAction(
 
                                 scorePreloadedA,
-                                intakeA,
-                                clearRampA
+                                intakeA
+//                                clearRampA
                         ),
                         robot.scoringActions.robotUpdate(robot)
                 )

@@ -67,6 +67,29 @@ public class ScoringActions {
         return new scanSpin(robot);
     }
 
+    public class intakeSpin implements Action {
+
+        private Robot robot;
+        private boolean initialized = false;
+        public intakeSpin(Robot robot) {
+            this.robot = robot;
+        }
+
+        @Override
+        public boolean run(TelemetryPacket packet) {
+            if (!initialized) {
+                initialized = true;
+                robot.intake.rotateToVacantSpotAuto();
+
+            }
+            return false;
+        }
+    }
+
+    public Action intakeSpin(Robot robot) {
+        return new intakeSpin(robot);
+    }
+
     public class stopSpin implements Action {
         private boolean initialized = false;
         private Robot robot;
@@ -149,12 +172,14 @@ public class ScoringActions {
         private long startTime;
 
         private MecanumDrive drive;
+        private double testFactor;
 
-        public prepareShot(double tx, double ty, Robot robot, MecanumDrive drive) {
+        public prepareShot(double tx, double ty, Robot robot, MecanumDrive drive, double testFactor) {
             this.robot = robot;
             this.tx = tx;
             this.ty = ty;
             this.drive = drive;
+            this.testFactor = testFactor;
         }
 
         @Override
@@ -164,14 +189,14 @@ public class ScoringActions {
                 startTime = System.currentTimeMillis();
             }
 
-            robot.outtake.autoUpdateAim(tx, ty, drive);
+            robot.outtake.autoUpdateAimAuto(tx, ty, drive, testFactor);
 
             return System.currentTimeMillis() - startTime < 5000; // adjust later
         }
     }
 
-    public Action prepareShot(double tx, double ty, Robot robot, MecanumDrive drive) {
-        return new prepareShot(tx, ty, robot, drive);
+    public Action prepareShot(double tx, double ty, Robot robot, MecanumDrive drive, double testFactor) {
+        return new prepareShot(tx, ty, robot, drive, testFactor);
     }
 
 
@@ -199,6 +224,31 @@ public class ScoringActions {
 
     public Action stopFlywheel(Robot robot) {
         return new stopFlywheel(robot);
+    }
+
+    public class zeroTurret implements Action {
+        private Robot robot;
+        private boolean initialized = false;
+
+        public zeroTurret(Robot robot) {
+            this.robot = robot;
+        }
+
+        @Override
+        public boolean run(@NonNull TelemetryPacket packet) {
+            if (!initialized) {
+                initialized = true;
+                startTime = System.currentTimeMillis();
+            }
+
+            robot.outtake.zeroTurret();
+
+            return System.currentTimeMillis() - startTime < 500;
+        }
+    }
+
+    public Action zeroTurret(Robot robot) {
+        return new zeroTurret(robot);
     }
 
     public class lowerScoop implements Action {
@@ -236,6 +286,9 @@ public class ScoringActions {
             }
             robot.intake.update();
             robot.outtake.update();
+
+//            packet.put("current balls", robot.currentBalls);
+//            packet.put("spindexer encoder value", robot.intake.encoder.getCurrentPosition());
 
             // MUST BE SET TO TRUE IF YOU WANT IT TO RUN ALL THE TIME
             return true;

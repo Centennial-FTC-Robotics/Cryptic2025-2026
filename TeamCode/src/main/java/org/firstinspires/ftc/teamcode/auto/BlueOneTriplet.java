@@ -33,49 +33,63 @@ public class BlueOneTriplet extends LinearOpMode {
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
 
         double ballX = (-1.5)*t, ballY = -1.5*t; // coords of the first ball
-        double scoreX = -t, scoreY = t*2; // where to score from, in a launch zone
+        double scoreX = -0.5*t, scoreY = -2.6*t + 4; // where to score from, in a launch zone
         double tx = -3*t, ty = 3*t; // coords of xthe goal
 
 
-        TrajectoryActionBuilder driveToAprilTag = drive.actionBuilder(initialPose)
-                .strafeToLinearHeading(new Vector2d(scoreX, scoreY), Math.toRadians(60))
-                .stopAndAdd(robot.scoringActions.getMotif(robot))
+        TrajectoryActionBuilder scorePreloaded = drive.actionBuilder(initialPose)
+                .strafeToLinearHeading(new Vector2d(scoreX, scoreY), Math.toRadians(120))
+                .stopAndAdd(robot.scoringActions.scanSpin(robot))
+                .waitSeconds(0.5) // TESTING PURPOSES
+                .stopAndAdd(robot.scoringActions.scanSpin(robot))
+                .waitSeconds(0.5) // TESTING PURPOSES
+                .stopAndAdd(robot.scoringActions.scanSpin(robot))
+                .waitSeconds(0.5) // TESTING PURPOSES
+                .stopAndAdd(robot.scoringActions.prepareShot(tx, ty, robot, drive, 0.45))
+                .waitSeconds(0.5) //KEEP THIS
+                .stopAndAdd(robot.scoringActions.launch(tx, ty, robot, drive))
+                .waitSeconds(0.5)
+                .stopAndAdd(robot.scoringActions.lowerScoop(robot))
+                .waitSeconds(0.5)
+                .stopAndAdd(robot.scoringActions.launch(tx, ty, robot, drive))
+                .waitSeconds(0.5)
+                .stopAndAdd(robot.scoringActions.lowerScoop(robot))
+                .waitSeconds(0.5)
+                .stopAndAdd(robot.scoringActions.launch(tx, ty, robot, drive))
+                .waitSeconds(0.5)
+                .stopAndAdd(robot.scoringActions.lowerScoop(robot))
+                .stopAndAdd(robot.scoringActions.stopFlywheel(robot))
+                .stopAndAdd(robot.scoringActions.zeroTurret(robot))
+                .waitSeconds(1) // TESTING PURPOSES
+//                .stopAndAdd(robot.scoringActions.getMotif(robot))
                 // .stopAndAdd(robot.sampleActions.positionToScore(robot))
                 // .strafeToSplineHeading(new Vector2d(scoreX, ballY), Math.toRadians(225))
                 // .stopAndAdd(robot.sampleActions.launchSample(robot))
                 // .stopAndAdd(robot.sampleActions.reset(robot))
                 ;
 
-        TrajectoryActionBuilder launch = driveToAprilTag.endTrajectory().fresh()
-                .splineToLinearHeading(new Pose2d(new Vector2d(ballX, ballY), Math.toRadians(180)), Math.toRadians(180))
-                .stopAndAdd(robot.scoringActions.scanSpin(robot))
-                .strafeToConstantHeading(new Vector2d(ballX - 5, ballY))
-                .stopAndAdd(robot.scoringActions.scanSpin(robot))
-                .strafeToConstantHeading(new Vector2d(ballX - 10, ballY))
-                .stopAndAdd(robot.scoringActions.scanSpin(robot))
-                .strafeToConstantHeading(new Vector2d(scoreX, scoreY))
-                .stopAndAdd(robot.scoringActions.prepareShot(tx, ty, robot, drive))
-                .stopAndAdd(robot.scoringActions.launch(scoreX, scoreY, robot, drive))
-                .stopAndAdd(robot.scoringActions.launch(scoreX, scoreY, robot, drive))
-                .stopAndAdd(robot.scoringActions.launch(scoreX, scoreY, robot, drive))
+
+
+        TrajectoryActionBuilder moveOut = scorePreloaded.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(-2*t, -2.5*t), Math.toRadians(180))
                 ;
 
-        TrajectoryActionBuilder clearRamp = launch.endTrajectory().fresh()
-                .splineToLinearHeading(new Pose2d(new Vector2d(-2.5*t, 0), Math.toRadians(180)), Math.toRadians(180))
-                ;
+        Action scorePreloadedA = scorePreloaded.build();
+        Action moveOutA = moveOut.build();
 
-        Action driveToAprilTagA = driveToAprilTag.build();
-        Action launchA = launch.build();
-        Action clearRampA = clearRamp.build();
+        waitForStart();
+
+        if (isStopRequested()) return;
 
         Actions.runBlocking(
                 new ParallelAction(
                         new SequentialAction(
 
-                                driveToAprilTagA,
-                                launchA,
-                                clearRampA
-                        )
+                                scorePreloadedA,
+                                moveOutA
+//                                clearRampA
+                        ),
+                        robot.scoringActions.robotUpdate(robot)
                 )
         );
     }

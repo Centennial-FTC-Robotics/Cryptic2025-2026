@@ -97,10 +97,10 @@ public class BlueTeleOp extends LinearOpMode {
         double ticksPerSecond = 850 * CPR / 60.0;
 
         boolean servoIsTop = false; // starts at bottom
-        Pose2d initialPose = new Pose2d(24.0*3-6.5, -(24.0*3-6.5) - 9.0, 0); // -9.0 to adjust odo? TODO CHANGE LATER
+        Pose2d initialPose = new Pose2d(24.0*3-6.5, -(24.0*3-6.5) + 10.0, 0); // -9.0 to adjust odo? TODO CHANGE LATER
 
         robot.dt.drivebase.localizer.update();
-        robot.dt.drivebase.localizer.setPose(new Pose2d(24.0*3-6.5,-(24.0*3-6.5),0));
+        robot.dt.drivebase.localizer.setPose(initialPose);
 
         // angleServo.setPosition(0.0);
         if (FtcDashboard.getInstance() != null) {
@@ -110,7 +110,6 @@ public class BlueTeleOp extends LinearOpMode {
         waitForStart();
 
         boolean rotating = false;
-        boolean isTransferUp = false; // change to false after each launch too
         int outtakePos = 0;
 
         while (opModeIsActive()) {
@@ -163,15 +162,8 @@ public class BlueTeleOp extends LinearOpMode {
             }
 
             // transfer servo
-            if (intakePad.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
-                if (!isTransferUp) {
-                    isTransferUp = true;
-                    transferServo.setPosition(Outtake.liftUp);
-                } else {
-                    isTransferUp = false;
-                    transferServo.setPosition(Outtake.rest);
-
-                }
+            if (drivePad.wasJustPressed(GamepadKeys.Button.Y)) {
+                robot.outtake.moveTransfer();
             }
 
             if (intakePad.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
@@ -218,7 +210,7 @@ public class BlueTeleOp extends LinearOpMode {
             telemetry.addData("y", currentPose.position.y);
             telemetry.addData("heading", Math.toDegrees(currentPose.heading.toDouble())+" degrees");
             telemetry.addData("turret heading", robot.outtake.rotateMotor.getCurrentPosition());
-            telemetry.addData("turret target position", robot.outtake.rotateMotor.getTargetPosition());
+            telemetry.addData("turret target position", Math.toDegrees(robot.outtake.encoderToRadians(robot.outtake.rotateMotor.getTargetPosition())));
             telemetry.addData("turret power", robot.outtake.rotateMotor.getPower());
             telemetry.addData("shooter power", robot.outtake.powerMotor.getVelocity()); // -1700
 
