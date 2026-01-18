@@ -26,8 +26,8 @@ import java.util.Arrays;
 @TeleOp(name = "RedTeleOp")
 public class RedTeleOp extends LinearOpMode {
 
-    public final static double GOAL_X = -72.0;
-    public final static double GOAL_Y = 72.0;
+    public static double GOAL_X = -72.0;
+    public static double GOAL_Y = 72.0;
 
     //@Override
     public void runOpMode() throws InterruptedException {
@@ -126,6 +126,12 @@ public class RedTeleOp extends LinearOpMode {
 
             robot.intake.update();
             robot.outtake.update();
+
+
+            if (intakePad.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
+
+            }
+
 
             // drivepad control intake
             if (gamepad1.right_trigger >= 0.4) {
