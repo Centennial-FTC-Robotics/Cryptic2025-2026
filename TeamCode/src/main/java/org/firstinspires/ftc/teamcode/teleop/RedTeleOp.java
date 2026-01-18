@@ -23,8 +23,8 @@ import org.firstinspires.ftc.teamcode.MecanumDrive;
 
 import java.util.Arrays;
 
-@TeleOp(name = "BlueTeleOp")
-public class BlueTeleOp extends LinearOpMode {
+@TeleOp(name = "RedTeleOp")
+public class RedTeleOp extends LinearOpMode {
 
     public final static double GOAL_X = -72.0;
     public final static double GOAL_Y = 72.0;
@@ -97,7 +97,7 @@ public class BlueTeleOp extends LinearOpMode {
         double ticksPerSecond = 850 * CPR / 60.0;
 
         boolean servoIsTop = false; // starts at bottom
-        Pose2d initialPose = new Pose2d(24.0*3-6.5, -(24.0*3-6.5) + 10.0, 0); // -9.0 to adjust odo? TODO CHANGE LATER
+        Pose2d initialPose = new Pose2d(-(24.0*3-6.5), -(24.0*3-6.5) + 10.0, 180); // -9.0 to adjust odo? TODO CHANGE LATER
 
         robot.dt.drivebase.localizer.update();
         robot.dt.drivebase.localizer.setPose(initialPose);

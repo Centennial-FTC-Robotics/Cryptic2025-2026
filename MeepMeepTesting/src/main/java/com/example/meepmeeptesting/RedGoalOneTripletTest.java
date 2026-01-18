@@ -8,31 +8,66 @@ import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 
 public class RedGoalOneTripletTest {
     public static void main(String[] args) {
-        // Test out auto
         MeepMeep meepMeep = new MeepMeep(800);
 
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
-                // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(50, 30, Math.toRadians(180), Math.toRadians(180), 18)
                 .build();
 
         double t = 23.5;
-        Pose2d initialPose = new Pose2d(t*(1.6), 2.6*t, Math.toRadians(90));
 
-        double ballX = (1.5)*t, ballY = 0.5*t; // coordinates of the first ball
-        double scoreX = 0, scoreY = t*2; // where to score from, in a launch zone
-        // double tx = -3*t, ty = 3*t; // coordinates of the goal
+        // MIRROR X:
+        // X is negated: t*(-2.0) -> t*(2.0)
+        // Y stays same: 2.4*t
+        // Heading is reflected: 180 - 135 = 45 degrees
+        Pose2d initialPose = new Pose2d(t * (2.0), 2.4 * t, Math.toRadians(45));
 
-        myBot.runAction(myBot.getDrive().actionBuilder(initialPose)
-                .strafeToLinearHeading(new Vector2d(0, t), Math.toRadians(90))
-                .splineToLinearHeading(new Pose2d(new Vector2d(ballX, ballY), Math.toRadians(0)), Math.toRadians(0))
-                .strafeToConstantHeading(new Vector2d(ballX + 5, ballY))
-                .waitSeconds(0.5)
-                .strafeToConstantHeading(new Vector2d(ballX + 10, ballY))
-                .strafeToConstantHeading(new Vector2d(scoreX, scoreY))
-                .splineToLinearHeading(new Pose2d(new Vector2d(2.5*t, 0), Math.toRadians(0)), 0)
-                .build());
+        // Define base variables (negated X compared to original)
+        double ballX = (1.5) * t; // Original was -1.5 * t
+        double ballY = 0.5 * t + 10; // Y stays exactly the same
+        double scoreX = t; // Original was -t
 
+        myBot.runAction(
+                myBot.getDrive().actionBuilder(initialPose)
+
+                        // 1. Shooting Position
+                        // Original X: scoreX + 12. Mirrored X: scoreX - 12 (flip the offset too)
+                        // Original Heading: 120. Mirrored Heading: 180 - 120 = 60
+                        .strafeToLinearHeading(new Vector2d(scoreX - 12, ballY), Math.toRadians(60))
+
+                        // Pause for shooting
+                        .waitSeconds(0.6 * 3 + 0.6 + 0.6 * 3 + 1.0)
+
+                        // 2. Intake Setup
+                        // Original X: scoreX + 15 -> Mirrored: scoreX - 15
+                        // Y stays same (ballY - 12)
+                        // Original Heading: 180 -> Mirrored: 180 - 180 = 0
+                        .strafeToLinearHeading(new Vector2d(scoreX - 15, ballY - 12), Math.toRadians(0))
+
+                        .waitSeconds(0.2)
+
+                        // 3. Intake
+                        // Original X: ballX + 2 -> Mirrored: ballX - 2
+                        // Heading: 0
+                        .strafeToLinearHeading(new Vector2d(ballX - 2, ballY - 12), Math.toRadians(0))
+
+                        .waitSeconds(0.2)
+                        .waitSeconds(0.5)
+
+                        // 4. Scan/Strafe
+                        // Original X: ballX - 4 -> Mirrored: ballX + 4
+                        .strafeToConstantHeading(new Vector2d(ballX + 4, ballY - 12))
+
+                        .waitSeconds(0.5)
+
+                        // 5. Scan/Strafe
+                        // Original X: ballX - 10 -> Mirrored: ballX + 10
+                        .strafeToConstantHeading(new Vector2d(ballX + 10, ballY - 12))
+
+                        .waitSeconds(0.5)
+
+                        .build()
+        );
 
         meepMeep.setBackground(MeepMeep.Background.FIELD_INTO_THE_DEEP_OFFICIAL)
                 .setDarkMode(true)

@@ -29,41 +29,39 @@ public class RedOneTriplet extends LinearOpMode {
         robot.initialize(this);
 
         double t = 23.5; // 23.5 inches per tile
-        // Flipped over x=0: x -> -x, angle 90° -> 90° (unchanged)
         Pose2d initialPose = new Pose2d(t*(0.5), (-2.6)*t, Math.toRadians(90));
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
 
-        // Flipped coordinates: x -> -x
-        double ballX = (1.5)*t, ballY = -1.5*t;
-        double scoreX = 0.5*t, scoreY = -2.6*t + 4;
-        double tx = 3*t, ty = 3*t;
+        double ballX = (1.5)*t, ballY = -1.5*t; // coords of the first ball
+        double scoreX = 0.5*t, scoreY = -2.6*t + 4; // where to score from, in a launch zone
+        double tx = 3*t, ty = 3*t; // coords of the goal
 
 
         TrajectoryActionBuilder scorePreloaded = drive.actionBuilder(initialPose)
-                // Flipped: 120° -> 60°
-                .strafeToLinearHeading(new Vector2d(scoreX, scoreY), Math.toRadians(60))
+                .strafeToLinearHeading(new Vector2d(scoreX, scoreY), Math.toRadians(90))
                 .stopAndAdd(robot.scoringActions.scanSpin(robot))
                 .waitSeconds(0.5) // TESTING PURPOSES
                 .stopAndAdd(robot.scoringActions.scanSpin(robot))
                 .waitSeconds(0.5) // TESTING PURPOSES
                 .stopAndAdd(robot.scoringActions.scanSpin(robot))
                 .waitSeconds(0.5) // TESTING PURPOSES
-                .stopAndAdd(robot.scoringActions.prepareShot(tx, ty, robot, drive, 0.45))
-                .waitSeconds(0.5) //KEEP THIS
+                .stopAndAdd(robot.scoringActions.prepareShot(tx, ty, robot, drive, 0.42))
+                .waitSeconds(1.0) //KEEP THIS
                 .stopAndAdd(robot.scoringActions.launch(tx, ty, robot, drive))
-                .waitSeconds(0.5)
+                .waitSeconds(1.0)
                 .stopAndAdd(robot.scoringActions.lowerScoop(robot))
-                .waitSeconds(0.5)
+                .waitSeconds(1.0)
                 .stopAndAdd(robot.scoringActions.launch(tx, ty, robot, drive))
-                .waitSeconds(0.5)
+                .waitSeconds(1.0)
                 .stopAndAdd(robot.scoringActions.lowerScoop(robot))
-                .waitSeconds(0.5)
+                .waitSeconds(1.0)
                 .stopAndAdd(robot.scoringActions.launch(tx, ty, robot, drive))
-                .waitSeconds(0.5)
+                .waitSeconds(1.0)
                 .stopAndAdd(robot.scoringActions.lowerScoop(robot))
                 .stopAndAdd(robot.scoringActions.stopFlywheel(robot))
                 .stopAndAdd(robot.scoringActions.zeroTurret(robot))
                 .waitSeconds(1) // TESTING PURPOSES
+                .stopAndAdd(robot.scoringActions.stopSpin(robot))
 //                .stopAndAdd(robot.scoringActions.getMotif(robot))
                 // .stopAndAdd(robot.sampleActions.positionToScore(robot))
                 // .strafeToSplineHeading(new Vector2d(scoreX, ballY), Math.toRadians(225))
@@ -74,7 +72,6 @@ public class RedOneTriplet extends LinearOpMode {
 
 
         TrajectoryActionBuilder moveOut = scorePreloaded.endTrajectory().fresh()
-                // Flipped: 180° -> 0°
                 .strafeToLinearHeading(new Vector2d(2*t, -2.5*t), Math.toRadians(0))
                 ;
 
