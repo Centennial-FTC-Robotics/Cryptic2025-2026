@@ -55,7 +55,7 @@ public class Outtake extends Subsystem {
         transferServo = opmode.hardwareMap.get(Servo.class, "transferServo");
         bandMotor = opmode.hardwareMap.get(DcMotorEx.class, "bandMotor");
         // encoder = opmode.hardwareMap.get(DcMotorEx.class, "spinEncoder");
-        encoder = opmode.hardwareMap.get(DcMotorEx.class, "leftBack");
+        encoder = opmode.hardwareMap.get(DcMotorEx.class, "rightBack");
 
         powerMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         rotateMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);

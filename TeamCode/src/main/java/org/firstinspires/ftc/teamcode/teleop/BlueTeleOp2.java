@@ -185,7 +185,7 @@ public class BlueTeleOp2 extends LinearOpMode {
             telemetry.addData("currentIntakeIndex, currentBalls: ", robot.currentIntakeIndex+", "+ Arrays.toString(robot.currentBalls));
             telemetry.addData("currentIndex", robot.currentIndex);
             telemetry.addData("motif: ", robot.motif);
-            telemetry.addData("Encoder", leftBack.getCurrentPosition());
+            telemetry.addData("Encoder", rightBack.getCurrentPosition());
             telemetry.addData("rotating", rotating);
             telemetry.addData("rotatingIntake", robot.rotatingIntake);
             telemetry.addData("outtake po", outtakePos);
