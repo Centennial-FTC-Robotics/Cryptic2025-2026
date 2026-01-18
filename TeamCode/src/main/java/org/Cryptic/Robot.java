@@ -42,7 +42,7 @@ public class Robot {
 
     public int motif = 21; // 21 for GPP, 22 for PGP, 23 for PPG
 
-    public final int encoderTicks = 6600;
+    public final int encoderTicks = 8192;
     public final int[] targetPosition = {0, encoderTicks/6, encoderTicks*2/6, encoderTicks*3/6, encoderTicks*4/6, encoderTicks*5/6};
     // intake0, outtake2, intake1, outtake0, intake2, outtake1
     public boolean rotating = false;

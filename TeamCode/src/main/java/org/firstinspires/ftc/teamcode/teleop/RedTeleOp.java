@@ -59,7 +59,7 @@ public class RedTeleOp extends LinearOpMode {
         DcMotorEx rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
 
         DcMotorEx bandMotor = hardwareMap.get(DcMotorEx.class, "bandMotor");
-        DcMotorEx encoder = hardwareMap.get(DcMotorEx.class, "spinEncoder");
+        DcMotorEx encoder = hardwareMap.get(DcMotorEx.class, "rightBack");
         bandMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         encoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         // encoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);

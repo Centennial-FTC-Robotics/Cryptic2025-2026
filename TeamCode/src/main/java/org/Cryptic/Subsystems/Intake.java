@@ -35,7 +35,7 @@ public class Intake extends Subsystem {
         bandMotor = opmode.hardwareMap.get(DcMotorEx.class, "bandMotor");
         indexServo = opmode.hardwareMap.get(Servo.class, "indexServo");
 
-        encoder = opmode.hardwareMap.get(DcMotorEx.class, "spinEncoder");
+        encoder = opmode.hardwareMap.get(DcMotorEx.class, "rightBack");
         // encoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         // encoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         bandMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
