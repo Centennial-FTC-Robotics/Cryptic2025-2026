@@ -97,7 +97,13 @@ public class BlueTeleOp2 extends LinearOpMode {
         boolean rotating = false;
         int outtakePos = 0;
 
+
+
+        boolean currentlyTransferring = false;
+        long startingTime = 0; // placeholder
+
         while (opModeIsActive()) {
+
 
             rotateMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
@@ -120,6 +126,7 @@ public class BlueTeleOp2 extends LinearOpMode {
             }
 
             if (intakePad.wasJustPressed(GamepadKeys.Button.X)) {
+                robot.intake.scanBallColor();
                 robot.rotatingIntake = true;
             }
             if (robot.rotatingIntake) {
@@ -134,9 +141,11 @@ public class BlueTeleOp2 extends LinearOpMode {
                 robot.outtake.rotateToOuttakeSlot(outtakePos);
             }
 
+            /*
             if (intakePad.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
                 robot.intake.scanBallColor();
             }
+            */
 
             if (intakePad.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
                 robot.dt.drivebase.updatePoseEstimate();
@@ -146,10 +155,21 @@ public class BlueTeleOp2 extends LinearOpMode {
                 robot.outtake.executeLaunchSpeed(Math.sqrt(dx * dx + dy * dy));
             }
 
-            // transfer servo
-            if (intakePad.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
+            if (intakePad.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT) && !currentlyTransferring) {
+                currentlyTransferring = true;
                 robot.outtake.moveTransfer();
+                startingTime = System.currentTimeMillis();
             }
+
+            if (currentlyTransferring) {
+                if (System.currentTimeMillis() - startingTime >= 500) {
+                    robot.outtake.moveTransfer();
+                    currentlyTransferring = false;
+                }
+            }
+
+
+
 
             if (intakePad.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
                 robot.outtake.stopFlywheel();
@@ -234,7 +254,6 @@ public class BlueTeleOp2 extends LinearOpMode {
 
             dashboard.sendTelemetryPacket(packet);
             telemetry.update();
-
 
         }
     }
