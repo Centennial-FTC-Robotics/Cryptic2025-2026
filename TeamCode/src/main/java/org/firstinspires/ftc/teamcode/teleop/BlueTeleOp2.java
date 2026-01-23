@@ -26,8 +26,8 @@ import java.util.Arrays;
 @TeleOp(name = "BlueTeleOp2")
 public class BlueTeleOp2 extends LinearOpMode {
 
-    public final static double GOAL_X = -72.0;
-    public final static double GOAL_Y = 72.0;
+    public final static double GOAL_X = -76.0;
+    public final static double GOAL_Y = 76.0;
 
     //@Override
     public void runOpMode() throws InterruptedException {

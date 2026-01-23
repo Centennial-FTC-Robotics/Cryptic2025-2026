@@ -43,8 +43,11 @@ public class Outtake extends Subsystem {
     public static final double CPR_BAND = 145.6;
     // 28 to 160
 
-    public static final double LAUNCH_ANGLE = 47.52; // DEGREES
-    public static final double LAUNCH_POS = 0.2;
+    public static final double LAUNCH_ANGLE_FAR = 33.675;
+    public static final double LAUNCH_ANGLE_CLOSE = 47.52; // DEGREES
+    public static final double LAUNCH_POS_FAR = 0.2;
+
+    public static final double LAUNCH_POS_CLOSE = 0.5;
 
     @Override
     public void init(LinearOpMode opmode) throws InterruptedException {
@@ -54,8 +57,7 @@ public class Outtake extends Subsystem {
         indexServo = opmode.hardwareMap.get(Servo.class, "indexServo");
         transferServo = opmode.hardwareMap.get(Servo.class, "transferServo");
         bandMotor = opmode.hardwareMap.get(DcMotorEx.class, "bandMotor");
-        // encoder = opmode.hardwareMap.get(DcMotorEx.class, "spinEncoder");
-        encoder = opmode.hardwareMap.get(DcMotorEx.class, "rightBack");
+        encoder = opmode.hardwareMap.get(DcMotorEx.class, "spinEncoder");
 
         powerMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         rotateMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -72,7 +74,7 @@ public class Outtake extends Subsystem {
         this.robot.targetIndex = 0;
 
         transferServo.setPosition(rest);
-        angleServo.setPosition(LAUNCH_POS); // 47.52 degrees
+        angleServo.setPosition(LAUNCH_POS_CLOSE); // 47.52 degrees
     }
 
     // helper method that properly angles the angleServo to theta
@@ -122,6 +124,13 @@ public class Outtake extends Subsystem {
         // Normalize target angle to [-π, π]
         double targetNormalized = Math.atan2(Math.sin(relativeTargetAngle),
                 Math.cos(relativeTargetAngle));
+
+        //check y pos to see which angle servo position
+//        if (dy > 96) {
+//            angleServo.setPosition(LAUNCH_POS_FAR);
+//        } else {
+//            angleServo.setPosition(LAUNCH_POS_CLOSE);
+//        }
 
         // Check if we would cross the -180/180 boundary
         // This happens when signs differ and the absolute difference is > π
@@ -206,18 +215,27 @@ public class Outtake extends Subsystem {
         executeLaunchSpeed(dist, 0.4);
     }
     public void executeLaunchSpeed(double dist, double testFactor) {
-        // double launchAngle = Math.atan2(2*height, dist);
+
+         double launchAngle = Math.atan2(2*height, dist);
+
         // double vel = Math.sqrt(2.0 * 9.81 * height) / Math.sin(launchAngle); units: meters/s;
-        double vel = Math.sqrt(386.09 * dist * dist /
-                (2 * Math.pow(Math.cos(Math.toRadians(LAUNCH_ANGLE)), 2) *
-                        (dist * Math.tan(Math.toRadians(LAUNCH_ANGLE)) - height))); // inches per second
-        // in/s * t/rev * rev/in = in/s * 145.6 * 1/(circumference)
-        double tps = vel * CPR_LAUNCH * 1 / (3.77953 * Math.PI);
+//        double vel = Math.sqrt(386.09 * dist * dist /
+//                (2 * Math.pow(Math.cos(Math.toRadians(LAUNCH_ANGLE_CLOSE)), 2) *
+//                        (dist * Math.tan(Math.toRadians(LAUNCH_ANGLE_CLOSE)) - height))); // inches per second
+//        // in/s * t/rev * rev/in = in/s * 145.6 * 1/(circumference)
+//        double tps = vel * CPR_LAUNCH * 1 / (3.77953 * Math.PI);
 //        double testFactor = 0.4; // TODO cut this
 
+
+        if (dist > 125) {
+            shooterSpeed = 100 * CPR_LAUNCH / (3.77953 * Math.PI) * 0.8;
+        } else {
+            shooterSpeed = 100 * CPR_LAUNCH / (3.77953 * Math.PI) * 0.4;
+        }
+
         powerMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        shooterSpeed = -tps * testFactor;
         powerMotor.setVelocity(shooterSpeed);
+
     }
 
     public void stopFlywheel() {
